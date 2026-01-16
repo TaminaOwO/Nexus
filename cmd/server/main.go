@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -76,5 +77,14 @@ func main() {
 		})
 	}
 
-	r.Run(":8080")
+	// Get PORT from environment (Railway assigns dynamically)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // Fallback for local development
+	}
+
+	log.Println("🚀 Nexus Server starting on port:", port)
+	if err := r.Run(":" + port); err != nil {
+		log.Fatal("Server start error:", err)
+	}
 }

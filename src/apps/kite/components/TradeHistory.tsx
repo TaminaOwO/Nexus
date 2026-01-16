@@ -37,10 +37,6 @@ const STRATEGY_OPTIONS = [
     { value: "BOSS|CHEAP_ACQUISITION", label: "🛡️ Boss - Cheap Acquisition" },
 ];
 
-function formatPrice(price: number): string {
-    return price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
 function formatPercent(value: number): string {
     const sign = value >= 0 ? "+" : "";
     return `${sign}${value.toFixed(2)}%`;

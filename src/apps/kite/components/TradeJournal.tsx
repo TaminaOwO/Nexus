@@ -50,7 +50,7 @@ interface PortfolioData {
     total_pl_percent: number;
 }
 
-const API_BASE = "http://localhost:8080/api/kite";
+const API_BASE = "/api/kite";
 
 function formatPrice(price: number): string {
     return price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });

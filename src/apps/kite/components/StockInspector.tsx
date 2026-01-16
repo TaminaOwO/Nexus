@@ -18,7 +18,7 @@ interface StockInspectorProps {
     structure: StructureType;
 }
 
-const API_BASE = "http://localhost:8080/api/kite";
+const API_BASE = "/api/kite";
 
 // Format large numbers in Chinese style (億/萬)
 function formatTradeValue(value: number): string {

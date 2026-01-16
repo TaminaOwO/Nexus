@@ -28,7 +28,7 @@ interface HistoryData {
     best_pl: number;
 }
 
-const API_BASE = "http://localhost:8080/api/kite";
+const API_BASE = "/api/kite";
 
 const STRATEGY_OPTIONS = [
     { value: "OFFICE|STRONG_WEEKLY", label: "🏢 Office - Strong Weekly" },

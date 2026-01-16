@@ -1,0 +1,11 @@
+[build]
+# Use Dockerfile for build
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# Start command (already defined in Dockerfile CMD)
+healthcheckPath = "/api/kite/ping"
+healthcheckTimeout = 300
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3

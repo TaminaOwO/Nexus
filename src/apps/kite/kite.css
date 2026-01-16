@@ -1,0 +1,354 @@
+/* ============================================
+   KITE TRADING WAR ROOM - Global Theme
+   ============================================ */
+
+/* Import Inter Font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* Root Variables - Modern Dark Theme */
+:root {
+    /* Backgrounds */
+    --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    --bg-card: rgba(30, 41, 59, 0.5);
+    --bg-card-hover: rgba(30, 41, 59, 0.7);
+    --bg-input: rgba(15, 23, 42, 0.6);
+
+    /* Glass Effect */
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+    /* Strategy Colors */
+    --office-primary: #6366f1;
+    --office-glow: rgba(99, 102, 241, 0.15);
+    --office-border: rgba(99, 102, 241, 0.4);
+    --office-text: #a5b4fc;
+
+    --boss-primary: #f59e0b;
+    --boss-glow: rgba(245, 158, 11, 0.15);
+    --boss-border: rgba(245, 158, 11, 0.4);
+    --boss-text: #fcd34d;
+
+    /* Semantic Colors */
+    --success: #10b981;
+    --success-glow: rgba(16, 185, 129, 0.15);
+    --danger: #ef4444;
+    --danger-glow: rgba(239, 68, 68, 0.15);
+    --warning: #f59e0b;
+
+    /* Text */
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+
+    /* Fonts */
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+    /* Spacing & Radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+}
+
+/* Global Kite Dashboard */
+.kite-dashboard {
+    min-height: 100vh;
+    background: var(--bg-gradient);
+    padding: 2rem;
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+}
+
+.kite-content-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* ============================================
+   Navigation - Pill Switcher
+   ============================================ */
+.kite-nav-tabs {
+    display: inline-flex;
+    gap: 0.25rem;
+    padding: 0.375rem;
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    margin-bottom: 2rem;
+}
+
+.nav-tab {
+    position: relative;
+    padding: 0.875rem 1.75rem;
+    background: transparent;
+    border: none;
+    border-radius: calc(var(--radius-xl) - 4px);
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-tab:hover {
+    color: var(--text-primary);
+}
+
+.nav-tab.active {
+    background: linear-gradient(135deg, var(--office-primary), #3b82f6);
+    color: white;
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+}
+
+/* ============================================
+   Glass Card Base
+   ============================================ */
+.glass-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--glass-shadow);
+    padding: 1.5rem;
+}
+
+/* Strategy-specific glow */
+.glass-card.office {
+    border-left: 4px solid var(--office-primary);
+    box-shadow: var(--glass-shadow), inset 0 0 60px var(--office-glow);
+}
+
+.glass-card.boss {
+    border-left: 4px solid var(--boss-primary);
+    box-shadow: var(--glass-shadow), inset 0 0 60px var(--boss-glow);
+}
+
+/* ============================================
+   Modern Inputs
+   ============================================ */
+.modern-input {
+    width: 100%;
+    padding: 0.875rem 1.25rem;
+    background: var(--bg-input);
+    border: 2px solid transparent;
+    border-radius: var(--radius-lg);
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-family: var(--font-sans);
+    transition: all 0.2s ease;
+}
+
+.modern-input:focus {
+    outline: none;
+    border-color: var(--office-primary);
+    box-shadow: 0 0 0 3px var(--office-glow);
+}
+
+.modern-input.boss:focus {
+    border-color: var(--boss-primary);
+    box-shadow: 0 0 0 3px var(--boss-glow);
+}
+
+/* Price inputs - Monospace */
+.modern-input.price {
+    font-family: var(--font-mono);
+    font-weight: 500;
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 3rem;
+    padding: 0 1.75rem;
+    background: linear-gradient(135deg, #10b981, #14b8a6);
+    border: none;
+    border-radius: var(--radius-lg);
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 2.75rem;
+    padding: 0 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--office-primary);
+}
+
+/* Danger Button */
+.btn-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.btn-danger:hover {
+    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
+}
+
+/* ============================================
+   Typography Utilities
+   ============================================ */
+.font-mono {
+    font-family: var(--font-mono) !important;
+}
+
+.text-success {
+    color: var(--success) !important;
+}
+
+.text-danger {
+    color: var(--danger) !important;
+}
+
+.text-warning {
+    color: var(--warning) !important;
+}
+
+.text-office {
+    color: var(--office-text) !important;
+}
+
+.text-boss {
+    color: var(--boss-text) !important;
+}
+
+/* Price Display */
+.price-display {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+.price-display.up {
+    color: var(--success);
+}
+
+.price-display.down {
+    color: var(--danger);
+}
+
+/* Percentage Badge */
+.pct-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.pct-badge.up {
+    background: var(--success-glow);
+    color: var(--success);
+}
+
+.pct-badge.down {
+    background: var(--danger-glow);
+    color: var(--danger);
+}
+
+/* ============================================
+   Strategy Badges
+   ============================================ */
+.strategy-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.875rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.strategy-badge.office {
+    background: var(--office-glow);
+    color: var(--office-text);
+    border: 1px solid var(--office-border);
+}
+
+.strategy-badge.boss {
+    background: var(--boss-glow);
+    color: var(--boss-text);
+    border: 1px solid var(--boss-border);
+}
+
+/* ============================================
+   Stat Cards
+   ============================================ */
+.stat-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.stat-card .stat-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.stat-card .stat-value {
+    font-family: var(--font-mono);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.stat-card.success {
+    border-left: 4px solid var(--success);
+    box-shadow: var(--glass-shadow), inset 0 0 40px var(--success-glow);
+}
+
+.stat-card.success .stat-value {
+    color: var(--success);
+}
+
+.stat-card.danger {
+    border-left: 4px solid var(--danger);
+    box-shadow: var(--glass-shadow), inset 0 0 40px var(--danger-glow);
+}
+
+.stat-card.danger .stat-value {
+    color: var(--danger);
+}

@@ -1,0 +1,396 @@
+/* ============================================
+   WIND COCKPIT - Modern War Room
+   ============================================ */
+
+.wind-cockpit {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--glass-shadow);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.wind-cockpit h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.wind-cockpit>p {
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+}
+
+/* ============================================
+   Structure Banner
+   ============================================ */
+.structure-card {
+  background: var(--bg-input);
+  border-radius: var(--radius-xl);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.structure-card.easy-rise {
+  background: var(--success-glow);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.structure-card.boundary {
+  background: rgba(234, 179, 8, 0.1);
+  border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.structure-card.easy-fall {
+  background: var(--danger-glow);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.cycle-display {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.cycle-display .emoji {
+  font-size: 2rem;
+}
+
+.cycle-display .label {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.cycle-display .label span {
+  color: var(--text-secondary);
+  font-weight: 400;
+  font-size: 0.95rem;
+  margin-left: 0.5rem;
+}
+
+.structure-card.easy-rise .cycle-display .label {
+  color: var(--success);
+}
+
+.structure-card.boundary .cycle-display .label {
+  color: var(--warning);
+}
+
+.structure-card.easy-fall .cycle-display .label {
+  color: var(--danger);
+}
+
+/* Traffic Light */
+.traffic-light {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: var(--radius-lg);
+}
+
+.traffic-light .light {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.traffic-light .light.active.green {
+  background: var(--success);
+  box-shadow: 0 0 20px var(--success);
+}
+
+.traffic-light .light.active.yellow {
+  background: var(--warning);
+  box-shadow: 0 0 20px var(--warning);
+}
+
+.traffic-light .light.active.red {
+  background: var(--danger);
+  box-shadow: 0 0 20px var(--danger);
+}
+
+.traffic-light .light-label {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.traffic-light .light-label.green {
+  color: var(--success);
+}
+
+.traffic-light .light-label.yellow {
+  color: var(--warning);
+}
+
+.traffic-light .light-label.red {
+  color: var(--danger);
+}
+
+/* ============================================
+   Wind Cards Grid (Large Light-up Cards)
+   ============================================ */
+.wind-week-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.wind-day-card {
+  background: var(--bg-input);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: default;
+}
+
+.wind-day-card:hover {
+  transform: translateY(-4px);
+}
+
+/* Active/Today card glow */
+.wind-day-card.today {
+  border: 2px solid var(--office-primary);
+  box-shadow: 0 0 30px var(--office-glow);
+}
+
+/* Wind type specific colors */
+.wind-day-card.strong {
+  border-left: 4px solid var(--success);
+}
+
+.wind-day-card.strong.active {
+  background: var(--success-glow);
+  border: 2px solid var(--success);
+  box-shadow: 0 0 40px var(--success-glow), inset 0 0 30px var(--success-glow);
+}
+
+.wind-day-card.calm {
+  border-left: 4px solid #3b82f6;
+}
+
+.wind-day-card.calm.active {
+  background: rgba(59, 130, 246, 0.1);
+  border: 2px solid #3b82f6;
+  box-shadow: 0 0 40px rgba(59, 130, 246, 0.15), inset 0 0 30px rgba(59, 130, 246, 0.1);
+}
+
+.wind-day-card.headwind {
+  border-left: 4px solid var(--danger);
+}
+
+.wind-day-card.headwind.active {
+  background: var(--danger-glow);
+  border: 2px solid var(--danger);
+  box-shadow: 0 0 40px var(--danger-glow), inset 0 0 30px var(--danger-glow);
+}
+
+.wind-day-card.none {
+  border-left: 4px solid var(--text-muted);
+  opacity: 0.5;
+}
+
+.wind-day-card .day-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+}
+
+.wind-day-card .wind-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.wind-day-card .wind-type {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.wind-day-card.strong .wind-type {
+  color: var(--success);
+}
+
+.wind-day-card.calm .wind-type {
+  color: #60a5fa;
+}
+
+.wind-day-card.headwind .wind-type {
+  color: var(--danger);
+}
+
+/* ============================================
+   Today's Wind Banner
+   ============================================ */
+.today-wind-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  background: var(--bg-input);
+  border-radius: var(--radius-xl);
+  gap: 1rem;
+}
+
+.today-wind-banner .wind-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.today-wind-banner .wind-icon {
+  font-size: 2.5rem;
+}
+
+.today-wind-banner .wind-details h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.today-wind-banner .wind-details p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 0.25rem 0 0;
+}
+
+.today-wind-banner.strong {
+  border-left: 4px solid var(--success);
+  box-shadow: inset 0 0 40px var(--success-glow);
+}
+
+.today-wind-banner.strong h3 {
+  color: var(--success);
+}
+
+.today-wind-banner.calm {
+  border-left: 4px solid #3b82f6;
+  box-shadow: inset 0 0 40px rgba(59, 130, 246, 0.1);
+}
+
+.today-wind-banner.calm h3 {
+  color: #60a5fa;
+}
+
+.today-wind-banner.headwind {
+  border-left: 4px solid var(--danger);
+  box-shadow: inset 0 0 40px var(--danger-glow);
+}
+
+.today-wind-banner.headwind h3 {
+  color: var(--danger);
+}
+
+/* ============================================
+   Wind Legend
+   ============================================ */
+.wind-legend {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--glass-border);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.legend-item .icon {
+  font-size: 1.25rem;
+}
+
+.legend-item.strong {
+  color: var(--success);
+}
+
+.legend-item.calm {
+  color: #60a5fa;
+}
+
+.legend-item.headwind {
+  color: var(--danger);
+}
+
+/* ============================================
+   Week Counter Badge
+   ============================================ */
+.week-counter {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.counter-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.counter-badge.strong {
+  background: var(--success-glow);
+  color: var(--success);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.counter-badge.calm {
+  background: rgba(59, 130, 246, 0.1);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.counter-badge.headwind {
+  background: var(--danger-glow);
+  color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 768px) {
+  .wind-week-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .wind-day-card .wind-icon {
+    font-size: 2rem;
+  }
+
+  .structure-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .wind-week-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

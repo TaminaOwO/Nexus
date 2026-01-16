@@ -1,0 +1,29 @@
+# Binary (執行檔)
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+nexus  # Linux binary name if you build specifically
+
+# Dependencies (依賴套件)
+node_modules/
+vendor/
+
+# Build Artifacts (編譯產物)
+dist/
+build/
+tmp/
+
+# Environment Variables (機密設定)
+.env
+.env.local
+
+# OS Files (系統垃圾檔)
+.DS_Store
+Thumbs.db
+
+# IDE Files (編輯器設定)
+.vscode/
+.idea/

@@ -1,0 +1,755 @@
+/* ============================================
+   STOCK INSPECTOR - Modern Trading War Room
+   ============================================ */
+
+.stock-inspector {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--glass-shadow);
+    padding: 2rem;
+    margin-top: 2rem;
+    transition: all 0.3s ease;
+}
+
+.stock-inspector.office {
+    border-left: 4px solid var(--office-primary);
+    box-shadow: var(--glass-shadow), inset 0 0 80px var(--office-glow);
+}
+
+.stock-inspector.boss {
+    border-left: 4px solid var(--boss-primary);
+    box-shadow: var(--glass-shadow), inset 0 0 80px var(--boss-glow);
+}
+
+.stock-inspector.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+/* Header */
+.inspector-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.inspector-header h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+/* Strategy Tabs */
+.strategy-tabs {
+    display: flex;
+    gap: 0.25rem;
+    padding: 0.375rem;
+    background: var(--bg-input);
+    border-radius: var(--radius-xl);
+}
+
+.strategy-tab {
+    padding: 0.75rem 1.5rem;
+    background: transparent;
+    border: none;
+    border-radius: calc(var(--radius-xl) - 4px);
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.strategy-tab:hover {
+    color: var(--text-primary);
+}
+
+.strategy-tab.active.office {
+    background: linear-gradient(135deg, var(--office-primary), #8b5cf6);
+    color: white;
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+}
+
+.strategy-tab.active.boss {
+    background: linear-gradient(135deg, var(--boss-primary), #d97706);
+    color: white;
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.4);
+}
+
+/* Sub Strategy Pills */
+.sub-strategy-pills {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+.sub-strategy-pill {
+    padding: 0.625rem 1.25rem;
+    background: var(--bg-input);
+    border: 2px solid transparent;
+    border-radius: 9999px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sub-strategy-pill:hover {
+    background: var(--bg-card-hover);
+    color: var(--text-primary);
+}
+
+.sub-strategy-pill.active.office {
+    background: var(--office-glow);
+    border-color: var(--office-primary);
+    color: var(--office-text);
+}
+
+.sub-strategy-pill.active.boss {
+    background: var(--boss-glow);
+    border-color: var(--boss-primary);
+    color: var(--boss-text);
+}
+
+/* Disabled Warning */
+.inspector-disabled {
+    text-align: center;
+    padding: 3rem 2rem;
+}
+
+.inspector-disabled p:first-child {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.inspector-disabled .hint {
+    font-size: 1rem;
+    color: var(--text-muted);
+}
+
+/* ============================================
+   Search Bar
+   ============================================ */
+.search-bar {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.search-bar input {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    background: var(--bg-input);
+    border: 2px solid transparent;
+    border-radius: var(--radius-lg);
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    transition: all 0.2s ease;
+}
+
+.search-bar input:focus {
+    outline: none;
+    border-color: var(--office-primary);
+    box-shadow: 0 0 0 3px var(--office-glow);
+}
+
+.search-bar input.boss:focus {
+    border-color: var(--boss-primary);
+    box-shadow: 0 0 0 3px var(--boss-glow);
+}
+
+.search-bar input::placeholder {
+    color: var(--text-muted);
+}
+
+.search-btn {
+    padding: 0 1.75rem;
+    background: linear-gradient(135deg, var(--office-primary), #3b82f6);
+    border: none;
+    border-radius: var(--radius-lg);
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.search-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+}
+
+.search-btn.boss {
+    background: linear-gradient(135deg, var(--boss-primary), #d97706);
+}
+
+.search-btn.boss:hover {
+    box-shadow: 0 8px 24px rgba(245, 158, 11, 0.4);
+}
+
+/* ============================================
+   Quote Display
+   ============================================ */
+.quote-result {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.quote-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.quote-main {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+}
+
+.quote-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.quote-symbol {
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+.quote-price-section {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+}
+
+.quote-price {
+    font-family: var(--font-mono);
+    font-size: 2.25rem;
+    font-weight: 700;
+}
+
+.quote-price.up {
+    color: var(--success);
+}
+
+.quote-price.down {
+    color: var(--danger);
+}
+
+.quote-change {
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    font-weight: 600;
+    padding: 0.375rem 0.875rem;
+    border-radius: 9999px;
+}
+
+.quote-change.up {
+    background: var(--success-glow);
+    color: var(--success);
+}
+
+.quote-change.down {
+    background: var(--danger-glow);
+    color: var(--danger);
+}
+
+.log-trade-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 3rem;
+    padding: 0 1.5rem;
+    background: linear-gradient(135deg, #10b981, #14b8a6);
+    border: none;
+    border-radius: var(--radius-lg);
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.log-trade-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+}
+
+/* ============================================
+   Technical Data Grid
+   ============================================ */
+.technical-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.tech-card {
+    background: var(--bg-input);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.tech-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.tech-value {
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.tech-value.up {
+    color: var(--success);
+}
+
+.tech-value.down {
+    color: var(--danger);
+}
+
+/* ============================================
+   Verdict Panel
+   ============================================ */
+.verdict-panel {
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    margin-top: 1.5rem;
+}
+
+.verdict-panel.buy {
+    background: var(--success-glow);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.verdict-panel.wait {
+    background: rgba(234, 179, 8, 0.1);
+    border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.verdict-panel.danger {
+    background: var(--danger-glow);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.verdict-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+
+.verdict-status.buy {
+    color: var(--success);
+}
+
+.verdict-status.wait {
+    color: var(--warning);
+}
+
+.verdict-status.danger {
+    color: var(--danger);
+}
+
+.verdict-message {
+    font-size: 1rem;
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+/* ============================================
+   Validation Checkbox
+   ============================================ */
+.validation-check {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background: var(--bg-input);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.validation-check:hover {
+    background: var(--bg-card-hover);
+}
+
+.validation-check input[type="checkbox"] {
+    width: 1.25rem;
+    height: 1.25rem;
+    accent-color: var(--boss-primary);
+}
+
+.validation-check label {
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+/* ============================================
+   Trade Modal
+   ============================================ */
+.trade-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+.trade-modal {
+    background: linear-gradient(145deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.98));
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 520px;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.modal-header h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.modal-close {
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-input);
+    border: none;
+    border-radius: 50%;
+    color: var(--text-secondary);
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    background: var(--danger-glow);
+    color: var(--danger);
+}
+
+.modal-body {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Modal Stock Info */
+.modal-stock-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.modal-stock-info .stock-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.modal-stock-info .stock-symbol {
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+.modal-strategy-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--bg-input);
+    border-radius: var(--radius-lg);
+    font-size: 0.9rem;
+}
+
+.modal-strategy-info.office {
+    background: var(--office-glow);
+    border: 1px solid var(--office-border);
+    color: var(--office-text);
+}
+
+.modal-strategy-info.boss {
+    background: var(--boss-glow);
+    border: 1px solid var(--boss-border);
+    color: var(--boss-text);
+}
+
+/* Form Groups */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 0.875rem 1rem;
+    background: var(--bg-input);
+    border: 2px solid transparent;
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-family: var(--font-sans);
+    transition: all 0.2s ease;
+}
+
+.form-group input[type="number"] {
+    font-family: var(--font-mono);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--office-primary);
+    box-shadow: 0 0 0 3px var(--office-glow);
+}
+
+.form-hint {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* Exit Plan Row */
+.form-row.exit-plan {
+    padding: 1.25rem;
+    background: var(--danger-glow);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: var(--radius-lg);
+}
+
+.form-group input.error {
+    border-color: var(--danger);
+    background: var(--danger-glow);
+}
+
+/* Captured Context */
+.captured-context {
+    background: var(--bg-input);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+}
+
+.captured-context h5 {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0 0 1rem 0;
+}
+
+.context-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    font-size: 0.9rem;
+}
+
+.context-row span:first-child {
+    color: var(--text-muted);
+}
+
+.context-row span.up {
+    color: var(--success);
+}
+
+.context-row span.down {
+    color: var(--danger);
+}
+
+/* Modal Footer */
+.modal-footer {
+    padding: 1.5rem 2rem;
+    border-top: 1px solid var(--glass-border);
+}
+
+.modal-footer .save-btn {
+    width: 100%;
+    height: 3.25rem;
+    background: linear-gradient(135deg, #10b981, #14b8a6);
+    border: none;
+    border-radius: var(--radius-lg);
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-footer .save-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+}
+
+.modal-footer .save-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.modal-footer .save-btn.success {
+    background: var(--success);
+    pointer-events: none;
+}
+
+/* ============================================
+   Loading & Error States
+   ============================================ */
+.loading-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 2rem;
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.error-message {
+    padding: 1rem 1.5rem;
+    background: var(--danger-glow);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: var(--radius-lg);
+    color: var(--danger);
+    font-size: 1rem;
+}
+
+/* ============================================
+   Hot Stock Badge
+   ============================================ */
+.hot-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    background: linear-gradient(135deg, #ef4444, #f97316);
+    border-radius: 9999px;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 600;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* ============================================
+   Cycle Badge
+   ============================================ */
+.cycle-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.cycle-badge.easy-rise {
+    background: var(--success-glow);
+    color: var(--success);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.cycle-badge.boundary {
+    background: rgba(234, 179, 8, 0.1);
+    color: var(--warning);
+    border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.cycle-badge.easy-fall {
+    background: var(--danger-glow);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* ============================================
+   Responsive Adjustments
+   ============================================ */
+@media (max-width: 640px) {
+    .stock-inspector {
+        padding: 1.5rem;
+    }
+
+    .inspector-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .quote-main {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .quote-price {
+        font-size: 1.75rem;
+    }
+}

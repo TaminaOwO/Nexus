@@ -113,7 +113,7 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
             {/* Wind Input Buttons */}
             <div style={{ marginTop: '1.5rem' }}>
                 <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1rem' }}>Today's Wind</h2>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
+                <div className="wind-grid">
                     {WIND_OPTIONS.map((windType) => {
                         const info = WIND_LABELS[windType];
                         const isSelected = todayWind === windType;
@@ -139,9 +139,7 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                                     transform: isSelected ? 'translateY(-4px)' : 'none',
                                 }}
                             >
-                                <span style={{ fontSize: '2rem' }}>{info.emoji}</span>
-                                <span style={{ fontSize: '0.9rem', fontWeight: 600, color: isSelected ? '#a5b4fc' : '#f1f5f9' }}>{info.en}</span>
-                                <span style={{ fontSize: '0.75rem', color: isSelected ? '#c7d2fe' : '#94a3b8' }}>{info.zh}</span>
+                                <span style={{ fontSize: '2.5rem' }}>{info.emoji}</span>
                             </button>
                         );
                     })}

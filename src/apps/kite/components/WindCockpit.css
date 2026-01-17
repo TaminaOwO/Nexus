@@ -390,7 +390,18 @@
 }
 
 @media (max-width: 480px) {
-  .wind-week-grid {
+  .wind-week-grid {}
+}
+
+/* Responsive Grid for Wind Buttons */
+.wind-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .wind-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }

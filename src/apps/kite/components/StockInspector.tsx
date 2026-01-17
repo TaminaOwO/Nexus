@@ -680,12 +680,7 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                     {quote && (
                         <div className="quote-card">
                             {/* Stock Info Header - 2 Column Grid */}
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(2, 1fr)',
-                                gap: '1rem',
-                                marginBottom: '1.5rem',
-                            }}>
+                            <div className="stock-header-grid">
                                 {/* Price Card */}
                                 <div style={{
                                     background: 'rgba(30, 41, 59, 0.5)',

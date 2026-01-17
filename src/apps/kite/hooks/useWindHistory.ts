@@ -10,7 +10,10 @@ const STORAGE_KEY = "kite-wind-history";
 export function getDateString(daysAgo: number = 0): string {
     const date = new Date();
     date.setDate(date.getDate() - daysAgo);
-    return date.toISOString().split("T")[0];
+    // Use local time instead of UTC to avoid date shift issues
+    const offset = date.getTimezoneOffset();
+    const localDate = new Date(date.getTime() - (offset * 60 * 1000));
+    return localDate.toISOString().split("T")[0];
 }
 
 /**

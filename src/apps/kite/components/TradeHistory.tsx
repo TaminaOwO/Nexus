@@ -79,7 +79,7 @@ export function TradeHistory() {
         strategy: "BOSS|WEEKLY_PULLBACK",
         entryPrice: 0,
         exitPrice: 0,
-        quantity: 1000,
+        quantity: 1,
         entryDate: "",
         exitDate: "",
         notes: "",
@@ -155,7 +155,7 @@ export function TradeHistory() {
                     strategy: "BOSS|WEEKLY_PULLBACK",
                     entryPrice: 0,
                     exitPrice: 0,
-                    quantity: 1000,
+                    quantity: 1,
                     entryDate: "",
                     exitDate: "",
                     notes: "",
@@ -394,7 +394,7 @@ export function TradeHistory() {
                             <button
                                 className="import-btn"
                                 onClick={submitImport}
-                                disabled={importing || !importForm.symbol || !importForm.entryDate || !importForm.exitDate}
+                                disabled={importing || !importForm.symbol || !importForm.entryDate || (!isActiveHolding && !importForm.exitDate)}
                             >
                                 {importing ? "匯入中..." : "📥 匯入 Import"}
                             </button>

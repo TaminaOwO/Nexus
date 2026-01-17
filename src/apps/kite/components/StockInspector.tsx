@@ -60,7 +60,7 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
     const [showTradeModal, setShowTradeModal] = useState(false);
     const [tradeForm, setTradeForm] = useState({
         entryPrice: 0,
-        quantity: 1000, // Default to 1 lot = 1000 shares
+        quantity: 1, // Default to 1 share
         plannedBatches: 5,
         currentBatch: 1,
         stopLossPrice: 0,

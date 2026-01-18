@@ -10,9 +10,12 @@ function App() {
     return (
         <div className="app">
             <nav className="nav">
-                <Link to="/admin">LifeOS</Link>
-                <Link to="/kite">Kite Stock</Link>
-                <Link to="/choice-fit">Choice-Fit</Link>
+                <Link to="/" className="nav-brand">🚀 Nexus</Link>
+                <div className="nav-links">
+                    <Link to="/admin">⚡ LifeOS</Link>
+                    <Link to="/kite">🪁 Kite</Link>
+                    <Link to="/choice-fit">💪 Choice</Link>
+                </div>
             </nav>
 
             <main className="main">
@@ -35,18 +38,21 @@ function Home() {
             <h1>Nexus</h1>
             <p>Modular Monolith Platform</p>
             <div className="modules">
-                <div className="module-card">
+                <Link to="/admin" className="module-card">
+                    <span className="module-icon">⚡</span>
                     <h2>LifeOS</h2>
                     <p>Internal Admin Dashboard</p>
-                </div>
-                <div className="module-card">
+                </Link>
+                <Link to="/kite" className="module-card">
+                    <span className="module-icon">🪁</span>
                     <h2>Kite Stock</h2>
                     <p>Stock Strategy Visualization</p>
-                </div>
-                <div className="module-card">
+                </Link>
+                <Link to="/choice-fit" className="module-card">
+                    <span className="module-icon">💪</span>
                     <h2>Choice-Fit</h2>
-                    <p>Fitness &amp; Coaching Platform</p>
-                </div>
+                    <p>Fitness & Coaching Platform</p>
+                </Link>
             </div>
         </div>
     )

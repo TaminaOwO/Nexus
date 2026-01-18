@@ -3,11 +3,13 @@ package service
 import (
 	"fmt"
 	"time"
+
+	"nexus/internal/modules/kite/model"
 )
 
 // PortfolioHolding contains trade info with real-time P&L
 type PortfolioHolding struct {
-	TradeEntry
+	model.TradeEntry
 	CurrentPrice        float64  `json:"current_price"`
 	UnrealizedPL        float64  `json:"unrealized_pl"`
 	UnrealizedPLPercent float64  `json:"unrealized_pl_percent"`
@@ -36,7 +38,7 @@ type PortfolioResponse struct {
 }
 
 // checkStrategyExitRules implements the Strategy Guardian logic
-func checkStrategyExitRules(trade TradeEntry, quote *QuoteResponse, daysHeld int, unrealizedPLPct float64) []Alert {
+func checkStrategyExitRules(trade model.TradeEntry, quote *QuoteResponse, daysHeld int, unrealizedPLPct float64) []Alert {
 	var alerts []Alert
 	strategy := trade.Strategy
 	subStrategy := trade.SubStrategy

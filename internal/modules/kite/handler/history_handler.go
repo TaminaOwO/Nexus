@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 
+	"nexus/internal/modules/kite/model"
 	"nexus/internal/modules/kite/service"
 
 	"github.com/gin-gonic/gin"
@@ -53,7 +54,7 @@ func GetHistory(c *gin.Context) {
 
 // ImportTrade handles POST /api/kite/import
 func ImportTrade(c *gin.Context) {
-	var req service.ImportTradeRequest
+	var req model.ImportTradeRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 		return

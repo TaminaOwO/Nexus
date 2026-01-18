@@ -263,7 +263,7 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                             </div>
 
                             {/* Price & Shares Row */}
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                            <div className="form-row">
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                     <label style={{ fontSize: '0.9rem', color: '#94a3b8' }}>🏷️ 價格 Price</label>
                                     <input
@@ -308,7 +308,7 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                             </div>
 
                             {/* Batches Row */}
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                            <div className="form-row">
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                     <label style={{ fontSize: '0.9rem', color: '#94a3b8' }}>💰 預計分批 Batches</label>
                                     <input
@@ -359,7 +359,7 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                                 borderRadius: '0.75rem',
                             }}>
                                 <div style={{ fontSize: '0.9rem', color: '#fca5a5', marginBottom: '0.75rem', fontWeight: 600 }}>🛑 出場計畫 Exit Plan</div>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                <div className="form-row">
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                         <label style={{ fontSize: '0.85rem', color: '#94a3b8' }}>停損價 Stop Loss *</label>
                                         <input

@@ -6,19 +6,27 @@ import (
 	"os"
 	"strings"
 
+	"nexus/internal/database"
 	kiteHandler "nexus/internal/modules/kite/handler"
+	"nexus/internal/modules/kite/model"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	// Initialize Database
+	database.Init()
+
+	// Auto Migrate
+	database.DB.AutoMigrate(&model.WindRecord{}, &model.TradeEntry{})
+
 	r := gin.Default()
 
 	// CORS middleware for frontend (only needed in dev mode)
 	r.Use(func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 		if c.Request.Method == "OPTIONS" {
 			c.AbortWithStatus(http.StatusNoContent)
 			return
@@ -48,6 +56,11 @@ func main() {
 		kite.POST("/trade/:id/settle", kiteHandler.SettleTrade)
 		kite.GET("/history", kiteHandler.GetHistory)
 		kite.POST("/import", kiteHandler.ImportTrade)
+
+		// Wind Routes
+		kite.GET("/wind/latest", kiteHandler.GetLatestWind)
+		kite.GET("/wind/history", kiteHandler.GetWindHistory)
+		kite.POST("/wind", kiteHandler.SaveWind)
 	}
 
 	// Choice-Fit Module Routes

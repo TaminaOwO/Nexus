@@ -51,56 +51,90 @@
     --radius-xl: 24px;
 }
 
-/* Global Kite Dashboard */
+/* Global Kite Dashboard - Mobile First */
 .kite-dashboard {
     min-height: 100vh;
-    background: var(--bg-gradient);
-    padding: 2rem;
+    min-height: 100dvh;
+    background: var(--bg-base, #0a0a0b);
+    padding: var(--space-md, 16px);
+    padding-bottom: calc(80px + env(safe-area-inset-bottom));
     font-family: var(--font-sans);
     color: var(--text-primary);
 }
 
 .kite-content-wrapper {
-    max-width: 1400px;
+    max-width: 100%;
     margin: 0 auto;
 }
 
+@media (min-width: 768px) {
+    .kite-dashboard {
+        padding: 2rem;
+        padding-bottom: 2rem;
+    }
+
+    .kite-content-wrapper {
+        max-width: 1200px;
+    }
+}
+
 /* ============================================
-   Navigation - Pill Switcher
+   Navigation - Pill Switcher (Mobile First)
    ============================================ */
 .kite-nav-tabs {
-    display: inline-flex;
-    gap: 0.25rem;
-    padding: 0.375rem;
-    background: var(--bg-card);
-    backdrop-filter: blur(12px);
-    border-radius: var(--radius-xl);
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow);
-    margin-bottom: 2rem;
+    display: flex;
+    width: 100%;
+    gap: 4px;
+    padding: 4px;
+    background: var(--bg-surface, rgba(30, 41, 59, 0.5));
+    border-radius: var(--radius-md, 12px);
+    border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
+    margin-bottom: var(--space-md, 16px);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.kite-nav-tabs::-webkit-scrollbar {
+    display: none;
 }
 
 .nav-tab {
-    position: relative;
-    padding: 0.875rem 1.75rem;
+    flex: 1;
+    min-width: fit-content;
+    padding: 12px 16px;
     background: transparent;
     border: none;
-    border-radius: calc(var(--radius-xl) - 4px);
-    color: var(--text-secondary);
-    font-size: 1rem;
+    border-radius: var(--radius-sm, 8px);
+    color: var(--text-secondary, #8e8e93);
+    font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s ease;
+    white-space: nowrap;
 }
 
 .nav-tab:hover {
-    color: var(--text-primary);
+    color: var(--text-primary, #f5f5f7);
 }
 
 .nav-tab.active {
-    background: linear-gradient(135deg, var(--office-primary), #3b82f6);
+    background: var(--accent, #0a84ff);
     color: white;
-    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+}
+
+@media (min-width: 768px) {
+    .kite-nav-tabs {
+        display: inline-flex;
+        width: auto;
+        margin-bottom: 2rem;
+    }
+
+    .nav-tab {
+        flex: none;
+        padding: 0.875rem 1.75rem;
+        font-size: 1rem;
+    }
 }
 
 /* ============================================
@@ -351,4 +385,51 @@
 
 .stat-card.danger .stat-value {
     color: var(--danger);
+}
+
+/* ============================================
+   Mobile Responsive Overrides
+   ============================================ */
+@media (max-width: 480px) {
+
+    /* Inputs - Prevent zoom on iOS */
+    .modern-input,
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    input[type="email"],
+    select,
+    textarea {
+        font-size: 16px !important;
+        min-height: 48px;
+        border-radius: var(--radius-md, 12px);
+    }
+
+    /* Buttons - Touch friendly */
+    .btn-primary,
+    .btn-secondary,
+    button {
+        min-height: 48px;
+        padding: 12px 20px;
+    }
+
+    /* Stat cards - Stack on mobile */
+    .stat-card {
+        padding: var(--space-md, 16px);
+    }
+
+    .stat-card .stat-value {
+        font-size: 1.5rem;
+    }
+
+    /* Glass cards */
+    .glass-card {
+        padding: var(--space-md, 16px);
+        border-radius: var(--radius-md, 12px);
+    }
+
+    /* Price display */
+    .price-display {
+        font-size: 1.25rem;
+    }
 }

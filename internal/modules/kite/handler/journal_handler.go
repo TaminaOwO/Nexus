@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 
+	"nexus/internal/modules/kite/model"
 	"nexus/internal/modules/kite/service"
 
 	"github.com/gin-gonic/gin"
@@ -10,7 +11,7 @@ import (
 
 // CreateTrade handles POST /api/kite/journal
 func CreateTrade(c *gin.Context) {
-	var req service.CreateTradeRequest
+	var req model.CreateTradeRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 		return
@@ -47,7 +48,7 @@ func CreateTrade(c *gin.Context) {
 func GetTrades(c *gin.Context) {
 	symbol := c.Query("symbol")
 
-	var entries []service.TradeEntry
+	var entries []model.TradeEntry
 	if symbol != "" {
 		entries = service.GetTradesBySymbol(symbol)
 	} else {

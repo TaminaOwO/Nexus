@@ -198,16 +198,13 @@ export function TradeHistory() {
                     }}
                 >
                     <div
-                        className="import-modal"
+                        className="import-modal w-[95vw] md:max-w-lg overflow-x-hidden"
                         onClick={(e) => e.stopPropagation()}
                         style={{
                             background: 'linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(10, 15, 30, 0.98))',
                             border: '1px solid rgba(255,255,255,0.1)',
                             borderRadius: '1rem',
-                            width: '100%',
-                            maxWidth: '420px',
                             boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
-                            overflowX: 'hidden',
                         }}
                     >
                         <div style={{
@@ -402,7 +399,8 @@ export function TradeHistory() {
                     </div>
                 </div>,
                 document.body
-            )}
+            )
+            }
 
             <div className="history-header">
                 <h2>📈 Trade History</h2>
@@ -412,64 +410,68 @@ export function TradeHistory() {
             </div>
 
             {/* Stats Cards */}
-            {history && (
-                <div className="history-stats">
-                    <div className="stat-card">
-                        <span className="stat-label">🎯 Win Rate</span>
-                        <span className="stat-value">{history.win_rate.toFixed(1)}%</span>
-                        <span className="stat-sub">{history.wins} / {history.total_trades}</span>
+            {
+                history && (
+                    <div className="history-stats">
+                        <div className="stat-card">
+                            <span className="stat-label">🎯 Win Rate</span>
+                            <span className="stat-value">{history.win_rate.toFixed(1)}%</span>
+                            <span className="stat-sub">{history.wins} / {history.total_trades}</span>
+                        </div>
+                        <div className={`stat-card pl ${history.total_pl >= 0 ? "up" : "down"}`}>
+                            <span className="stat-label">💰 Total P/L</span>
+                            <span className="stat-value">{formatMoney(history.total_pl)}</span>
+                        </div>
+                        <div className="stat-card best">
+                            <span className="stat-label">🏆 Best Strategy</span>
+                            <span className="stat-value">
+                                {history.best_strategy === "BOSS" ? "🛡️" : "🏢"} {history.best_strategy || "-"}
+                            </span>
+                            <span className="stat-sub">{formatMoney(history.best_pl)}</span>
+                        </div>
                     </div>
-                    <div className={`stat-card pl ${history.total_pl >= 0 ? "up" : "down"}`}>
-                        <span className="stat-label">💰 Total P/L</span>
-                        <span className="stat-value">{formatMoney(history.total_pl)}</span>
-                    </div>
-                    <div className="stat-card best">
-                        <span className="stat-label">🏆 Best Strategy</span>
-                        <span className="stat-value">
-                            {history.best_strategy === "BOSS" ? "🛡️" : "🏢"} {history.best_strategy || "-"}
-                        </span>
-                        <span className="stat-sub">{formatMoney(history.best_pl)}</span>
-                    </div>
-                </div>
-            )}
+                )
+            }
 
             {/* History Table */}
-            {history && history.trades && history.trades.length > 0 ? (
-                <div className="history-table">
-                    <div className="table-header">
-                        <span className="col-date">Exit Date</span>
-                        <span className="col-symbol">Symbol</span>
-                        <span className="col-strategy">Strategy</span>
-                        <span className="col-pl">P/L ($)</span>
-                        <span className="col-pct">P/L (%)</span>
-                        <span className="col-days">Days</span>
-                    </div>
-                    {history.trades.map((trade) => (
-                        <div key={trade.id} className="table-row">
-                            <span className="col-date">{formatDate(trade.closed_at)}</span>
-                            <div className="col-symbol">
-                                <span className="company">{trade.company_name}</span>
-                                <span className="symbol">{trade.symbol}</span>
-                            </div>
-                            <span className={`col-strategy ${trade.strategy.toLowerCase()}`}>
-                                {trade.strategy === "BOSS" ? "🛡️" : "🏢"} {trade.sub_strategy?.replace(/_/g, " ") || trade.strategy}
-                            </span>
-                            <span className={`col-pl ${trade.final_pl >= 0 ? "up" : "down"}`}>
-                                {formatMoney(trade.final_pl)}
-                            </span>
-                            <span className={`col-pct ${trade.final_pl_percent >= 0 ? "up" : "down"}`}>
-                                {formatPercent(trade.final_pl_percent)}
-                            </span>
-                            <span className="col-days">{calcDays(trade.created_at, trade.closed_at)}天</span>
+            {
+                history && history.trades && history.trades.length > 0 ? (
+                    <div className="history-table">
+                        <div className="table-header">
+                            <span className="col-date">Exit Date</span>
+                            <span className="col-symbol">Symbol</span>
+                            <span className="col-strategy">Strategy</span>
+                            <span className="col-pl">P/L ($)</span>
+                            <span className="col-pct">P/L (%)</span>
+                            <span className="col-days">Days</span>
                         </div>
-                    ))}
-                </div>
-            ) : (
-                <div className="empty-state">
-                    <p>📭 No closed trades yet</p>
-                    <p className="hint">Use "➕ Import Past Data" to add historical records, or settle open trades in Portfolio.</p>
-                </div>
-            )}
+                        {history.trades.map((trade) => (
+                            <div key={trade.id} className="table-row">
+                                <span className="col-date">{formatDate(trade.closed_at)}</span>
+                                <div className="col-symbol">
+                                    <span className="company">{trade.company_name}</span>
+                                    <span className="symbol">{trade.symbol}</span>
+                                </div>
+                                <span className={`col-strategy ${trade.strategy.toLowerCase()}`}>
+                                    {trade.strategy === "BOSS" ? "🛡️" : "🏢"} {trade.sub_strategy?.replace(/_/g, " ") || trade.strategy}
+                                </span>
+                                <span className={`col-pl ${trade.final_pl >= 0 ? "up" : "down"}`}>
+                                    {formatMoney(trade.final_pl)}
+                                </span>
+                                <span className={`col-pct ${trade.final_pl_percent >= 0 ? "up" : "down"}`}>
+                                    {formatPercent(trade.final_pl_percent)}
+                                </span>
+                                <span className="col-days">{calcDays(trade.created_at, trade.closed_at)}天</span>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="empty-state">
+                        <p>📭 No closed trades yet</p>
+                        <p className="hint">Use "➕ Import Past Data" to add historical records, or settle open trades in Portfolio.</p>
+                    </div>
+                )
+            }
 
             {error && <div className="error-message">⚠️ {error}</div>}
         </div>

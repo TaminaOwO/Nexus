@@ -1,16 +1,22 @@
 /* ============================================
-   STOCK INSPECTOR - Modern Trading War Room
+   STOCK INSPECTOR - Mobile First Design
    ============================================ */
 
 .stock-inspector {
-    background: var(--bg-card);
-    backdrop-filter: blur(12px);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--glass-shadow);
-    padding: 2rem;
-    margin-top: 2rem;
-    transition: all 0.3s ease;
+    background: var(--bg-surface, rgba(30, 41, 59, 0.5));
+    border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
+    border-radius: var(--radius-lg, 16px);
+    padding: var(--space-md, 16px);
+    margin-top: var(--space-md, 16px);
+    transition: all 0.2s ease;
+}
+
+@media (min-width: 768px) {
+    .stock-inspector {
+        padding: 2rem;
+        margin-top: 2rem;
+        border-radius: var(--radius-xl, 24px);
+    }
 }
 
 .stock-inspector.office {
@@ -733,23 +739,106 @@
    ============================================ */
 @media (max-width: 640px) {
     .stock-inspector {
-        padding: 1.5rem;
+        padding: 1rem;
+    }
+
+    .stock-header-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .strategy-tabs {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .strategy-tab {
+        text-align: center;
+        width: 100%;
+    }
+
+    .inspector-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
     }
 
     .inspector-header h2 {
-        font-size: 1.5rem;
+        font-size: 1.25rem;
     }
 
+    /* Form stacking on mobile */
     .form-row {
         grid-template-columns: 1fr;
     }
 
+    /* Exit Plan row */
+    .form-row.exit-plan {
+        padding: 1rem;
+    }
+
+    /* Modal body */
+    .modal-body {
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    /* Modal stock info */
+    .modal-stock-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .modal-stock-info .stock-name {
+        font-size: 1.25rem;
+    }
+
+    /* Form inputs - iOS zoom prevention */
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 16px !important;
+        min-height: 48px;
+        padding: 12px;
+    }
+
+    /* Captured context */
+    .captured-context {
+        padding: 1rem;
+    }
+
+    .context-row {
+        flex-direction: column;
+        gap: 0.25rem;
+        align-items: flex-start;
+    }
+
+    /* Modal footer */
+    .modal-footer {
+        padding: 1rem;
+    }
+
+    .modal-footer .save-btn {
+        min-height: 48px;
+    }
+
+    /* Quote display */
     .quote-main {
         flex-direction: column;
         gap: 0.5rem;
     }
 
     .quote-price {
-        font-size: 1.75rem;
+        font-size: 1.5rem;
+    }
+
+    .quote-change {
+        font-size: 0.875rem;
+    }
+
+    /* Indicator grids */
+    .indicator-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
     }
 }

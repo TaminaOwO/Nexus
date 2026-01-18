@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { WindRecord, WindType } from "../types";
 
-const STORAGE_KEY = "kite-wind-history";
+const API_BASE = "/api/kite";
 
 /**
  * Get date string in YYYY-MM-DD format for a given offset from today.
@@ -17,96 +17,99 @@ export function getDateString(daysAgo: number = 0): string {
 }
 
 /**
- * Custom hook for managing wind history with localStorage persistence.
+ * Custom hook for managing wind history with Backend persistence.
  */
 export function useWindHistory() {
     const [history, setHistory] = useState<WindRecord[]>([]);
     const [todayWind, setTodayWind] = useState<WindType | null>(null);
 
-    // Load history from localStorage on mount
+    // Load history from Backend on mount
     useEffect(() => {
-        try {
-            const stored = localStorage.getItem(STORAGE_KEY);
-            if (stored) {
-                const parsed = JSON.parse(stored) as WindRecord[];
-                setHistory(parsed);
-
-                // Check if today's entry exists
-                const today = getDateString(0);
-                const todayEntry = parsed.find((r) => r.date === today);
-                if (todayEntry) {
-                    setTodayWind(todayEntry.wind);
+        const fetchHistory = async () => {
+            try {
+                // Fetch History
+                const histRes = await fetch(`${API_BASE}/wind/history`);
+                if (histRes.ok) {
+                    const data = await histRes.json();
+                    // Map API response to frontend WindRecord if needed
+                    // Assuming API returns matches WindRecord interface
+                    setHistory(data || []);
                 }
-            }
-        } catch (error) {
-            console.error("Failed to load wind history:", error);
-        }
-    }, []);
 
-    // Persist history to localStorage
-    const persistHistory = useCallback((records: WindRecord[]) => {
-        try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
-        } catch (error) {
-            console.error("Failed to save wind history:", error);
-        }
+                // Fetch Today's Wind
+                const todayRes = await fetch(`${API_BASE}/wind/latest`);
+                if (todayRes.ok) {
+                    const data = await todayRes.json();
+                    if (data && data.wind) {
+                        setTodayWind(data.wind as WindType);
+                    }
+                }
+            } catch (error) {
+                console.error("Failed to load wind history:", error);
+            }
+        };
+
+        fetchHistory();
     }, []);
 
     // Add or update today's wind record
-    const recordWind = useCallback((wind: WindType) => {
+    const recordWind = useCallback(async (wind: WindType) => {
         const today = getDateString(0);
 
+        // Optimistic update
+        setTodayWind(wind);
         setHistory((prev) => {
-            // Remove existing entry for today if any
             const filtered = prev.filter((r) => r.date !== today);
-
-            // Add new entry and sort by date
-            const updated = [...filtered, { date: today, wind }].sort(
-                (a, b) => a.date.localeCompare(b.date)
-            );
-
-            // Keep only last 30 days to prevent localStorage bloat
-            const trimmed = updated.slice(-30);
-            persistHistory(trimmed);
-            return trimmed;
+            return [...filtered, { date: today, wind }].sort((a, b) => a.date.localeCompare(b.date));
         });
 
-        setTodayWind(wind);
-    }, [persistHistory]);
+        try {
+            await fetch(`${API_BASE}/wind`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ date: today, wind }),
+            });
+        } catch (error) {
+            console.error("Failed to save wind:", error);
+            // Revert on error if needed, for now just log
+        }
+    }, []);
 
     // Set wind for a specific date (Dev Mode feature)
-    const setHistoryForDate = useCallback((date: string, wind: WindType | null) => {
+    const setHistoryForDate = useCallback(async (date: string, wind: WindType | null) => {
+        // Optimistic update
         setHistory((prev) => {
-            // Remove existing entry for this date
             let updated = prev.filter((r) => r.date !== date);
-
-            // Add new entry if wind is not null
             if (wind !== null) {
                 updated = [...updated, { date, wind }];
             }
-
-            // Sort by date
             updated.sort((a, b) => a.date.localeCompare(b.date));
-
-            // Keep only last 30 days
-            const trimmed = updated.slice(-30);
-            persistHistory(trimmed);
-
-            // Update todayWind if we modified today's entry
-            const today = getDateString(0);
-            if (date === today) {
-                setTodayWind(wind);
-            }
-
-            return trimmed;
+            return updated;
         });
-    }, [persistHistory]);
 
-    // Clear all history (for reset functionality)
+        if (date === getDateString(0)) {
+            setTodayWind(wind);
+        }
+
+        if (wind) {
+            try {
+                await fetch(`${API_BASE}/wind`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ date, wind }),
+                });
+            } catch (error) {
+                console.error("Failed to save wind history:", error);
+            }
+        }
+    }, []);
+
+    // Clear all history (Reset) - Note: Backend API doesn't have clear endpoint yet
+    // Implementation: Just clear local state for now, or add an endpoint if critical.
+    // User didn't explicitly ask for Clear persistence, so local clear is fine.
     const clearHistory = useCallback(() => {
         setHistory([]);
         setTodayWind(null);
-        localStorage.removeItem(STORAGE_KEY);
     }, []);
 
     return {

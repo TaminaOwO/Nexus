@@ -240,187 +240,116 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                         {/* Body */}
                         <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                             {/* Strategy Badge */}
-                            <div style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '0.75rem',
-                                padding: '0.75rem 1rem',
-                                background: activeStrategy === 'BOSS' ? 'rgba(245, 158, 11, 0.15)' : 'rgba(99, 102, 241, 0.15)',
-                                border: `1px solid ${activeStrategy === 'BOSS' ? 'rgba(245, 158, 11, 0.3)' : 'rgba(99, 102, 241, 0.3)'}`,
-                                borderRadius: '0.75rem',
-                            }}>
-                                <span style={{ fontSize: '1.5rem' }}>{activeStrategy === "BOSS" ? "🛡️" : "🏢"}</span>
-                                <div>
-                                    <div style={{ fontWeight: 600 }}>{activeStrategy} Strategy</div>
-                                    <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>{currentSubStrategy.replace(/_/g, " ")}</div>
+                            <div className="trade-form-strategy">
+                                <span className="strategy-icon">{activeStrategy === "BOSS" ? "🛡️" : "🏢"}</span>
+                                <div className="strategy-info">
+                                    <div className="strategy-name">{activeStrategy} Strategy</div>
+                                    <div className="strategy-sub">{currentSubStrategy.replace(/_/g, " ")}</div>
                                 </div>
                             </div>
 
                             {/* Stock Info */}
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                <span style={{ fontSize: '1.5rem', fontWeight: 700 }}>{quote.company_name}</span>
-                                <span style={{ color: '#94a3b8' }}>{quote.symbol}</span>
+                            <div className="trade-form-stock">
+                                <span className="stock-name">{quote.company_name}</span>
+                                <span className="stock-symbol">{quote.symbol}</span>
                             </div>
 
                             {/* Price & Shares Row */}
                             <div className="form-row">
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                    <label style={{ fontSize: '0.9rem', color: '#94a3b8' }}>🏷️ 價格 Price</label>
+                                <div className="form-group">
+                                    <label>🏷️ 價格 Price</label>
                                     <input
                                         type="number"
                                         step="0.01"
                                         value={tradeForm.entryPrice}
                                         onChange={(e) => setTradeForm({ ...tradeForm, entryPrice: parseFloat(e.target.value) || 0 })}
-                                        style={{
-                                            height: '3rem',
-                                            padding: '0 1rem',
-                                            background: 'rgba(15, 23, 42, 0.6)',
-                                            border: '2px solid rgba(255,255,255,0.1)',
-                                            borderRadius: '0.5rem',
-                                            color: 'white',
-                                            fontSize: '1rem',
-                                            fontFamily: 'monospace',
-                                        }}
+                                        className="form-input mono"
                                     />
-                                    <span style={{ fontSize: '0.8rem', color: '#64748b' }}>系統價: ${formatPrice(quote.price)}</span>
+                                    <span className="form-hint">系統價: ${formatPrice(quote.price)}</span>
                                 </div>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                    <label style={{ fontSize: '0.9rem', color: '#94a3b8' }}>📦 股數 Shares</label>
+                                <div className="form-group">
+                                    <label>📦 股數 Shares</label>
                                     <input
                                         type="number"
                                         min="1"
                                         step="1000"
                                         value={tradeForm.quantity}
                                         onChange={(e) => setTradeForm({ ...tradeForm, quantity: parseInt(e.target.value) || 1000 })}
-                                        style={{
-                                            height: '3rem',
-                                            padding: '0 1rem',
-                                            background: 'rgba(15, 23, 42, 0.6)',
-                                            border: '2px solid rgba(255,255,255,0.1)',
-                                            borderRadius: '0.5rem',
-                                            color: 'white',
-                                            fontSize: '1rem',
-                                            fontFamily: 'monospace',
-                                        }}
+                                        className="form-input mono"
                                     />
-                                    <span style={{ fontSize: '0.8rem', color: '#64748b' }}>1張 = 1000股</span>
+                                    <span className="form-hint">1張 = 1000股</span>
                                 </div>
                             </div>
 
                             {/* Batches Row */}
                             <div className="form-row">
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                    <label style={{ fontSize: '0.9rem', color: '#94a3b8' }}>💰 預計分批 Batches</label>
+                                <div className="form-group">
+                                    <label>💰 預計分批 Batches</label>
                                     <input
                                         type="number"
                                         min="1"
                                         value={tradeForm.plannedBatches}
                                         onChange={(e) => setTradeForm({ ...tradeForm, plannedBatches: parseInt(e.target.value) || 1 })}
-                                        style={{
-                                            height: '3rem',
-                                            padding: '0 1rem',
-                                            background: 'rgba(15, 23, 42, 0.6)',
-                                            border: '2px solid rgba(255,255,255,0.1)',
-                                            borderRadius: '0.5rem',
-                                            color: 'white',
-                                            fontSize: '1rem',
-                                            fontFamily: 'monospace',
-                                        }}
+                                        className="form-input mono"
                                     />
-                                    <span style={{ fontSize: '0.8rem', color: '#64748b' }}>建議: {getSuggestedBatches()}</span>
+                                    <span className="form-hint">建議: {getSuggestedBatches()}</span>
                                 </div>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                    <label style={{ fontSize: '0.9rem', color: '#94a3b8' }}>🎯 第幾批 Current</label>
+                                <div className="form-group">
+                                    <label>🎯 第幾批 Current</label>
                                     <input
                                         type="number"
                                         min="1"
                                         max={tradeForm.plannedBatches}
                                         value={tradeForm.currentBatch}
                                         onChange={(e) => setTradeForm({ ...tradeForm, currentBatch: parseInt(e.target.value) || 1 })}
-                                        style={{
-                                            height: '3rem',
-                                            padding: '0 1rem',
-                                            background: 'rgba(15, 23, 42, 0.6)',
-                                            border: '2px solid rgba(255,255,255,0.1)',
-                                            borderRadius: '0.5rem',
-                                            color: 'white',
-                                            fontSize: '1rem',
-                                            fontFamily: 'monospace',
-                                        }}
+                                        className="form-input mono"
                                     />
                                 </div>
                             </div>
 
                             {/* Exit Plan */}
-                            <div style={{
-                                padding: '1rem',
-                                background: 'rgba(239, 68, 68, 0.1)',
-                                border: '1px solid rgba(239, 68, 68, 0.2)',
-                                borderRadius: '0.75rem',
-                            }}>
-                                <div style={{ fontSize: '0.9rem', color: '#fca5a5', marginBottom: '0.75rem', fontWeight: 600 }}>🛑 出場計畫 Exit Plan</div>
+                            <div className="exit-plan-card">
+                                <div className="exit-plan-title">🛑 出場計畫 Exit Plan</div>
                                 <div className="form-row">
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                        <label style={{ fontSize: '0.85rem', color: '#94a3b8' }}>停損價 Stop Loss *</label>
+                                    <div className="form-group">
+                                        <label>停損價 Stop Loss *</label>
                                         <input
                                             type="number"
                                             step="0.01"
                                             value={tradeForm.stopLossPrice}
                                             onChange={(e) => setTradeForm({ ...tradeForm, stopLossPrice: parseFloat(e.target.value) || 0 })}
-                                            style={{
-                                                height: '3rem',
-                                                padding: '0 1rem',
-                                                background: tradeForm.stopLossPrice <= 0 ? 'rgba(239, 68, 68, 0.2)' : 'rgba(15, 23, 42, 0.6)',
-                                                border: tradeForm.stopLossPrice <= 0 ? '2px solid #ef4444' : '2px solid rgba(255,255,255,0.1)',
-                                                borderRadius: '0.5rem',
-                                                color: 'white',
-                                                fontSize: '1rem',
-                                                fontFamily: 'monospace',
-                                            }}
+                                            className={`form-input mono ${tradeForm.stopLossPrice <= 0 ? 'error' : ''}`}
                                         />
                                     </div>
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                        <label style={{ fontSize: '0.85rem', color: '#94a3b8' }}>停利價 Take Profit</label>
+                                    <div className="form-group">
+                                        <label>停利價 Take Profit</label>
                                         <input
                                             type="number"
                                             step="0.01"
                                             value={tradeForm.takeProfitPrice || ""}
                                             onChange={(e) => setTradeForm({ ...tradeForm, takeProfitPrice: parseFloat(e.target.value) || 0 })}
                                             placeholder="選填"
-                                            style={{
-                                                height: '3rem',
-                                                padding: '0 1rem',
-                                                background: 'rgba(15, 23, 42, 0.6)',
-                                                border: '2px solid rgba(255,255,255,0.1)',
-                                                borderRadius: '0.5rem',
-                                                color: 'white',
-                                                fontSize: '1rem',
-                                                fontFamily: 'monospace',
-                                            }}
+                                            className="form-input mono"
                                         />
                                     </div>
                                 </div>
                             </div>
 
                             {/* Auto-captured Context */}
-                            <div style={{
-                                padding: '1rem',
-                                background: 'rgba(255,255,255,0.03)',
-                                borderRadius: '0.75rem',
-                            }}>
-                                <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.75rem' }}>📊 自動擷取 Auto-Captured</div>
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
-                                    <div style={{ textAlign: 'center' }}>
-                                        <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Strategy</div>
-                                        <div style={{ fontWeight: 600 }}>{activeStrategy === "BOSS" ? "🛡️" : "🏢"}</div>
+                            <div className="auto-captured">
+                                <div className="auto-captured-title">📊 自動擷取 Auto-Captured</div>
+                                <div className="auto-captured-grid">
+                                    <div className="captured-item">
+                                        <div className="captured-label">Strategy</div>
+                                        <div className="captured-value">{activeStrategy === "BOSS" ? "🛡️" : "🏢"}</div>
                                     </div>
-                                    <div style={{ textAlign: 'center' }}>
-                                        <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Cycle</div>
-                                        <div style={{ fontWeight: 600 }}>{structureInfo.zh}</div>
+                                    <div className="captured-item">
+                                        <div className="captured-label">Cycle</div>
+                                        <div className="captured-value">{structureInfo.zh}</div>
                                     </div>
-                                    <div style={{ textAlign: 'center' }}>
-                                        <div style={{ fontSize: '0.75rem', color: '#64748b' }}>MA20 Dev</div>
-                                        <div style={{ fontWeight: 600, color: quote.deviation_ma20 >= 0 ? '#10b981' : '#ef4444' }}>
+                                    <div className="captured-item">
+                                        <div className="captured-label">MA20 Dev</div>
+                                        <div className={`captured-value ${quote.deviation_ma20 >= 0 ? 'up' : 'down'}`}>
                                             {formatPercent(quote.deviation_ma20)}
                                         </div>
                                     </div>

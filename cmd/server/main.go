@@ -54,6 +54,7 @@ func main() {
 		kite.GET("/journal", kiteHandler.GetTrades)
 		kite.GET("/portfolio", kiteHandler.GetPortfolio)
 		kite.POST("/trade/:id/settle", kiteHandler.SettleTrade)
+		kite.DELETE("/trade/:id", kiteHandler.DeleteTrade)
 		kite.GET("/history", kiteHandler.GetHistory)
 		kite.POST("/import", kiteHandler.ImportTrade)
 

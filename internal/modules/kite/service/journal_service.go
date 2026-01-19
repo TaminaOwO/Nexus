@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"time"
 
 	"nexus/internal/database"
@@ -44,6 +45,18 @@ func CreateTrade(req model.CreateTradeRequest) (*model.TradeEntry, error) {
 	}
 
 	return &entry, nil
+}
+
+// DeleteTrade removes a trade entry by ID
+func DeleteTrade(id string) error {
+	result := database.DB.Delete(&model.TradeEntry{}, "id = ?", id)
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("trade not found")
+	}
+	return nil
 }
 
 // GetAllTrades returns all trade entries ordered by created_at descending

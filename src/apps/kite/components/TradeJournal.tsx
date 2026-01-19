@@ -161,6 +161,25 @@ export function TradeJournal() {
         return { pl, pct };
     };
 
+    // Delete trade
+    const deleteTrade = async (holding: Holding) => {
+        if (!window.confirm(`確認刪除 ${holding.company_name} (${holding.symbol}) 持股？\n\nConfirm delete this holding?`)) {
+            return;
+        }
+        try {
+            const response = await fetch(`${API_BASE}/trade/${holding.id}`, {
+                method: "DELETE",
+            });
+            if (response.ok) {
+                fetchPortfolio();
+            } else {
+                throw new Error("Failed to delete trade");
+            }
+        } catch (err) {
+            setError("刪除失敗 Delete failed");
+        }
+    };
+
     if (loading) {
         return (
             <div className="trade-journal">
@@ -360,6 +379,13 @@ export function TradeJournal() {
                                     onClick={() => openSettleModal(holding)}
                                 >
                                     ✅ 平倉 Settle
+                                </button>
+                                <button
+                                    className="delete-action-btn"
+                                    onClick={() => deleteTrade(holding)}
+                                    title="刪除 Delete"
+                                >
+                                    🗑️
                                 </button>
                             </div>
                         </div>

@@ -57,3 +57,20 @@ func GetTrades(c *gin.Context) {
 
 	c.JSON(http.StatusOK, entries)
 }
+
+// DeleteTrade handles DELETE /api/kite/trade/:id
+func DeleteTrade(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Trade ID is required"})
+		return
+	}
+
+	err := service.DeleteTrade(id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Trade not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Trade deleted successfully"})
+}

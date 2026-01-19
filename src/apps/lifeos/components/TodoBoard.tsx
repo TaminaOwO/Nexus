@@ -16,7 +16,7 @@ const INITIAL_TASKS: Task[] = [
 ];
 
 export function TodoBoard({ compact = false }: { compact?: boolean }) {
-    const [tasks, setTasks] = useState(INITIAL_TASKS);
+    const [tasks, _setTasks] = useState(INITIAL_TASKS);
 
     const columns = [
         { id: 'todo', title: 'To Do', color: 'var(--text-secondary)' },

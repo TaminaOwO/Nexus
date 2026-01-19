@@ -27,3 +27,6 @@ Thumbs.db
 # IDE Files (編輯器設定)
 .vscode/
 .idea/
+
+# TypeScript build cache
+tsconfig.tsbuildinfo

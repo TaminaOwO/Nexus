@@ -10,6 +10,7 @@ import {
     BossSubStrategy,
 } from "../types";
 import { getStrategyVerdict } from "../utils/strategyDiagnosis";
+import { IconCompany, IconBOSS, IconLifeOS } from "../../../components/HandDrawnIcons";
 import "./StockInspector.css";
 
 interface StockInspectorProps {
@@ -241,7 +242,9 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                         <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                             {/* Strategy Badge */}
                             <div className="trade-form-strategy">
-                                <span className="strategy-icon">{activeStrategy === "BOSS" ? "🛡️" : "🏢"}</span>
+                                <span className="strategy-icon">
+                                    {activeStrategy === "BOSS" ? <IconBOSS className="w-8 h-8" /> : <IconCompany className="w-8 h-8" />}
+                                </span>
                                 <div className="strategy-info">
                                     <div className="strategy-name">{activeStrategy} Strategy</div>
                                     <div className="strategy-sub">{currentSubStrategy.replace(/_/g, " ")}</div>
@@ -410,48 +413,48 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                 <button
                     onClick={() => setActiveStrategy("OFFICE")}
                     style={{
-                        height: '3.5rem',
+                        height: '5rem',
                         display: 'flex',
+                        flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: '0.5rem',
                         background: activeStrategy === "OFFICE"
-                            ? 'linear-gradient(135deg, #4f46e5, #6366f1)'
-                            : 'rgba(30, 41, 59, 0.6)',
-                        border: activeStrategy === "OFFICE" ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                            ? 'rgba(99, 102, 241, 0.15)'
+                            : 'var(--bg-surface)',
+                        border: activeStrategy === "OFFICE" ? '2px solid #6366f1' : '1px solid var(--border-default)',
                         borderRadius: '0.75rem',
-                        color: activeStrategy === "OFFICE" ? 'white' : '#94a3b8',
-                        fontSize: '1.125rem',
-                        fontWeight: 700,
+                        color: activeStrategy === "OFFICE" ? '#818cf8' : 'var(--text-secondary)',
                         cursor: 'pointer',
-                        boxShadow: activeStrategy === "OFFICE" ? '0 8px 24px rgba(99, 102, 241, 0.4)' : 'none',
+                        boxShadow: activeStrategy === "OFFICE" ? '0 8px 24px rgba(99, 102, 241, 0.2)' : 'none',
                         transition: 'all 0.2s ease',
                     }}
                 >
-                    🏢 Office Worker <span style={{ opacity: 0.7, fontWeight: 400 }}>(上班族型)</span>
+                    <IconCompany className="w-8 h-8" />
+                    <span style={{ fontWeight: 700, fontSize: '1rem' }}>Office Worker</span>
                 </button>
                 <button
                     onClick={() => setActiveStrategy("BOSS")}
                     style={{
-                        height: '3.5rem',
+                        height: '5rem',
                         display: 'flex',
+                        flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: '0.5rem',
                         background: activeStrategy === "BOSS"
-                            ? 'linear-gradient(135deg, #d97706, #f59e0b)'
-                            : 'rgba(30, 41, 59, 0.6)',
-                        border: activeStrategy === "BOSS" ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                            ? 'rgba(245, 158, 11, 0.15)'
+                            : 'var(--bg-surface)',
+                        border: activeStrategy === "BOSS" ? '2px solid #f59e0b' : '1px solid var(--border-default)',
                         borderRadius: '0.75rem',
-                        color: activeStrategy === "BOSS" ? '#1e293b' : '#94a3b8',
-                        fontSize: '1.125rem',
-                        fontWeight: 700,
+                        color: activeStrategy === "BOSS" ? '#fbbf24' : 'var(--text-secondary)',
                         cursor: 'pointer',
-                        boxShadow: activeStrategy === "BOSS" ? '0 8px 24px rgba(245, 158, 11, 0.4)' : 'none',
+                        boxShadow: activeStrategy === "BOSS" ? '0 8px 24px rgba(245, 158, 11, 0.2)' : 'none',
                         transition: 'all 0.2s ease',
                     }}
                 >
-                    🛡️ Boss Strategy <span style={{ opacity: 0.7, fontWeight: 400 }}>(老闆型)</span>
+                    <IconBOSS className="w-8 h-8" />
+                    <span style={{ fontWeight: 700, fontSize: '1rem' }}>Boss Strategy</span>
                 </button>
             </div>
 
@@ -463,6 +466,9 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                             onClick={() => setOfficeSubStrategy("STRONG_WEEKLY")}
                             style={{
                                 padding: '0.75rem 1.5rem',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
                                 background: officeSubStrategy === "STRONG_WEEKLY"
                                     ? 'rgba(99, 102, 241, 0.2)'
                                     : 'transparent',
@@ -477,7 +483,7 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                                 transition: 'all 0.2s ease',
                             }}
                         >
-                            ⚡ 強勢週/追漲
+                            <IconLifeOS className="w-4 h-4" /> 強勢週/追漲
                         </button>
                         <button
                             onClick={() => setOfficeSubStrategy("WEEKLY_TREND")}

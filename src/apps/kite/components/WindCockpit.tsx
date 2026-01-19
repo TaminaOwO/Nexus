@@ -1,9 +1,21 @@
 import { useState, useMemo } from "react";
 import { getDateString } from "../hooks/useWindHistory";
 import { WindType, WindRecord, StructureType, GateLight, WIND_LABELS, STRUCTURE_LABELS } from "../types";
+import { IconStrongWind, IconTurbulence, IconGust, IconNoWind, IconWind, IconSettings } from "../../../components/HandDrawnIcons";
 import "./WindCockpit.css";
 
 const WIND_OPTIONS: WindType[] = ["STRONG", "TURBULENT", "GUSTY", "CALM"];
+
+// Map wind types to components
+const WindIcon = ({ type, className }: { type: WindType; className?: string }) => {
+    switch (type) {
+        case "STRONG": return <IconStrongWind className={className} />;
+        case "TURBULENT": return <IconTurbulence className={className} />;
+        case "GUSTY": return <IconGust className={className} />;
+        case "CALM": return <IconNoWind className={className} />;
+        default: return <IconWind className={className} />;
+    }
+};
 
 // Color mapping for history strip dots
 const WIND_DOT_COLORS: Record<WindType, string> = {
@@ -122,24 +134,27 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                                 key={windType}
                                 onClick={() => recordWind(windType)}
                                 style={{
-                                    height: '6rem',
+                                    height: '8rem',
                                     display: 'flex',
                                     flexDirection: 'column',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    gap: '0.25rem',
+                                    gap: '0.5rem',
                                     background: isSelected
-                                        ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(139, 92, 246, 0.3))'
-                                        : 'rgba(30, 41, 59, 0.6)',
-                                    border: isSelected ? '2px solid #6366f1' : '1px solid rgba(255,255,255,0.1)',
+                                        ? 'rgba(245, 158, 11, 0.15)'
+                                        : 'var(--bg-surface)',
+                                    border: isSelected ? '2px solid var(--accent)' : '1px solid var(--border-default)',
                                     borderRadius: '1rem',
                                     cursor: 'pointer',
-                                    transition: 'all 0.3s ease',
-                                    boxShadow: isSelected ? '0 0 20px rgba(99, 102, 241, 0.4)' : 'none',
+                                    transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                                    boxShadow: isSelected ? '0 8px 20px rgba(245, 158, 11, 0.2)' : 'none',
                                     transform: isSelected ? 'translateY(-4px)' : 'none',
+                                    color: isSelected ? 'var(--accent)' : 'var(--text-secondary)',
                                 }}
                             >
-                                <span style={{ fontSize: '2.5rem' }}>{info.emoji}</span>
+                                <WindIcon type={windType} className="w-12 h-12" />
+                                <span style={{ fontWeight: 700, fontSize: '1.1rem' }}>{info.en}</span>
+                                <span style={{ fontSize: '0.8rem', opacity: 0.7 }}>{info.zh}</span>
                             </button>
                         );
                     })}
@@ -160,9 +175,12 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                         fontWeight: 500,
                         cursor: 'pointer',
                         transition: 'all 0.2s ease',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
                     }}
                 >
-                    🛠️ {devModeOpen ? "Close Dev Mode" : "Edit History"}
+                    <IconSettings className="w-4 h-4" /> {devModeOpen ? "Close Dev Mode" : "Edit History"}
                 </button>
                 <button
                     onClick={() => setLastWeekWindOpen(true)}
@@ -181,10 +199,19 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                         gap: '0.5rem',
                     }}
                 >
-                    📥 設定上週風度
-                    {lastWeekOverride && <span style={{ background: 'rgba(8, 145, 178, 0.5)', padding: '0.125rem 0.5rem', borderRadius: '9999px', fontSize: '0.8rem' }}>
-                        {WIND_LABELS[lastWeekOverride].emoji}
-                    </span>}
+                    📥 設定上週風度 (Set LW)
+                    {lastWeekOverride && (
+                        <span style={{
+                            background: 'rgba(8, 145, 178, 0.5)',
+                            padding: '0.125rem 0.5rem',
+                            borderRadius: '9999px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}>
+                            <WindIcon type={lastWeekOverride} className="w-4 h-4" />
+                        </span>
+                    )}
                 </button>
             </div>
 
@@ -246,9 +273,11 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                                             transition: 'all 0.2s ease',
                                         }}
                                     >
-                                        <span style={{ fontSize: '2rem' }}>{info.emoji}</span>
-                                        <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#f1f5f9' }}>{info.en}</span>
-                                        <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{info.zh}</span>
+                                        <WindIcon type={windType} className="w-10 h-10" />
+                                        <div style={{ textAlign: "center" }}>
+                                            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#f1f5f9' }}>{info.en}</div>
+                                            <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{info.zh}</div>
+                                        </div>
                                     </button>
                                 );
                             })}
@@ -316,13 +345,12 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                                                 background: isSelected ? 'rgba(99, 102, 241, 0.3)' : 'rgba(55, 65, 81, 0.6)',
                                                 border: 'none',
                                                 borderRadius: '0.5rem',
-                                                fontSize: '1.25rem',
                                                 cursor: 'pointer',
                                                 transition: 'all 0.2s ease',
                                                 boxShadow: isSelected ? '0 0 0 2px #6366f1' : 'none',
                                             }}
                                         >
-                                            {info.emoji}
+                                            <WindIcon type={windType} className="w-6 h-6" />
                                         </button>
                                     );
                                 })}
@@ -372,3 +400,4 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
         </div>
     );
 }
+

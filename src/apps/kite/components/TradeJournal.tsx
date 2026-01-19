@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { IconBOSS, IconCompany } from "../../../components/HandDrawnIcons";
 import "./TradeJournal.css";
 
 interface StrategySnapshot {
@@ -221,7 +222,7 @@ export function TradeJournal() {
                                 <div className="settle-details">
                                     <span className="symbol">{settleTarget.symbol}</span>
                                     <span className={`strategy-tag ${settleTarget.strategy.toLowerCase()}`}>
-                                        {settleTarget.strategy === "BOSS" ? "🛡️" : "🏢"} {settleTarget.strategy}
+                                        {settleTarget.strategy === "BOSS" ? <IconBOSS className="w-4 h-4 inline mr-1" /> : <IconCompany className="w-4 h-4 inline mr-1" />} {settleTarget.strategy}
                                     </span>
                                 </div>
                             </div>
@@ -330,7 +331,7 @@ export function TradeJournal() {
                             <div className="holding-details">
                                 <div className="detail-row">
                                     <span className="strategy-badge">
-                                        {holding.strategy === "BOSS" ? "🛡️" : "🏢"}
+                                        {holding.strategy === "BOSS" ? <IconBOSS className="w-4 h-4 inline mr-1" /> : <IconCompany className="w-4 h-4 inline mr-1" />}
                                         {holding.strategy} - {holding.sub_strategy.replace(/_/g, " ")}
                                     </span>
                                     <span className="days-held">{holding.days_held}天</span>

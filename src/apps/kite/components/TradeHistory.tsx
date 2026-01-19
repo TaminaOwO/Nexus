@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
+import { IconBOSS, IconCompany } from "../../../components/HandDrawnIcons";
 import "./TradeHistory.css";
 
 interface ClosedTrade {
@@ -425,7 +426,7 @@ export function TradeHistory() {
                         <div className="stat-card best">
                             <span className="stat-label">🏆 Best Strategy</span>
                             <span className="stat-value">
-                                {history.best_strategy === "BOSS" ? "🛡️" : "🏢"} {history.best_strategy || "-"}
+                                {history.best_strategy === "BOSS" ? <IconBOSS className="w-5 h-5 inline mr-1" /> : <IconCompany className="w-5 h-5 inline mr-1" />} {history.best_strategy || "-"}
                             </span>
                             <span className="stat-sub">{formatMoney(history.best_pl)}</span>
                         </div>
@@ -453,7 +454,7 @@ export function TradeHistory() {
                                     <span className="symbol">{trade.symbol}</span>
                                 </div>
                                 <span className={`col-strategy ${trade.strategy.toLowerCase()}`}>
-                                    {trade.strategy === "BOSS" ? "🛡️" : "🏢"} {trade.sub_strategy?.replace(/_/g, " ") || trade.strategy}
+                                    {trade.strategy === "BOSS" ? <IconBOSS className="w-4 h-4 inline mr-1" /> : <IconCompany className="w-4 h-4 inline mr-1" />} {trade.sub_strategy?.replace(/_/g, " ") || trade.strategy}
                                 </span>
                                 <span className={`col-pl ${trade.final_pl >= 0 ? "up" : "down"}`}>
                                     {formatMoney(trade.final_pl)}

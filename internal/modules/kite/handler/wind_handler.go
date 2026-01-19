@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm/clause"
 )
 
 // GetWindHistory returns all wind records
@@ -52,21 +53,21 @@ func SaveWind(c *gin.Context) {
 		req.Date = time.Now().Format("2006-01-02")
 	}
 
-	var record model.WindRecord
-	// Check if exists
-	result := database.DB.Where("date = ?", req.Date).First(&record)
+	record := model.WindRecord{
+		Date: req.Date,
+		Wind: req.Wind,
+	}
 
-	if result.Error == nil {
-		// Update
-		record.Wind = req.Wind
-		database.DB.Save(&record)
-	} else {
-		// Create
-		record = model.WindRecord{
-			Date: req.Date,
-			Wind: req.Wind,
-		}
-		database.DB.Create(&record)
+	// Use Upsert (OnConflict) to handle both Create and Update cases gracefully
+	// avoiding UNIQUE constraint errors
+	result := database.DB.Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "date"}},
+		DoUpdates: clause.AssignmentColumns([]string{"wind", "updated_at"}),
+	}).Create(&record)
+
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
 	}
 
 	c.JSON(http.StatusOK, record)

@@ -65,8 +65,13 @@ func ImportTrade(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Symbol is required"})
 		return
 	}
-	if req.EntryPrice <= 0 || req.ExitPrice <= 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Entry and exit prices must be positive"})
+	if req.EntryPrice <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Entry price must be positive"})
+		return
+	}
+	// Exit price is only required for closed trades (when exit_date is provided)
+	if req.ExitDate != "" && req.ExitPrice <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Exit price must be positive for closed trades"})
 		return
 	}
 	if req.Quantity <= 0 {

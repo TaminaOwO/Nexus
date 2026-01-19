@@ -30,3 +30,7 @@ Thumbs.db
 
 # TypeScript build cache
 tsconfig.tsbuildinfo
+
+# SQLite Database
+*.db
+nexus.db

@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { getDateString } from "../hooks/useWindHistory";
+import { getLastNTradingDays } from "../hooks/useWindHistory";
 import { WindType, WindRecord, StructureType, GateLight, WIND_LABELS, STRUCTURE_LABELS } from "../types";
 import { IconStrongWind, IconTurbulence, IconGust, IconNoWind, IconWind, IconSettings } from "../../../components/HandDrawnIcons";
 import "./WindCockpit.css";
@@ -17,14 +17,6 @@ const WindIcon = ({ type, className }: { type: WindType; className?: string }) =
     }
 };
 
-// Color mapping for history strip dots
-const WIND_DOT_COLORS: Record<WindType, string> = {
-    STRONG: "#ef4444",    // Red - bullish
-    TURBULENT: "#f97316", // Orange - bullish
-    GUSTY: "#22c55e",     // Green - bearish
-    CALM: "#3b82f6",      // Blue - bearish
-};
-
 // Props interface for the UI component
 interface WindCockpitUIProps {
     windState: {
@@ -38,87 +30,117 @@ interface WindCockpitUIProps {
     gateLight: GateLight;
 }
 
+// Gate light emoji mapping (icons only, no text)
+const GATE_LIGHT_EMOJI: Record<GateLight, string> = {
+    GREEN: "🟢",
+    YELLOW: "🟡",
+    RED: "🔴",
+};
+
 export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUIProps) {
     const { history, todayWind, recordWind, setHistoryForDate, clearHistory } = windState;
     const [devModeOpen, setDevModeOpen] = useState(false);
-    const [lastWeekWindOpen, setLastWeekWindOpen] = useState(false);
-    const [lastWeekOverride, setLastWeekOverride] = useState<WindType | null>(null);
+    const [lastWeekCycleOpen, setLastWeekCycleOpen] = useState(false);
+    const [lastWeekCycle, setLastWeekCycle] = useState<StructureType | null>(null);
 
-    // Get last 5 days for history strip (including empty slots)
+    // Get last 5 trading days for history strip (using trading day logic)
     const historyStrip = useMemo(() => {
-        const days: { date: string; wind: WindType | null; label: string }[] = [];
-        for (let i = 4; i >= 0; i--) {
-            const date = getDateString(i);
-            const record = history.find((r) => r.date === date);
-            const label = i === 0 ? "Today" : i === 1 ? "Yesterday" : `${i} days ago`;
+        const tradingDays = getLastNTradingDays(5);
+        const days: { date: string; wind: WindType | null; dayLabel: string }[] = [];
+
+        tradingDays.forEach((dateStr, index) => {
+            const record = history.find((r) => r.date === dateStr);
             days.push({
-                date,
+                date: dateStr,
                 wind: record?.wind ?? null,
-                label,
+                dayLabel: `-${5 - index}`, // -5, -4, -3, -2, -1
             });
-        }
+        });
+
         return days;
     }, [history]);
 
-    // Dev mode: past 4 days for editing (not today)
+    // Dev mode: past 5 trading days for editing
     const editableDays = useMemo(() => {
-        return [1, 2, 3, 4].map((daysAgo) => {
-            const date = getDateString(daysAgo);
-            const record = history.find((r) => r.date === date);
+        const tradingDays = getLastNTradingDays(5);
+        return tradingDays.map((dateStr, index) => {
+            const record = history.find((r) => r.date === dateStr);
             return {
-                date,
-                daysAgo,
+                date: dateStr,
                 wind: record?.wind ?? null,
-                label: daysAgo === 1 ? "Yesterday" : `${daysAgo} days ago`,
+                label: `-${5 - index}`,
             };
         });
     }, [history]);
 
     const structureInfo = STRUCTURE_LABELS[structure];
 
-    const gateLightText = {
-        GREEN: "🟢 Go Signal",
-        YELLOW: "🟡 Caution",
-        RED: "🔴 Stop",
-    };
+    // Cycle options for Last Week Cycle modal
+    const CYCLE_OPTIONS: StructureType[] = ["EASY_RISE", "EASY_FALL", "BOUNDARY"];
 
     return (
         <div className="wind-cockpit">
             <h1>🪁 Wind Cockpit</h1>
             <p>Smart Wind Calculator - Track winds, calculate cycles</p>
 
-            {/* Structure Display */}
+            {/* Last Week Cycle Setting Card */}
+            <div className="last-week-cycle-card">
+                <div className="last-week-cycle-content">
+                    <span className="last-week-label">📥 上週循環:</span>
+                    {lastWeekCycle ? (
+                        <span className="last-week-value">
+                            {STRUCTURE_LABELS[lastWeekCycle].emoji} {STRUCTURE_LABELS[lastWeekCycle].zh}循環
+                        </span>
+                    ) : (
+                        <span className="last-week-value empty">未設定</span>
+                    )}
+                    <button
+                        className="edit-btn"
+                        onClick={() => setLastWeekCycleOpen(true)}
+                    >
+                        編輯
+                    </button>
+                </div>
+            </div>
+
+            {/* Structure Display Card with History Strip Inside */}
             <div className="structure-card">
-                <div className="cycle-display">
-                    <span className="emoji">{structureInfo.emoji}</span>
-                    <span className="label">
-                        {structureInfo.en}
-                        <span>({structureInfo.zh})</span>
-                    </span>
-                </div>
-
-                {/* History Strip - 5 colored dots */}
-                <div className="history-strip">
-                    {historyStrip.map((day) => (
-                        <div
-                            key={day.date}
-                            className={`strip-dot ${day.wind ? "filled" : "empty"}`}
-                            style={{
-                                backgroundColor: day.wind ? WIND_DOT_COLORS[day.wind] : undefined,
-                            }}
-                            title={`${day.label}: ${day.wind ? WIND_LABELS[day.wind].en : "No data"}`}
-                        />
-                    ))}
-                </div>
-
-                {/* Traffic Light */}
-                <div className="traffic-light">
-                    <div className="lights">
-                        <div className={`light red ${gateLight === "RED" ? "active" : ""}`} />
-                        <div className={`light yellow ${gateLight === "YELLOW" ? "active" : ""}`} />
-                        <div className={`light green ${gateLight === "GREEN" ? "active" : ""}`} />
+                {/* History Strip - 5 trading days with labels */}
+                <div className="history-strip-container">
+                    <div className="history-strip-labels">
+                        {historyStrip.map((day) => (
+                            <span key={day.date} className="day-label">{day.dayLabel}</span>
+                        ))}
                     </div>
-                    <span className="status-text">{gateLightText[gateLight]}</span>
+                    <div className="history-strip-icons">
+                        {historyStrip.map((day) => (
+                            <div
+                                key={day.date}
+                                className={`strip-icon ${day.wind ? "filled" : "empty"}`}
+                                title={`${day.date}: ${day.wind ? WIND_LABELS[day.wind].zh : "無資料"}`}
+                            >
+                                {day.wind ? (
+                                    <WindIcon type={day.wind} className="w-8 h-8" />
+                                ) : (
+                                    <span className="empty-dot">•</span>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Cycle Display with Gate Light */}
+                <div className="cycle-row">
+                    <div className="cycle-display">
+                        <span className="emoji">{structureInfo.emoji}</span>
+                        <span className="label">
+                            {structureInfo.en}
+                            <span>({structureInfo.zh})</span>
+                        </span>
+                    </div>
+                    <div className="gate-light-icon">
+                        {GATE_LIGHT_EMOJI[gateLight]}
+                    </div>
                 </div>
             </div>
 
@@ -161,7 +183,7 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                 </div>
             </div>
 
-            {/* Dev Mode & Last Week Wind Buttons */}
+            {/* Dev Mode Button */}
             <div style={{ marginTop: '1.5rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                 <button
                     onClick={() => setDevModeOpen(!devModeOpen)}
@@ -182,43 +204,12 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                 >
                     <IconSettings className="w-4 h-4" /> {devModeOpen ? "Close Dev Mode" : "Edit History"}
                 </button>
-                <button
-                    onClick={() => setLastWeekWindOpen(true)}
-                    style={{
-                        padding: '0.75rem 1.25rem',
-                        background: 'rgba(8, 145, 178, 0.2)',
-                        border: '1px solid rgba(8, 145, 178, 0.5)',
-                        borderRadius: '0.5rem',
-                        color: '#67e8f9',
-                        fontSize: '0.95rem',
-                        fontWeight: 500,
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                    }}
-                >
-                    📥 設定上週風度 (Set LW)
-                    {lastWeekOverride && (
-                        <span style={{
-                            background: 'rgba(8, 145, 178, 0.5)',
-                            padding: '0.125rem 0.5rem',
-                            borderRadius: '9999px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                        }}>
-                            <WindIcon type={lastWeekOverride} className="w-4 h-4" />
-                        </span>
-                    )}
-                </button>
             </div>
 
-            {/* Last Week Wind Modal */}
-            {lastWeekWindOpen && (
+            {/* Last Week Cycle Modal */}
+            {lastWeekCycleOpen && (
                 <div
-                    onClick={() => setLastWeekWindOpen(false)}
+                    onClick={() => setLastWeekCycleOpen(false)}
                     style={{
                         position: 'fixed',
                         inset: 0,
@@ -244,24 +235,24 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                         }}
                     >
                         <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1rem', color: '#67e8f9' }}>
-                            📥 設定上週風度 (Last Week's Wind)
+                            📥 設定上週循環
                         </h3>
                         <p style={{ fontSize: '0.9rem', color: '#94a3b8', marginBottom: '1.5rem' }}>
-                            Select the wind type from the App to override the baseline for this week's calculation.
+                            選擇上週的市場循環狀態，作為本週循環計算的基準。
                         </p>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.75rem' }}>
-                            {WIND_OPTIONS.map((windType) => {
-                                const info = WIND_LABELS[windType];
-                                const isSelected = lastWeekOverride === windType;
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem' }}>
+                            {CYCLE_OPTIONS.map((cycleType) => {
+                                const info = STRUCTURE_LABELS[cycleType];
+                                const isSelected = lastWeekCycle === cycleType;
                                 return (
                                     <button
-                                        key={windType}
+                                        key={cycleType}
                                         onClick={() => {
-                                            setLastWeekOverride(windType);
-                                            setLastWeekWindOpen(false);
+                                            setLastWeekCycle(cycleType);
+                                            setLastWeekCycleOpen(false);
                                         }}
                                         style={{
-                                            padding: '1rem',
+                                            padding: '1rem 0.5rem',
                                             display: 'flex',
                                             flexDirection: 'column',
                                             alignItems: 'center',
@@ -273,20 +264,20 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                                             transition: 'all 0.2s ease',
                                         }}
                                     >
-                                        <WindIcon type={windType} className="w-10 h-10" />
+                                        <span style={{ fontSize: '2rem' }}>{info.emoji}</span>
                                         <div style={{ textAlign: "center" }}>
-                                            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#f1f5f9' }}>{info.en}</div>
-                                            <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{info.zh}</div>
+                                            <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#f1f5f9' }}>{info.zh}</div>
+                                            <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>{info.en}</div>
                                         </div>
                                     </button>
                                 );
                             })}
                         </div>
-                        {lastWeekOverride && (
+                        {lastWeekCycle && (
                             <button
                                 onClick={() => {
-                                    setLastWeekOverride(null);
-                                    setLastWeekWindOpen(false);
+                                    setLastWeekCycle(null);
+                                    setLastWeekCycleOpen(false);
                                 }}
                                 style={{
                                     width: '100%',
@@ -300,7 +291,7 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                                     cursor: 'pointer',
                                 }}
                             >
-                                🗑️ Clear Override
+                                🗑️ 清除設定
                             </button>
                         )}
                     </div>
@@ -318,7 +309,7 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                     marginTop: '1rem',
                 }}>
                     <p style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: '0.5rem' }}>
-                        Simulate past winds to test cycle calculation logic.
+                        編輯過去 5 個交易日的風度紀錄。
                     </p>
                     {editableDays.map((day) => (
                         <div key={day.date} style={{
@@ -326,7 +317,9 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                             alignItems: 'center',
                             justifyContent: 'space-between',
                         }}>
-                            <span style={{ color: '#94a3b8', fontSize: '0.9rem', width: '6rem' }}>{day.label}</span>
+                            <span style={{ color: '#94a3b8', fontSize: '0.9rem', width: '6rem' }}>
+                                {day.label} ({day.date.slice(5)})
+                            </span>
                             <div style={{ display: 'flex', gap: '0.5rem' }}>
                                 {WIND_OPTIONS.map((windType) => {
                                     const info = WIND_LABELS[windType];
@@ -400,4 +393,3 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
         </div>
     );
 }
-

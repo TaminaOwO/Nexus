@@ -22,7 +22,7 @@ export const WIND_LABELS: Record<WindType, { emoji: string; zh: string; en: stri
 export const STRUCTURE_LABELS: Record<StructureType, { emoji: string; zh: string; en: string }> = {
     EASY_RISE: { emoji: "📈", zh: "易漲", en: "Easy Rise" },
     EASY_FALL: { emoji: "📉", zh: "易跌", en: "Easy Fall" },
-    BOUNDARY: { emoji: "⚖️", zh: "交界", en: "Boundary" },
+    BOUNDARY: { emoji: "🌀", zh: "交界", en: "Boundary" },
 };
 
 // Stock Quote types for Stock Inspector

@@ -1,9 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { getLastNTradingDays } from "../hooks/useWindHistory";
 import { WindType, WindRecord, StructureType, GateLight, WIND_LABELS, STRUCTURE_LABELS } from "../types";
 import { IconStrongWind, IconTurbulence, IconGust, IconNoWind, IconWind, IconSettings } from "../../../components/HandDrawnIcons";
 import "./WindCockpit.css";
 
+const API_BASE = "/api/kite";
 const WIND_OPTIONS: WindType[] = ["STRONG", "TURBULENT", "GUSTY", "CALM"];
 
 // Map wind types to components
@@ -42,6 +43,44 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
     const [devModeOpen, setDevModeOpen] = useState(false);
     const [lastWeekCycleOpen, setLastWeekCycleOpen] = useState(false);
     const [lastWeekCycle, setLastWeekCycle] = useState<StructureType | null>(null);
+
+    // Load cycle setting from API on mount
+    useEffect(() => {
+        const fetchCycleSetting = async () => {
+            try {
+                const res = await fetch(`${API_BASE}/cycle`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.cycle) {
+                        setLastWeekCycle(data.cycle as StructureType);
+                    }
+                }
+            } catch (error) {
+                console.error("Failed to load cycle setting:", error);
+            }
+        };
+        fetchCycleSetting();
+    }, []);
+
+    // Save cycle setting to API
+    const saveCycleSetting = async (cycle: StructureType | null) => {
+        setLastWeekCycle(cycle);
+        setLastWeekCycleOpen(false);
+
+        try {
+            if (cycle) {
+                await fetch(`${API_BASE}/cycle`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ cycle }),
+                });
+            } else {
+                await fetch(`${API_BASE}/cycle`, { method: "DELETE" });
+            }
+        } catch (error) {
+            console.error("Failed to save cycle setting:", error);
+        }
+    };
 
     // Get last 5 trading days for history strip (using trading day logic)
     const historyStrip = useMemo(() => {
@@ -247,10 +286,7 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                                 return (
                                     <button
                                         key={cycleType}
-                                        onClick={() => {
-                                            setLastWeekCycle(cycleType);
-                                            setLastWeekCycleOpen(false);
-                                        }}
+                                        onClick={() => saveCycleSetting(cycleType)}
                                         style={{
                                             padding: '1rem 0.5rem',
                                             display: 'flex',
@@ -275,10 +311,7 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                         </div>
                         {lastWeekCycle && (
                             <button
-                                onClick={() => {
-                                    setLastWeekCycle(null);
-                                    setLastWeekCycleOpen(false);
-                                }}
+                                onClick={() => saveCycleSetting(null)}
                                 style={{
                                     width: '100%',
                                     marginTop: '1rem',

@@ -18,7 +18,7 @@ func main() {
 	database.Init()
 
 	// Auto Migrate
-	database.DB.AutoMigrate(&model.WindRecord{}, &model.TradeEntry{})
+	database.DB.AutoMigrate(&model.WindRecord{}, &model.TradeEntry{}, &model.CycleSetting{})
 
 	r := gin.Default()
 
@@ -62,6 +62,11 @@ func main() {
 		kite.GET("/wind/latest", kiteHandler.GetLatestWind)
 		kite.GET("/wind/history", kiteHandler.GetWindHistory)
 		kite.POST("/wind", kiteHandler.SaveWind)
+
+		// Cycle Setting Routes
+		kite.GET("/cycle", kiteHandler.GetCycleSetting)
+		kite.POST("/cycle", kiteHandler.SaveCycleSetting)
+		kite.DELETE("/cycle", kiteHandler.DeleteCycleSetting)
 	}
 
 	// Choice-Fit Module Routes

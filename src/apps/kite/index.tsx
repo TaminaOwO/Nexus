@@ -6,6 +6,7 @@ import { WindCockpitUI } from "./components/WindCockpit";
 import { StockInspector } from "./components/StockInspector";
 import { TradeJournal } from "./components/TradeJournal";
 import { TradeHistory } from "./components/TradeHistory";
+import { Watchlist } from "./components/Watchlist";
 import { StructureType, StrategyType } from "./types";
 import "./kite.css";
 
@@ -16,11 +17,12 @@ function getStrategy(structure: StructureType): StrategyType {
     return structure === "EASY_RISE" ? "OFFICE" : "BOSS";
 }
 
-type ViewType = "active" | "history";
+type ViewType = "active" | "watchlist" | "history";
 
 function Kite() {
     const windState = useWindHistory();
     const [activeView, setActiveView] = useState<ViewType>("active");
+    const [inspectorSymbol, setInspectorSymbol] = useState<string>("");
 
     // Calculate structure and gate at dashboard level
     const structure = useMemo(
@@ -38,6 +40,11 @@ function Kite() {
         [structure]
     );
 
+    const handleWatchlistSelect = (symbol: string) => {
+        setInspectorSymbol(symbol);
+        setActiveView("active");
+    };
+
     return (
         <div className="kite-dashboard">
             {/* Navigation Tabs */}
@@ -46,18 +53,24 @@ function Kite() {
                     className={`nav-tab ${activeView === "active" ? "active" : ""}`}
                     onClick={() => setActiveView("active")}
                 >
-                    📊 Active Portfolio
+                    📊 Active
+                </button>
+                <button
+                    className={`nav-tab ${activeView === "watchlist" ? "active" : ""}`}
+                    onClick={() => setActiveView("watchlist")}
+                >
+                    👀 Watchlist
                 </button>
                 <button
                     className={`nav-tab ${activeView === "history" ? "active" : ""}`}
                     onClick={() => setActiveView("history")}
                 >
-                    📈 Trade History
+                    📈 History
                 </button>
             </div>
 
             <div className="kite-content-wrapper">
-                {activeView === "active" ? (
+                {activeView === "active" && (
                     <>
                         <WindCockpitUI
                             windState={windState}
@@ -68,10 +81,18 @@ function Kite() {
                             gateLight={gateLight}
                             strategy={strategy}
                             structure={structure}
+                            initialSymbol={inspectorSymbol}
                         />
                         <TradeJournal />
                     </>
-                ) : (
+                )}
+                {activeView === "watchlist" && (
+                    <Watchlist
+                        structure={structure}
+                        onStockSelect={handleWatchlistSelect}
+                    />
+                )}
+                {activeView === "history" && (
                     <TradeHistory />
                 )}
             </div>
@@ -80,3 +101,4 @@ function Kite() {
 }
 
 export default Kite
+

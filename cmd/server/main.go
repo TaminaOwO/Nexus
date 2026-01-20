@@ -18,7 +18,7 @@ func main() {
 	database.Init()
 
 	// Auto Migrate
-	database.DB.AutoMigrate(&model.WindRecord{}, &model.TradeEntry{}, &model.CycleSetting{})
+	database.DB.AutoMigrate(&model.WindRecord{}, &model.TradeEntry{}, &model.CycleSetting{}, &model.WatchlistEntry{})
 
 	r := gin.Default()
 
@@ -67,6 +67,14 @@ func main() {
 		kite.GET("/cycle", kiteHandler.GetCycleSetting)
 		kite.POST("/cycle", kiteHandler.SaveCycleSetting)
 		kite.DELETE("/cycle", kiteHandler.DeleteCycleSetting)
+
+		// Watchlist Routes
+		kite.GET("/watchlist", kiteHandler.GetWatchlist)
+		kite.GET("/watchlist/:id", kiteHandler.GetWatchlistEntry)
+		kite.POST("/watchlist", kiteHandler.CreateWatchlistEntry)
+		kite.PUT("/watchlist/:id", kiteHandler.UpdateWatchlistEntry)
+		kite.DELETE("/watchlist/:id", kiteHandler.DeleteWatchlistEntry)
+		kite.POST("/watchlist/:id/convert", kiteHandler.ConvertToTrade)
 	}
 
 	// Choice-Fit Module Routes

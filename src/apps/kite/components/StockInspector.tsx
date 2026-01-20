@@ -17,6 +17,7 @@ interface StockInspectorProps {
     gateLight: GateLight;
     strategy: StrategyType;
     structure: StructureType;
+    initialSymbol?: string;
 }
 
 const API_BASE = "/api/kite";
@@ -42,9 +43,9 @@ function formatPercent(value: number): string {
     return `${sign}${value.toFixed(2)}%`;
 }
 
-export function StockInspector({ gateLight, strategy: defaultStrategy, structure }: StockInspectorProps) {
+export function StockInspector({ gateLight, strategy: defaultStrategy, structure, initialSymbol }: StockInspectorProps) {
     // ============ State ============
-    const [symbol, setSymbol] = useState("");
+    const [symbol, setSymbol] = useState(initialSymbol || "");
     const [quote, setQuote] = useState<QuoteData | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);

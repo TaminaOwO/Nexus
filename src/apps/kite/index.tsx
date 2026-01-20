@@ -82,6 +82,7 @@ function Kite() {
                             strategy={strategy}
                             structure={structure}
                             initialSymbol={inspectorSymbol}
+                            currentWind={windState.todayWind}
                         />
                         <TradeJournal />
                     </>

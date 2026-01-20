@@ -8,9 +8,11 @@ import {
     SubStrategyType,
     OfficeSubStrategy,
     BossSubStrategy,
+    WindType,
 } from "../types";
 import { getStrategyVerdict } from "../utils/strategyDiagnosis";
 import { IconCompany, IconBOSS, IconLifeOS } from "../../../components/HandDrawnIcons";
+import { StrategyChecklist } from "./StrategyChecklist";
 import "./StockInspector.css";
 
 interface StockInspectorProps {
@@ -18,6 +20,7 @@ interface StockInspectorProps {
     strategy: StrategyType;
     structure: StructureType;
     initialSymbol?: string;
+    currentWind?: WindType | null;
 }
 
 const API_BASE = "/api/kite";
@@ -43,7 +46,7 @@ function formatPercent(value: number): string {
     return `${sign}${value.toFixed(2)}%`;
 }
 
-export function StockInspector({ gateLight, strategy: defaultStrategy, structure, initialSymbol }: StockInspectorProps) {
+export function StockInspector({ gateLight, strategy: defaultStrategy, structure, initialSymbol, currentWind }: StockInspectorProps) {
     // ============ State ============
     const [symbol, setSymbol] = useState(initialSymbol || "");
     const [quote, setQuote] = useState<QuoteData | null>(null);
@@ -902,6 +905,15 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Strategy Conditions Checklist */}
+                            <StrategyChecklist
+                                quote={quote}
+                                structure={structure}
+                                subStrategy={currentSubStrategy}
+                                currentWind={currentWind ?? null}
+                                revenueYoyChecked={revenueYoyChecked}
+                            />
                         </div>
                     )}
                 </>

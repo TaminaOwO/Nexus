@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
-import { StructureType, SubStrategyType, STRATEGY_LABELS, SUB_STRATEGY_LABELS } from "../types";
+import { useState, useEffect, useCallback } from "react";
+import { StructureType, SubStrategyType, WindType, QuoteData, STRATEGY_LABELS, SUB_STRATEGY_LABELS } from "../types";
+import { getStrategyChecklist, getChecklistStatus } from "../utils/strategyChecklist";
+import { IconCompany, IconBOSS } from "../../../components/HandDrawnIcons";
 import "./Watchlist.css";
 
 const API_BASE = "/api/kite";
@@ -18,11 +20,14 @@ interface WatchlistEntry {
 
 interface WatchlistProps {
     structure: StructureType;
+    currentWind: WindType | null;
     onStockSelect?: (symbol: string) => void;
+    onConvertToTrade?: (entry: WatchlistEntry) => void;
 }
 
-export function Watchlist({ structure: _structure, onStockSelect }: WatchlistProps) {
+export function Watchlist({ structure, currentWind, onStockSelect, onConvertToTrade }: WatchlistProps) {
     const [entries, setEntries] = useState<WatchlistEntry[]>([]);
+    const [quotes, setQuotes] = useState<Record<string, QuoteData>>({});
     const [isAdding, setIsAdding] = useState(false);
     const [newEntry, setNewEntry] = useState({
         symbol: "",
@@ -32,11 +37,19 @@ export function Watchlist({ structure: _structure, onStockSelect }: WatchlistPro
         sub_strategy: "WEEKLY_PULLBACK" as SubStrategyType,
         notes: "",
     });
+    const [loadingCompany, setLoadingCompany] = useState(false);
 
     // Fetch watchlist on mount
     useEffect(() => {
         fetchWatchlist();
     }, []);
+
+    // Fetch quotes for all watchlist symbols
+    useEffect(() => {
+        if (entries.length > 0) {
+            fetchQuotes(entries.map(e => e.symbol));
+        }
+    }, [entries]);
 
     const fetchWatchlist = async () => {
         try {
@@ -49,6 +62,45 @@ export function Watchlist({ structure: _structure, onStockSelect }: WatchlistPro
             console.error("Failed to fetch watchlist:", error);
         }
     };
+
+    const fetchQuotes = async (symbols: string[]) => {
+        if (symbols.length === 0) return;
+        try {
+            const symbolsQuery = symbols.join(",");
+            const res = await fetch(`${API_BASE}/quotes?symbols=${symbolsQuery}`);
+            if (res.ok) {
+                const data = await res.json();
+                const quotesMap: Record<string, QuoteData> = {};
+                data.forEach((q: QuoteData) => {
+                    // Strip .TW suffix to match Watchlist entry symbols
+                    const normalizedSymbol = q.symbol.replace('.TW', '');
+                    quotesMap[normalizedSymbol] = q;
+                });
+                setQuotes(quotesMap);
+            }
+        } catch (error) {
+            console.error("Failed to fetch quotes:", error);
+        }
+    };
+
+    // Auto-fetch company name when symbol changes
+    const fetchCompanyName = useCallback(async (symbol: string) => {
+        if (!symbol || symbol.length < 4) return;
+        setLoadingCompany(true);
+        try {
+            const res = await fetch(`${API_BASE}/quote?symbol=${symbol}`);
+            if (res.ok) {
+                const data = await res.json();
+                if (data.company_name) {
+                    setNewEntry(prev => ({ ...prev, company_name: data.company_name }));
+                }
+            }
+        } catch (error) {
+            console.error("Failed to fetch company name:", error);
+        } finally {
+            setLoadingCompany(false);
+        }
+    }, []);
 
     const addEntry = async () => {
         if (!newEntry.symbol) return;
@@ -88,20 +140,18 @@ export function Watchlist({ structure: _structure, onStockSelect }: WatchlistPro
         }
     };
 
-    const markAsReady = async (id: string) => {
-        try {
-            const res = await fetch(`${API_BASE}/watchlist/${id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ status: "READY" }),
-            });
-            if (res.ok) {
-                const updated = await res.json();
-                setEntries(entries.map(e => e.id === id ? updated : e));
-            }
-        } catch (error) {
-            console.error("Failed to update watchlist entry:", error);
+    const convertToTrade = async (entry: WatchlistEntry) => {
+        if (onConvertToTrade) {
+            onConvertToTrade(entry);
         }
+    };
+
+    // Get checklist data for an entry (conditions + status)
+    const getEntryChecklistData = (entry: WatchlistEntry) => {
+        const quote = quotes[entry.symbol] || null;
+        const conditions = getStrategyChecklist(quote, structure, entry.sub_strategy, currentWind, false);
+        const status = getChecklistStatus(conditions);
+        return { conditions, status };
     };
 
     const getStatusIcon = (status: string) => {
@@ -140,12 +190,14 @@ export function Watchlist({ structure: _structure, onStockSelect }: WatchlistPro
                             placeholder="股票代號 (e.g. 2330)"
                             value={newEntry.symbol}
                             onChange={(e) => setNewEntry({ ...newEntry, symbol: e.target.value.toUpperCase() })}
+                            onBlur={(e) => fetchCompanyName(e.target.value)}
                         />
                         <input
                             type="text"
-                            placeholder="公司名稱"
+                            placeholder={loadingCompany ? "載入中..." : "公司名稱"}
                             value={newEntry.company_name}
                             onChange={(e) => setNewEntry({ ...newEntry, company_name: e.target.value })}
+                            disabled={loadingCompany}
                         />
                     </div>
                     <div className="form-row">
@@ -155,23 +207,41 @@ export function Watchlist({ structure: _structure, onStockSelect }: WatchlistPro
                             value={newEntry.target_price || ""}
                             onChange={(e) => setNewEntry({ ...newEntry, target_price: parseFloat(e.target.value) || 0 })}
                         />
-                        <select
-                            value={newEntry.strategy}
-                            onChange={(e) => setNewEntry({ ...newEntry, strategy: e.target.value as "OFFICE" | "BOSS" })}
-                        >
-                            <option value="OFFICE">🏢 上班族型</option>
-                            <option value="BOSS">🛡️ 老闆型</option>
-                        </select>
+                        <div className="strategy-button-group">
+                            <button
+                                type="button"
+                                className={`strategy-btn ${newEntry.strategy === "OFFICE" ? "active" : ""}`}
+                                onClick={() => setNewEntry({ ...newEntry, strategy: "OFFICE", sub_strategy: "STRONG_WEEKLY" })}
+                            >
+                                <IconCompany style={{ width: 20, height: 20 }} />
+                                <span>{STRATEGY_LABELS.OFFICE.zh}</span>
+                            </button>
+                            <button
+                                type="button"
+                                className={`strategy-btn ${newEntry.strategy === "BOSS" ? "active" : ""}`}
+                                onClick={() => setNewEntry({ ...newEntry, strategy: "BOSS", sub_strategy: "WEEKLY_PULLBACK" })}
+                            >
+                                <IconBOSS style={{ width: 20, height: 20 }} />
+                                <span>{STRATEGY_LABELS.BOSS.zh}</span>
+                            </button>
+                        </div>
                     </div>
                     <div className="form-row">
                         <select
                             value={newEntry.sub_strategy}
                             onChange={(e) => setNewEntry({ ...newEntry, sub_strategy: e.target.value as SubStrategyType })}
                         >
-                            <option value="STRONG_WEEKLY">⚡ 強勢週</option>
-                            <option value="WEEKLY_TREND">📉 週趨勢</option>
-                            <option value="WEEKLY_PULLBACK">🔄 週拉回</option>
-                            <option value="CHEAP_ACQUISITION">🏷️ 廉價收購</option>
+                            {newEntry.strategy === "OFFICE" ? (
+                                <>
+                                    <option value="STRONG_WEEKLY">{SUB_STRATEGY_LABELS.STRONG_WEEKLY.badge} {SUB_STRATEGY_LABELS.STRONG_WEEKLY.zh}</option>
+                                    <option value="WEEKLY_TREND">{SUB_STRATEGY_LABELS.WEEKLY_TREND.badge} {SUB_STRATEGY_LABELS.WEEKLY_TREND.zh}</option>
+                                </>
+                            ) : (
+                                <>
+                                    <option value="WEEKLY_PULLBACK">{SUB_STRATEGY_LABELS.WEEKLY_PULLBACK.badge} {SUB_STRATEGY_LABELS.WEEKLY_PULLBACK.zh}</option>
+                                    <option value="CHEAP_ACQUISITION">{SUB_STRATEGY_LABELS.CHEAP_ACQUISITION.badge} {SUB_STRATEGY_LABELS.CHEAP_ACQUISITION.zh}</option>
+                                </>
+                            )}
                         </select>
                     </div>
                     <textarea
@@ -187,45 +257,86 @@ export function Watchlist({ structure: _structure, onStockSelect }: WatchlistPro
                 {entries.length === 0 ? (
                     <p className="empty-message">尚無觀察標的</p>
                 ) : (
-                    entries.map((entry) => (
-                        <div
-                            key={entry.id}
-                            className={`watchlist-entry ${getStatusClass(entry.status)}`}
-                            onClick={() => onStockSelect?.(entry.symbol)}
-                        >
-                            <div className="entry-header">
-                                <span className="status-icon">{getStatusIcon(entry.status)}</span>
-                                <span className="symbol">{entry.symbol}</span>
-                                <span className="company">{entry.company_name}</span>
-                            </div>
-                            <div className="entry-details">
-                                <span className="target">目標價: ${entry.target_price}</span>
-                                <span className="strategy">
-                                    {STRATEGY_LABELS[entry.strategy]?.badge}
-                                    {SUB_STRATEGY_LABELS[entry.sub_strategy]?.zh}
-                                </span>
-                            </div>
-                            {entry.notes && (
-                                <p className="notes">{entry.notes}</p>
-                            )}
-                            <div className="entry-actions">
-                                {entry.status === "WATCHING" && (
-                                    <button
-                                        className="action-btn ready"
-                                        onClick={(e) => { e.stopPropagation(); markAsReady(entry.id); }}
-                                    >
-                                        🎯 標記可進場
-                                    </button>
+                    entries.map((entry) => {
+                        const quote = quotes[entry.symbol];
+                        const { conditions, status: checklistStatus } = getEntryChecklistData(entry);
+                        const canEnter = checklistStatus.allPassed;
+
+                        return (
+                            <div
+                                key={entry.id}
+                                className={`watchlist-entry ${getStatusClass(entry.status)}`}
+                                onClick={() => onStockSelect?.(entry.symbol)}
+                            >
+                                <div className="entry-header">
+                                    <span className="status-icon">{getStatusIcon(entry.status)}</span>
+                                    <span className="symbol">{entry.symbol}</span>
+                                    <span className="company">{entry.company_name}</span>
+                                </div>
+
+                                <div className="entry-details">
+                                    <div className="price-info">
+                                        <span className="target">目標: ${entry.target_price}</span>
+                                        <span className="current-price">
+                                            現價: {quote ? `$${quote.price.toFixed(2)}` : "載入中..."}
+                                        </span>
+                                        {quote && entry.target_price > 0 && (
+                                            <span className={`price-diff ${quote.price <= entry.target_price ? "below-target" : "above-target"}`}>
+                                                ({((quote.price - entry.target_price) / entry.target_price * 100).toFixed(1)}%)
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="strategy-info">
+                                        <span className="strategy-badge">
+                                            {SUB_STRATEGY_LABELS[entry.sub_strategy]?.badge}
+                                            {SUB_STRATEGY_LABELS[entry.sub_strategy]?.zh}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Mini Checklist */}
+                                <div className="mini-checklist">
+                                    <div className="mini-checklist-header">
+                                        <span>策略條件</span>
+                                        <span className={`mini-count ${canEnter ? "all-pass" : ""}`}>
+                                            {checklistStatus.passed}/{checklistStatus.total}
+                                        </span>
+                                    </div>
+                                    <div className="mini-conditions">
+                                        {conditions.map((c) => (
+                                            <div key={c.id} className={`mini-condition ${c.met ? "met" : "unmet"}`}>
+                                                <span className="mini-icon">{c.met ? "✓" : "✕"}</span>
+                                                <span className="mini-label">{c.label}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {entry.notes && (
+                                    <p className="notes">{entry.notes}</p>
                                 )}
-                                <button
-                                    className="action-btn delete"
-                                    onClick={(e) => { e.stopPropagation(); deleteEntry(entry.id); }}
-                                >
-                                    🗑️
-                                </button>
+
+                                <div className="entry-actions">
+                                    {entry.status === "WATCHING" && (
+                                        <button
+                                            className={`action-btn enter ${canEnter ? "enabled" : "disabled"}`}
+                                            onClick={(e) => { e.stopPropagation(); if (canEnter) convertToTrade(entry); }}
+                                            disabled={!canEnter}
+                                            title={canEnter ? "條件達成，可進場" : "條件未達成"}
+                                        >
+                                            {canEnter ? "🚀 進場" : "🔒 條件未滿足"}
+                                        </button>
+                                    )}
+                                    <button
+                                        className="action-btn delete"
+                                        onClick={(e) => { e.stopPropagation(); deleteEntry(entry.id); }}
+                                    >
+                                        🗑️
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    ))
+                        );
+                    })
                 )}
             </div>
         </div>

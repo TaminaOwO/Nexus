@@ -945,6 +945,11 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
             {showChart && quote && (
                 <StockChart
                     symbol={quote.symbol}
+                    quote={quote}
+                    structure={structure}
+                    currentSubStrategy={currentSubStrategy}
+                    currentWind={currentWind}
+                    revenueYoyChecked={revenueYoyChecked}
                     onClose={() => setShowChart(false)}
                 />
             )}

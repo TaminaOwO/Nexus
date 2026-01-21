@@ -90,6 +90,7 @@ function Kite() {
                 {activeView === "watchlist" && (
                     <Watchlist
                         structure={structure}
+                        currentWind={windState.todayWind}
                         onStockSelect={handleWatchlistSelect}
                     />
                 )}

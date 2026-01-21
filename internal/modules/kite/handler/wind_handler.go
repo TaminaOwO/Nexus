@@ -72,3 +72,84 @@ func SaveWind(c *gin.Context) {
 
 	c.JSON(http.StatusOK, record)
 }
+
+// getWeekKey returns the ISO week key for a given time (e.g., "2024-W03")
+func getWeekKey(t time.Time) string {
+	year, week := t.ISOWeek()
+	return time.Date(year, 1, 1, 0, 0, 0, 0, t.Location()).AddDate(0, 0, (week-1)*7).Format("2006") + "-W" + padWeek(week)
+}
+
+func padWeek(week int) string {
+	if week < 10 {
+		return "0" + string(rune('0'+week))
+	}
+	return string(rune('0'+week/10)) + string(rune('0'+week%10))
+}
+
+// GetCycleSetting returns the cycle setting for the current week
+func GetCycleSetting(c *gin.Context) {
+	weekKey := getWeekKey(time.Now())
+
+	var setting model.CycleSetting
+	result := database.DB.Where("week_key = ?", weekKey).First(&setting)
+
+	if result.Error != nil {
+		// Return empty response if no setting found
+		c.JSON(http.StatusOK, model.CycleSettingResponse{
+			WeekKey: weekKey,
+			Cycle:   "",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, model.CycleSettingResponse{
+		WeekKey: setting.WeekKey,
+		Cycle:   setting.Cycle,
+	})
+}
+
+// SaveCycleSetting saves or updates the cycle setting for the current week
+func SaveCycleSetting(c *gin.Context) {
+	var req model.CycleSettingRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	weekKey := getWeekKey(time.Now())
+
+	setting := model.CycleSetting{
+		WeekKey: weekKey,
+		Cycle:   req.Cycle,
+	}
+
+	// Upsert
+	result := database.DB.Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "week_key"}},
+		DoUpdates: clause.AssignmentColumns([]string{"cycle", "updated_at"}),
+	}).Create(&setting)
+
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, model.CycleSettingResponse{
+		WeekKey: setting.WeekKey,
+		Cycle:   setting.Cycle,
+	})
+}
+
+// DeleteCycleSetting removes the cycle setting for the current week
+func DeleteCycleSetting(c *gin.Context) {
+	weekKey := getWeekKey(time.Now())
+
+	result := database.DB.Where("week_key = ?", weekKey).Delete(&model.CycleSetting{})
+
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Cycle setting cleared"})
+}

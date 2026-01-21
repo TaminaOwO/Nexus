@@ -1,0 +1,253 @@
+/* Stock Chart Modal Styles */
+
+.stock-chart-modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+.stock-chart-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+}
+
+.stock-chart-container {
+    position: relative;
+    background: linear-gradient(145deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.98));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    width: 100%;
+    max-width: 1200px;
+    /* Increased width for sidebar */
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(15, 23, 42, 0.4);
+}
+
+.chart-title {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.chart-title h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary, #f5f5f7);
+    margin: 0;
+}
+
+/* Timeframe Tabs */
+.timeframe-tabs {
+    display: flex;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2px;
+    border-radius: 0.5rem;
+}
+
+.tf-tab {
+    padding: 0.25rem 0.75rem;
+    background: transparent;
+    border: none;
+    border-radius: 0.375rem;
+    color: #94a3b8;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tf-tab.active {
+    background: rgba(100, 116, 139, 0.3);
+    color: #f1f5f9;
+}
+
+.tf-tab:hover:not(.active) {
+    color: #e2e8f0;
+}
+
+.close-btn {
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    border-radius: 50%;
+    color: #94a3b8;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f1f5f9;
+}
+
+/* Content Layout */
+.chart-content-row {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    /* Ensure modal doesn't expand */
+    min-height: 480px;
+}
+
+.chart-main-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    /* Allow shrinking */
+}
+
+.chart-sidebar {
+    width: 320px;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(30, 41, 59, 0.2);
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+/* Legend */
+.chart-legend {
+    display: flex;
+    gap: 1.5rem;
+    padding: 0.75rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+.legend-item::before {
+    content: "";
+    /* For MA circles */
+    display: block;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+}
+
+.legend-item.ma5::before {
+    background: #fbbf24;
+}
+
+.legend-item.ma20::before {
+    background: #3b82f6;
+}
+
+.legend-item.ma60::before {
+    background: #a855f7;
+}
+
+/* Remove circles for MACD items since we use inline styles */
+.legend-item.macd::before,
+.legend-item.signal::before,
+.legend-item.histogram::before {
+    display: none;
+}
+
+/* Chart Areas */
+.chart-area {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    flex: 1;
+    /* Take remaining height */
+    min-height: 280px;
+}
+
+.macd-legend {
+    display: flex;
+    gap: 1.5rem;
+    padding: 0.5rem 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.75rem;
+}
+
+.macd-chart-area {
+    width: 100%;
+    padding: 0 1rem 1rem 1rem;
+    height: 120px;
+    /* Fixed height for MACD */
+}
+
+/* Loading & Error */
+.chart-loading,
+.chart-error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+    color: #94a3b8;
+    font-size: 1rem;
+}
+
+.chart-error {
+    color: #f87171;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .stock-chart-container {
+        max-width: 95vw;
+        height: 90vh;
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    .chart-content-row {
+        flex-direction: column;
+    }
+
+    .chart-sidebar {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        max-height: 300px;
+    }
+}
+
+@media (max-width: 640px) {
+    .chart-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+    }
+
+    .chart-legend {
+        gap: 1rem;
+        padding: 0.5rem 1rem;
+        flex-wrap: wrap;
+    }
+}

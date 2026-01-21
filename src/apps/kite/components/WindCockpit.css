@@ -46,7 +46,58 @@
 }
 
 /* ============================================
-   Structure Banner
+   Last Week Cycle Card
+   ============================================ */
+.last-week-cycle-card {
+  background: rgba(8, 145, 178, 0.1);
+  border: 1px solid rgba(8, 145, 178, 0.3);
+  border-radius: var(--radius-lg, 12px);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.last-week-cycle-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.last-week-label {
+  color: #67e8f9;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.last-week-value {
+  color: var(--text-primary, #f5f5f7);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.last-week-value.empty {
+  color: var(--text-secondary, #8e8e93);
+  font-style: italic;
+}
+
+.edit-btn {
+  margin-left: auto;
+  padding: 0.375rem 0.75rem;
+  background: rgba(8, 145, 178, 0.2);
+  border: 1px solid rgba(8, 145, 178, 0.4);
+  border-radius: 0.375rem;
+  color: #67e8f9;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit-btn:hover {
+  background: rgba(8, 145, 178, 0.3);
+}
+
+/* ============================================
+   Structure Banner with History Strip Inside
    ============================================ */
 .structure-card {
   background: var(--bg-input);
@@ -54,10 +105,8 @@
   padding: 1.25rem 1.5rem;
   margin-bottom: 2rem;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .structure-card.easy-rise {
@@ -73,6 +122,66 @@
 .structure-card.easy-fall {
   background: var(--danger-glow);
   border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* History Strip Container */
+.history-strip-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.history-strip-labels {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.history-strip-labels .day-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #8e8e93);
+  font-weight: 500;
+  width: 2rem;
+  text-align: center;
+}
+
+.history-strip-icons {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.strip-icon {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.strip-icon:hover {
+  transform: scale(1.1);
+}
+
+.strip-icon .wind-emoji {
+  font-size: 1.5rem;
+}
+
+.strip-icon.empty .empty-dot {
+  font-size: 1.5rem;
+  color: var(--text-muted, #4b5563);
+}
+
+/* Cycle Row with Gate Light */
+.cycle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .cycle-display {
@@ -109,7 +218,18 @@
   color: var(--danger);
 }
 
-/* Traffic Light */
+/* Gate Light Icon Only */
+.gate-light-icon {
+  font-size: 1.75rem;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Traffic Light - Legacy (kept for compatibility) */
 .traffic-light {
   display: flex;
   align-items: center;
@@ -140,6 +260,12 @@
 .traffic-light .light.active.red {
   background: var(--danger);
   box-shadow: 0 0 20px var(--danger);
+}
+
+.traffic-light .status-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .traffic-light .light-label {
@@ -401,8 +527,34 @@
   }
 
   .structure-card {
-    flex-direction: column;
-    align-items: flex-start;
+    padding: 1rem;
+  }
+
+  .history-strip-labels,
+  .history-strip-icons {
+    gap: 1rem;
+  }
+
+  .strip-icon {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .strip-icon .wind-emoji {
+    font-size: 1.25rem;
+  }
+
+  .cycle-row {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .cycle-display .emoji {
+    font-size: 1.5rem;
+  }
+
+  .cycle-display .label {
+    font-size: 1rem;
   }
 }
 

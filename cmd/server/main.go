@@ -11,9 +11,15 @@ import (
 	"nexus/internal/modules/kite/model"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	// Load .env file
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, using system environment")
+	}
+
 	// Initialize Database
 	database.Init()
 
@@ -75,6 +81,9 @@ func main() {
 		kite.PUT("/watchlist/:id", kiteHandler.UpdateWatchlistEntry)
 		kite.DELETE("/watchlist/:id", kiteHandler.DeleteWatchlistEntry)
 		kite.POST("/watchlist/:id/convert", kiteHandler.ConvertToTrade)
+
+		// Chart Routes
+		kite.GET("/chart", kiteHandler.GetChartData)
 	}
 
 	// Choice-Fit Module Routes

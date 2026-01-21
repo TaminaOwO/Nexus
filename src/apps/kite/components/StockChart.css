@@ -1,0 +1,134 @@
+/* Stock Chart Modal Styles */
+
+.stock-chart-modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+.stock-chart-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+}
+
+.stock-chart-container {
+    position: relative;
+    background: linear-gradient(145deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.98));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    width: 100%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chart-header h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary, #f5f5f7);
+    margin: 0;
+}
+
+.close-btn {
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    border-radius: 50%;
+    color: #94a3b8;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f1f5f9;
+}
+
+/* Legend */
+.chart-legend {
+    display: flex;
+    gap: 1.5rem;
+    padding: 0.75rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+.legend-item::before {
+    content: "";
+    display: block;
+    width: 1rem;
+    height: 3px;
+    border-radius: 2px;
+}
+
+.legend-item.ma5::before {
+    background: #fbbf24;
+}
+
+.legend-item.ma20::before {
+    background: #3b82f6;
+}
+
+.legend-item.ma60::before {
+    background: #a855f7;
+}
+
+/* Chart Area */
+.chart-area {
+    padding: 1rem;
+}
+
+/* Loading & Error */
+.chart-loading,
+.chart-error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+    color: #94a3b8;
+    font-size: 1rem;
+}
+
+.chart-error {
+    color: #f87171;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .stock-chart-container {
+        max-width: 100%;
+        border-radius: 0.75rem;
+    }
+
+    .chart-legend {
+        gap: 1rem;
+        padding: 0.5rem 1rem;
+    }
+}

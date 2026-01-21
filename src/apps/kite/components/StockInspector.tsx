@@ -13,6 +13,7 @@ import {
 import { getStrategyVerdict } from "../utils/strategyDiagnosis";
 import { IconCompany, IconBOSS, IconLifeOS } from "../../../components/HandDrawnIcons";
 import { StrategyChecklist } from "./StrategyChecklist";
+import { StockChart } from "./StockChart";
 import "./StockInspector.css";
 
 interface StockInspectorProps {
@@ -73,6 +74,9 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
     });
     const [tradeSaving, setTradeSaving] = useState(false);
     const [tradeSuccess, setTradeSuccess] = useState(false);
+
+    // Chart modal state
+    const [showChart, setShowChart] = useState(false);
 
     // ============ Computed ============
     const isDisabled = gateLight === "RED" && activeStrategy === "OFFICE";
@@ -680,25 +684,43 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                                 </div>
                             </div>
 
-                            {/* Log Trade Button */}
-                            <button
-                                onClick={openTradeModal}
-                                style={{
-                                    width: '100%',
-                                    padding: '0.75rem',
-                                    marginBottom: '1rem',
-                                    background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(168, 85, 247, 0.3))',
-                                    border: '1px solid rgba(99, 102, 241, 0.4)',
-                                    borderRadius: '0.75rem',
-                                    color: '#c7d2fe',
-                                    fontSize: '1rem',
-                                    fontWeight: 600,
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s ease',
-                                }}
-                            >
-                                📝 記錄進場 Log Trade
-                            </button>
+                            {/* Action Buttons */}
+                            <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem' }}>
+                                <button
+                                    onClick={openTradeModal}
+                                    style={{
+                                        flex: 1,
+                                        padding: '0.75rem',
+                                        background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(168, 85, 247, 0.3))',
+                                        border: '1px solid rgba(99, 102, 241, 0.4)',
+                                        borderRadius: '0.75rem',
+                                        color: '#c7d2fe',
+                                        fontSize: '1rem',
+                                        fontWeight: 600,
+                                        cursor: 'pointer',
+                                        transition: 'all 0.2s ease',
+                                    }}
+                                >
+                                    📝 記錄進場
+                                </button>
+                                <button
+                                    onClick={() => setShowChart(true)}
+                                    style={{
+                                        flex: 1,
+                                        padding: '0.75rem',
+                                        background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(6, 182, 212, 0.2))',
+                                        border: '1px solid rgba(16, 185, 129, 0.4)',
+                                        borderRadius: '0.75rem',
+                                        color: '#6ee7b7',
+                                        fontSize: '1rem',
+                                        fontWeight: 600,
+                                        cursor: 'pointer',
+                                        transition: 'all 0.2s ease',
+                                    }}
+                                >
+                                    📈 K線圖
+                                </button>
+                            </div>
 
                             {/* Boss: Revenue YOY Verification Tile */}
                             {activeStrategy === "BOSS" && (
@@ -917,6 +939,14 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                         </div>
                     )}
                 </>
+            )}
+
+            {/* K-Line Chart Modal */}
+            {showChart && quote && (
+                <StockChart
+                    symbol={quote.symbol}
+                    onClose={() => setShowChart(false)}
+                />
             )}
         </div>
     );

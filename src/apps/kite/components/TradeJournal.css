@@ -18,12 +18,52 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .journal-header h2 {
     font-size: 1.75rem;
     font-weight: 700;
     margin: 0;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.refresh-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.last-update {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+}
+
+.auto-refresh-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.auto-refresh-toggle input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+}
+
+.auto-refresh-toggle span {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
 }
 
 .refresh-btn {
@@ -444,6 +484,9 @@
     border-radius: var(--radius-xl);
     width: 100%;
     max-width: 460px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
     box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
 }
 
@@ -464,6 +507,9 @@
 
 .settle-modal .modal-body {
     padding: 2rem;
+    overflow-y: auto;
+    flex: 1;
+    -webkit-overflow-scrolling: touch;
 }
 
 .settle-stock-info {
@@ -733,5 +779,65 @@
 
     .summary-card .value {
         font-size: 1.5rem;
+    }
+
+    /* Improve touch targets for mobile */
+    .holding-card {
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+    }
+
+    .holding-actions button {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 0.75rem 1rem;
+    }
+
+    .settle-modal {
+        max-width: 95vw;
+        margin: 1rem;
+    }
+}
+
+/* Extra optimizations for small screens */
+@media (max-width: 480px) {
+    .trade-journal {
+        padding: 0;
+    }
+
+    .summary-cards {
+        gap: 0.75rem;
+    }
+
+    .holdings-list {
+        gap: 0.75rem;
+    }
+
+    /* Ensure all interactive elements meet 44x44px minimum */
+    .holding-header {
+        min-height: 44px;
+    }
+
+    /* Modal improvements for small screens */
+    .settle-modal-content,
+    .alert-modal-content {
+        max-height: 85vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .modal-header h3 {
+        font-size: 1.1rem;
+    }
+
+    /* Improve form input spacing */
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    input,
+    textarea {
+        font-size: 16px !important; /* Prevent zoom on iOS */
+        min-height: 48px;
     }
 }

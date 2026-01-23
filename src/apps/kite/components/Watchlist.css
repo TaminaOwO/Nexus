@@ -436,4 +436,58 @@
     .price-info {
         flex-wrap: wrap;
     }
+
+    /* Improve touch targets */
+    .watchlist-entry {
+        padding: 1.25rem;
+        cursor: pointer;
+        -webkit-tap-highlight-color: rgba(245, 158, 11, 0.1);
+    }
+
+    .entry-actions button {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .add-btn {
+        min-height: 44px;
+        padding: 0.75rem 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .watchlist-container {
+        padding: 0;
+    }
+
+    .watchlist-header {
+        padding: 1rem 0;
+    }
+
+    .add-form {
+        padding: 1rem;
+    }
+
+    /* Ensure inputs don't cause zoom on iOS */
+    .add-form input,
+    .add-form select,
+    .add-form textarea {
+        font-size: 16px !important;
+        min-height: 48px;
+    }
+
+    .watchlist-entries {
+        gap: 0.75rem;
+    }
+
+    /* Improve mini-checklist readability */
+    .mini-checklist {
+        padding: 0.75rem;
+    }
+
+    .mini-condition {
+        padding: 0.5rem;
+    }
 }

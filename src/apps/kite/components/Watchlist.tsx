@@ -18,11 +18,19 @@ interface WatchlistEntry {
     created_at: string;
 }
 
+interface WatchlistConversionData {
+    symbol: string;
+    companyName: string;
+    targetPrice: number;
+    strategy: "OFFICE" | "BOSS";
+    subStrategy: SubStrategyType;
+}
+
 interface WatchlistProps {
     structure: StructureType;
     currentWind: WindType | null;
     onStockSelect?: (symbol: string) => void;
-    onConvertToTrade?: (entry: WatchlistEntry) => void;
+    onConvertToTrade?: (data: WatchlistConversionData) => void;
 }
 
 export function Watchlist({ structure, currentWind, onStockSelect, onConvertToTrade }: WatchlistProps) {
@@ -142,14 +150,36 @@ export function Watchlist({ structure, currentWind, onStockSelect, onConvertToTr
 
     const convertToTrade = async (entry: WatchlistEntry) => {
         if (onConvertToTrade) {
-            onConvertToTrade(entry);
+            // Pass conversion data to parent
+            onConvertToTrade({
+                symbol: entry.symbol,
+                companyName: entry.company_name,
+                targetPrice: entry.target_price,
+                strategy: entry.strategy as "OFFICE" | "BOSS",
+                subStrategy: entry.sub_strategy as SubStrategyType,
+            });
+        }
+
+        // Mark as ENTERED in backend
+        try {
+            const res = await fetch(`${API_BASE}/watchlist/${entry.id}/convert`, {
+                method: "POST"
+            });
+            if (res.ok) {
+                // Refresh watchlist to update status
+                fetchWatchlist();
+            }
+        } catch (error) {
+            console.error("Failed to mark as entered:", error);
         }
     };
 
     // Get checklist data for an entry (conditions + status)
     const getEntryChecklistData = (entry: WatchlistEntry) => {
         const quote = quotes[entry.symbol] || null;
-        const conditions = getStrategyChecklist(quote, structure, entry.sub_strategy, currentWind, false);
+        // For BOSS strategy, assume YOY > 30% is met since we can't fetch this data
+        const revenueYoyChecked = entry.strategy === "BOSS";
+        const conditions = getStrategyChecklist(quote, structure, entry.sub_strategy, currentWind, revenueYoyChecked);
         const status = getChecklistStatus(conditions);
         return { conditions, status };
     };

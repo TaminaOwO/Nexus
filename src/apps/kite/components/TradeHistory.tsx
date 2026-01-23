@@ -32,10 +32,10 @@ interface HistoryData {
 const API_BASE = "/api/kite";
 
 const STRATEGY_OPTIONS = [
-    { value: "OFFICE|STRONG_WEEKLY", label: "🏢 Office - Strong Weekly" },
-    { value: "OFFICE|WEEKLY_TREND", label: "🏢 Office - Weekly Trend" },
-    { value: "BOSS|WEEKLY_PULLBACK", label: "🛡️ Boss - Weekly Pullback" },
-    { value: "BOSS|CHEAP_ACQUISITION", label: "🛡️ Boss - Cheap Acquisition" },
+    { value: "OFFICE|STRONG_WEEKLY", label: "Office - Strong Weekly", icon: "OFFICE" },
+    { value: "OFFICE|WEEKLY_TREND", label: "Office - Weekly Trend", icon: "OFFICE" },
+    { value: "BOSS|WEEKLY_PULLBACK", label: "Boss - Weekly Pullback", icon: "BOSS" },
+    { value: "BOSS|CHEAP_ACQUISITION", label: "Boss - Cheap Acquisition", icon: "BOSS" },
 ];
 
 function formatPercent(value: number): string {
@@ -67,10 +67,56 @@ function calcDays(entryStr: string, exitStr: string): number {
     return Math.ceil((exit.getTime() - entry.getTime()) / (1000 * 60 * 60 * 24));
 }
 
+// Calculate strategy-specific performance
+function getStrategyStats(trades: ClosedTrade[]) {
+    const stats: Record<string, { wins: number; total: number; pl: number }> = {};
+
+    trades.forEach(trade => {
+        const key = `${trade.strategy}|${trade.sub_strategy}`;
+        if (!stats[key]) {
+            stats[key] = { wins: 0, total: 0, pl: 0 };
+        }
+        stats[key].total++;
+        stats[key].pl += trade.final_pl;
+        if (trade.final_pl > 0) stats[key].wins++;
+    });
+
+    return Object.entries(stats).map(([key, data]) => {
+        const [strategy, subStrategy] = key.split('|');
+        return {
+            strategy,
+            subStrategy,
+            winRate: (data.wins / data.total) * 100,
+            totalPL: data.pl,
+            totalTrades: data.total,
+        };
+    }).sort((a, b) => b.totalPL - a.totalPL);
+}
+
+// Calculate monthly performance
+function getMonthlyStats(trades: ClosedTrade[]) {
+    const monthly: Record<string, { pl: number; trades: number }> = {};
+
+    trades.forEach(trade => {
+        const date = new Date(trade.closed_at);
+        const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        if (!monthly[key]) {
+            monthly[key] = { pl: 0, trades: 0 };
+        }
+        monthly[key].pl += trade.final_pl;
+        monthly[key].trades++;
+    });
+
+    return Object.entries(monthly)
+        .map(([month, data]) => ({ month, ...data }))
+        .sort((a, b) => a.month.localeCompare(b.month));
+}
+
 export function TradeHistory() {
     const [history, setHistory] = useState<HistoryData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [showAnalytics, setShowAnalytics] = useState(false);
 
     // Import Modal
     const [showImport, setShowImport] = useState(false);
@@ -199,13 +245,17 @@ export function TradeHistory() {
                     }}
                 >
                     <div
-                        className="import-modal w-[95vw] md:max-w-lg overflow-x-hidden"
+                        className="import-modal"
                         onClick={(e) => e.stopPropagation()}
                         style={{
                             background: 'linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(10, 15, 30, 0.98))',
                             border: '1px solid rgba(255,255,255,0.1)',
                             borderRadius: '1rem',
                             boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
+                            width: '95vw',
+                            maxWidth: '500px',
+                            maxHeight: '90vh',
+                            overflow: 'auto',
                         }}
                     >
                         <div style={{
@@ -245,7 +295,7 @@ export function TradeHistory() {
                                         onBlur={(e) => fetchCompanyName(e.target.value)}
                                     />
                                 </div>
-                                <div className="form-group">
+                                <div className="form-group" style={{ flex: 1, minWidth: 0 }}>
                                     <label>
                                         🏢 公司名 Company
                                         {!nameEditable && importForm.companyName && (
@@ -265,6 +315,7 @@ export function TradeHistory() {
                                         onChange={(e) => setImportForm({ ...importForm, companyName: e.target.value })}
                                         readOnly={!nameEditable && !!importForm.companyName}
                                         className={fetchingName ? "loading" : ""}
+                                        style={{ width: '100%', maxWidth: '100%' }}
                                     />
                                 </div>
                             </div>
@@ -405,32 +456,100 @@ export function TradeHistory() {
 
             <div className="history-header">
                 <h2>📈 Trade History</h2>
-                <button className="import-action-btn" onClick={() => setShowImport(true)}>
-                    ➕ Import Past Data
-                </button>
+                <div className="header-actions">
+                    <button className="analytics-btn" onClick={() => setShowAnalytics(!showAnalytics)}>
+                        📊 {showAnalytics ? "Hide" : "Show"} Analytics
+                    </button>
+                    <button className="import-action-btn" onClick={() => setShowImport(true)}>
+                        ➕ Import Past Data
+                    </button>
+                </div>
             </div>
 
             {/* Stats Cards */}
             {
                 history && (
-                    <div className="history-stats">
-                        <div className="stat-card">
-                            <span className="stat-label">🎯 Win Rate</span>
-                            <span className="stat-value">{history.win_rate.toFixed(1)}%</span>
-                            <span className="stat-sub">{history.wins} / {history.total_trades}</span>
+                    <>
+                        <div className="history-stats">
+                            <div className="stat-card">
+                                <span className="stat-label">🎯 Win Rate</span>
+                                <span className="stat-value">{history.win_rate.toFixed(1)}%</span>
+                                <span className="stat-sub">{history.wins} / {history.total_trades}</span>
+                            </div>
+                            <div className={`stat-card pl ${history.total_pl >= 0 ? "up" : "down"}`}>
+                                <span className="stat-label">💰 Total P/L</span>
+                                <span className="stat-value">{formatMoney(history.total_pl)}</span>
+                            </div>
+                            <div className="stat-card best">
+                                <span className="stat-label">🏆 Best Strategy</span>
+                                <span className="stat-value">
+                                    {history.best_strategy === "BOSS" ? <IconBOSS className="w-5 h-5 inline mr-1" /> : <IconCompany className="w-5 h-5 inline mr-1" />} {history.best_strategy || "-"}
+                                </span>
+                                <span className="stat-sub">{formatMoney(history.best_pl)}</span>
+                            </div>
+                            <div className="stat-card">
+                                <span className="stat-label">📅 Avg. Hold Time</span>
+                                <span className="stat-value">
+                                    {history.trades.length > 0
+                                        ? Math.round(history.trades.reduce((sum, t) => sum + calcDays(t.created_at, t.closed_at), 0) / history.trades.length)
+                                        : 0
+                                    }
+                                </span>
+                                <span className="stat-sub">days</span>
+                            </div>
                         </div>
-                        <div className={`stat-card pl ${history.total_pl >= 0 ? "up" : "down"}`}>
-                            <span className="stat-label">💰 Total P/L</span>
-                            <span className="stat-value">{formatMoney(history.total_pl)}</span>
-                        </div>
-                        <div className="stat-card best">
-                            <span className="stat-label">🏆 Best Strategy</span>
-                            <span className="stat-value">
-                                {history.best_strategy === "BOSS" ? <IconBOSS className="w-5 h-5 inline mr-1" /> : <IconCompany className="w-5 h-5 inline mr-1" />} {history.best_strategy || "-"}
-                            </span>
-                            <span className="stat-sub">{formatMoney(history.best_pl)}</span>
-                        </div>
-                    </div>
+
+                        {/* Advanced Analytics */}
+                        {showAnalytics && history.trades.length > 0 && (
+                            <div className="analytics-section">
+                                <h3>📊 Strategy Performance</h3>
+                                <div className="strategy-breakdown">
+                                    {getStrategyStats(history.trades).map((stat, idx) => (
+                                        <div key={idx} className="strategy-stat-card">
+                                            <div className="strategy-stat-header">
+                                                {stat.strategy === "BOSS" ? <IconBOSS className="w-5 h-5" /> : <IconCompany className="w-5 h-5" />}
+                                                <span className="strategy-name">{stat.subStrategy.replace(/_/g, ' ')}</span>
+                                            </div>
+                                            <div className="strategy-stat-body">
+                                                <div className="stat-row">
+                                                    <span>Win Rate:</span>
+                                                    <span className={stat.winRate >= 50 ? "up" : "down"}>{stat.winRate.toFixed(1)}%</span>
+                                                </div>
+                                                <div className="stat-row">
+                                                    <span>Total P/L:</span>
+                                                    <span className={stat.totalPL >= 0 ? "up" : "down"}>{formatMoney(stat.totalPL)}</span>
+                                                </div>
+                                                <div className="stat-row">
+                                                    <span>Trades:</span>
+                                                    <span>{stat.totalTrades}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <h3>📈 Monthly Performance</h3>
+                                <div className="monthly-chart">
+                                    {getMonthlyStats(history.trades).map((month, idx) => (
+                                        <div key={idx} className="month-bar">
+                                            <div className="month-label">{month.month.slice(5)}</div>
+                                            <div className="month-bar-container">
+                                                <div
+                                                    className={`month-bar-fill ${month.pl >= 0 ? "up" : "down"}`}
+                                                    style={{
+                                                        width: `${Math.min(Math.abs(month.pl) / Math.max(...getMonthlyStats(history.trades).map(m => Math.abs(m.pl))) * 100, 100)}%`,
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className={`month-value ${month.pl >= 0 ? "up" : "down"}`}>
+                                                {formatMoney(month.pl)}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </>
                 )
             }
 

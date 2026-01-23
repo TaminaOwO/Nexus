@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import {
     QuoteData,
     StrategyType,
@@ -16,12 +16,22 @@ import { StrategyChecklist } from "./StrategyChecklist";
 import { StockChart } from "./StockChart";
 import "./StockInspector.css";
 
+interface WatchlistConversionData {
+    symbol: string;
+    companyName: string;
+    targetPrice: number;
+    strategy: "OFFICE" | "BOSS";
+    subStrategy: SubStrategyType;
+}
+
 interface StockInspectorProps {
     gateLight: GateLight;
     strategy: StrategyType;
     structure: StructureType;
     initialSymbol?: string;
     currentWind?: WindType | null;
+    conversionData?: WatchlistConversionData | null;
+    onConversionComplete?: () => void;
 }
 
 const API_BASE = "/api/kite";
@@ -47,7 +57,7 @@ function formatPercent(value: number): string {
     return `${sign}${value.toFixed(2)}%`;
 }
 
-export function StockInspector({ gateLight, strategy: defaultStrategy, structure, initialSymbol, currentWind }: StockInspectorProps) {
+export function StockInspector({ gateLight, strategy: defaultStrategy, structure, initialSymbol, currentWind, conversionData, onConversionComplete }: StockInspectorProps) {
     // ============ State ============
     const [symbol, setSymbol] = useState(initialSymbol || "");
     const [quote, setQuote] = useState<QuoteData | null>(null);
@@ -124,6 +134,54 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
         }
     };
 
+    // Handle watchlist conversion - auto-fetch quote and open trade modal
+    useEffect(() => {
+        if (conversionData) {
+            // Set symbol and strategy from conversion data
+            setSymbol(conversionData.symbol);
+            setActiveStrategy(conversionData.strategy);
+
+            if (conversionData.strategy === "OFFICE") {
+                setOfficeSubStrategy(conversionData.subStrategy as OfficeSubStrategy);
+            } else {
+                setBossSubStrategy(conversionData.subStrategy as BossSubStrategy);
+            }
+
+            // Auto-fetch quote
+            const autoFetch = async () => {
+                setLoading(true);
+                setError(null);
+                try {
+                    const response = await fetch(`${API_BASE}/quote?symbol=${encodeURIComponent(conversionData.symbol)}`);
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch quote");
+                    }
+                    const data: QuoteData = await response.json();
+                    setQuote(data);
+
+                    // Auto-open trade modal after quote loads
+                    const defaultStopLoss = Math.round(data.price * 0.95 * 100) / 100;
+                    setTradeForm({
+                        entryPrice: data.price,
+                        quantity: 1000, // Default to 1張 = 1000股
+                        plannedBatches: structure === "EASY_RISE" ? 3 : structure === "BOUNDARY" ? 5 : 10,
+                        currentBatch: 1,
+                        stopLossPrice: defaultStopLoss,
+                        takeProfitPrice: conversionData.targetPrice || 0,
+                    });
+                    setTradeSuccess(false);
+                    setShowTradeModal(true);
+                } catch (err) {
+                    setError("Failed to load stock data for conversion");
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            autoFetch();
+        }
+    }, [conversionData, structure]);
+
     // Open trade modal
     const openTradeModal = () => {
         if (quote) {
@@ -185,6 +243,12 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
             }
 
             setTradeSuccess(true);
+
+            // If this was a watchlist conversion, notify parent
+            if (conversionData && onConversionComplete) {
+                onConversionComplete();
+            }
+
             setTimeout(() => setShowTradeModal(false), 1500);
         } catch (err) {
             setError("Failed to save trade");

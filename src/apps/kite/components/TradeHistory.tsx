@@ -32,10 +32,10 @@ interface HistoryData {
 const API_BASE = "/api/kite";
 
 const STRATEGY_OPTIONS = [
-    { value: "OFFICE|STRONG_WEEKLY", label: "🏢 Office - Strong Weekly" },
-    { value: "OFFICE|WEEKLY_TREND", label: "🏢 Office - Weekly Trend" },
-    { value: "BOSS|WEEKLY_PULLBACK", label: "🛡️ Boss - Weekly Pullback" },
-    { value: "BOSS|CHEAP_ACQUISITION", label: "🛡️ Boss - Cheap Acquisition" },
+    { value: "OFFICE|STRONG_WEEKLY", label: "Office - Strong Weekly", icon: "OFFICE" },
+    { value: "OFFICE|WEEKLY_TREND", label: "Office - Weekly Trend", icon: "OFFICE" },
+    { value: "BOSS|WEEKLY_PULLBACK", label: "Boss - Weekly Pullback", icon: "BOSS" },
+    { value: "BOSS|CHEAP_ACQUISITION", label: "Boss - Cheap Acquisition", icon: "BOSS" },
 ];
 
 function formatPercent(value: number): string {
@@ -245,13 +245,17 @@ export function TradeHistory() {
                     }}
                 >
                     <div
-                        className="import-modal w-[95vw] md:max-w-lg overflow-x-hidden"
+                        className="import-modal"
                         onClick={(e) => e.stopPropagation()}
                         style={{
                             background: 'linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(10, 15, 30, 0.98))',
                             border: '1px solid rgba(255,255,255,0.1)',
                             borderRadius: '1rem',
                             boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
+                            width: '95vw',
+                            maxWidth: '500px',
+                            maxHeight: '90vh',
+                            overflow: 'auto',
                         }}
                     >
                         <div style={{
@@ -291,7 +295,7 @@ export function TradeHistory() {
                                         onBlur={(e) => fetchCompanyName(e.target.value)}
                                     />
                                 </div>
-                                <div className="form-group">
+                                <div className="form-group" style={{ flex: 1, minWidth: 0 }}>
                                     <label>
                                         🏢 公司名 Company
                                         {!nameEditable && importForm.companyName && (
@@ -311,6 +315,7 @@ export function TradeHistory() {
                                         onChange={(e) => setImportForm({ ...importForm, companyName: e.target.value })}
                                         readOnly={!nameEditable && !!importForm.companyName}
                                         className={fetchingName ? "loading" : ""}
+                                        style={{ width: '100%', maxWidth: '100%' }}
                                     />
                                 </div>
                             </div>

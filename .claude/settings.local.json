@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git log:*)",
+      "Bash(grep:*)",
+      "Bash(npm run build:*)",
+      "Bash(where:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm install:*)",
+      "Bash(go list:*)",
+      "Bash(find:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}

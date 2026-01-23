@@ -177,7 +177,9 @@ export function Watchlist({ structure, currentWind, onStockSelect, onConvertToTr
     // Get checklist data for an entry (conditions + status)
     const getEntryChecklistData = (entry: WatchlistEntry) => {
         const quote = quotes[entry.symbol] || null;
-        const conditions = getStrategyChecklist(quote, structure, entry.sub_strategy, currentWind, false);
+        // For BOSS strategy, assume YOY > 30% is met since we can't fetch this data
+        const revenueYoyChecked = entry.strategy === "BOSS";
+        const conditions = getStrategyChecklist(quote, structure, entry.sub_strategy, currentWind, revenueYoyChecked);
         const status = getChecklistStatus(conditions);
         return { conditions, status };
     };

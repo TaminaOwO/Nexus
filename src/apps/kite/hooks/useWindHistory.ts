@@ -103,9 +103,12 @@ export function useWindHistory() {
                 const histRes = await fetch(`${API_BASE}/wind/history`);
                 if (histRes.ok) {
                     const data = await histRes.json();
-                    // Map API response to frontend WindRecord if needed
-                    // Assuming API returns matches WindRecord interface
-                    setHistory(data || []);
+                    // Normalize date format from backend (ISO 8601 → YYYY-MM-DD)
+                    const normalized = data.map((record: any) => ({
+                        ...record,
+                        date: record.date.split('T')[0] // Extract YYYY-MM-DD from ISO 8601
+                    }));
+                    setHistory(normalized || []);
                 }
 
                 // Fetch Today's Wind
@@ -137,7 +140,14 @@ export function useWindHistory() {
                 // Re-fetch history to include yesterday's entry
                 fetch(`${API_BASE}/wind/history`)
                     .then(res => res.ok ? res.json() : [])
-                    .then(data => setHistory(data || []))
+                    .then(data => {
+                        // Normalize date format
+                        const normalized = data.map((record: any) => ({
+                            ...record,
+                            date: record.date.split('T')[0]
+                        }));
+                        setHistory(normalized || []);
+                    })
                     .catch(err => console.error("Failed to refresh history:", err));
             }
         };

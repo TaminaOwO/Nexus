@@ -199,40 +199,51 @@ func GetPortfolio() (*PortfolioResponse, error) {
 			StrategyAlerts:      alertMessages,
 		}
 
+		// Send Discord notifications for strategy alerts (after holding is defined)
+		for _, alert := range strategyAlerts {
+			go SendPortfolioAlert(alert, holding)
+		}
+
 		holdings = append(holdings, holding)
 		totalCost += costBasis
 		marketValue += marketVal
 
 		// Basic alerts (Stop Loss / Take Profit)
 		if trade.StopLossPrice > 0 && currentPrice <= trade.StopLossPrice {
-			alerts = append(alerts, Alert{
+			alert := Alert{
 				Type:    "STOP_LOSS",
 				Symbol:  trade.Symbol,
 				TradeID: trade.ID,
 				Message: fmt.Sprintf("📉 %s 觸及停損 $%.2f! (Hit Stop Loss at $%.2f)",
 					trade.CompanyName, currentPrice, trade.StopLossPrice),
-			})
+			}
+			alerts = append(alerts, alert)
+			go SendPortfolioAlert(alert, holding)
 		}
 
 		if trade.TakeProfitPrice > 0 && currentPrice >= trade.TakeProfitPrice {
-			alerts = append(alerts, Alert{
+			alert := Alert{
 				Type:    "TAKE_PROFIT",
 				Symbol:  trade.Symbol,
 				TradeID: trade.ID,
 				Message: fmt.Sprintf("🚀 %s 達到停利 $%.2f! (Hit Take Profit at $%.2f)",
 					trade.CompanyName, currentPrice, trade.TakeProfitPrice),
-			})
+			}
+			alerts = append(alerts, alert)
+			go SendPortfolioAlert(alert, holding)
 		}
 
 		// Force sell safety net
 		if unrealizedPLPct <= -10 && trade.StopLossPrice == 0 && trade.Strategy != "BOSS" {
-			alerts = append(alerts, Alert{
+			alert := Alert{
 				Type:    "FORCE_SELL",
 				Symbol:  trade.Symbol,
 				TradeID: trade.ID,
 				Message: fmt.Sprintf("⚠️ %s 已虧損 %.1f%% - 建議止損! (Down %.1f%% - Cut Loss!)",
 					trade.CompanyName, unrealizedPLPct, unrealizedPLPct),
-			})
+			}
+			alerts = append(alerts, alert)
+			go SendPortfolioAlert(alert, holding)
 		}
 	}
 

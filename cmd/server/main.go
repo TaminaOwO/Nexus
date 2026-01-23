@@ -24,7 +24,7 @@ func main() {
 	database.Init()
 
 	// Auto Migrate
-	database.DB.AutoMigrate(&model.WindRecord{}, &model.TradeEntry{}, &model.CycleSetting{}, &model.WatchlistEntry{})
+	database.DB.AutoMigrate(&model.WindRecord{}, &model.TradeEntry{}, &model.CycleSetting{}, &model.WatchlistEntry{}, &model.NotificationLog{})
 
 	r := gin.Default()
 
@@ -81,6 +81,10 @@ func main() {
 		kite.PUT("/watchlist/:id", kiteHandler.UpdateWatchlistEntry)
 		kite.DELETE("/watchlist/:id", kiteHandler.DeleteWatchlistEntry)
 		kite.POST("/watchlist/:id/convert", kiteHandler.ConvertToTrade)
+		kite.GET("/watchlist/alerts", kiteHandler.GetWatchlistAlerts)
+
+		// Webhook Test Route
+		kite.POST("/test-webhook", kiteHandler.TestWebhook)
 
 		// Chart Routes
 		kite.GET("/chart", kiteHandler.GetChartData)

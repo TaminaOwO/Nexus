@@ -1,13 +1,13 @@
 # Nexus Project TODO List
 
-> **Last Updated**: 2026-01-22  
-> **當前焦點**: Kite 模組收尾 → LifeOS 核心 → ChoiceFit 初始化
+> **Last Updated**: 2026-01-23
+> **當前焦點**: Kite 模組優化完成 → LifeOS 核心 → ChoiceFit 初始化
 
 ---
 
 ## ✅ 已完成 (Completed)
 
-### Kite 模組
+### Kite 模組 - 核心功能
 - [x] Wind Cockpit（風型記錄 + 結構計算 + 門燈）
 - [x] Stock Inspector（個股分析 + 策略診斷）
 - [x] K 線圖表（日/週/月 K）
@@ -19,6 +19,26 @@
 - [x] Railway + Docker 部署
 - [x] SQLite 持久化（Volume）
 
+### Kite 模組 - 優先功能增強 (2026-01-23)
+- [x] **Watchlist → Trade 轉換**：一鍵從觀察清單進場，自動預填數據
+- [x] **即時價格更新**：Portfolio 30秒自動刷新 + 手動刷新控制
+- [x] **進階分析儀表板**：
+  - [x] 策略績效分組（勝率、損益、交易次數）
+  - [x] 月度績效圖表（橫條圖視覺化）
+  - [x] 平均持有天數統計
+- [x] **移動端 UI 優化**：
+  - [x] 44x44px 觸控目標標準
+  - [x] iOS zoom 防止（16px font-size）
+  - [x] Modal 滾動優化
+  - [x] 響應式間距調整
+
+### Kite 模組 - UI/UX 修復 (2026-01-23)
+- [x] History 匯入表單寬度溢出修復
+- [x] 統一策略 Icon 顯示
+- [x] Watchlist BOSS 策略 YOY>30% 預設勾選
+- [x] Active 平倉彈窗垂直居中修復
+- [x] Wind 歷史循環 API 持久化（已驗證）
+
 ### 基礎建設
 - [x] Go + Gin 後端架構
 - [x] React + TypeScript 前端
@@ -29,23 +49,22 @@
 
 ## 🔴 立即處理 (Immediate)
 
-### Kite 修復與優化
-- [ ] **Wind 持久化**：確保風型記錄存入 `WindRecord` 表格，重載頁面後保留
-- [ ] **MACD 精度**：修正 `calculateMACDDays` 的 off-by-one 錯誤
-- [ ] **週趨勢邏輯**：改用 MACD DIF（藍線）斜率判斷，避免「週三假訊號」
+### Kite UI 改進
+- [ ] **替換原生 Emoji 為 SVG Icon**：統一視覺風格，支持自訂顏色
+- [ ] **MACD 精度**：修正 `calculateMACDDays` 的 off-by-one 錯誤（如有）
+- [ ] **週趨勢邏輯**：改用 MACD DIF（藍線）斜率判斷，避免「週三假訊號」（如需）
 
-### Mobile UI 優化
-- [x] 響應式底部導航（手機版）
-- [x] 觸控友善的按鈕大小（min 48px）
-- [x] K 線圖表手機版佈局調整
+### LifeOS 後端整合
+- [ ] Habit Tracker 資料持久化
+- [ ] Todo Board CRUD API
 
 ---
 
 ## 🟡 短期目標 (Short-Term)
 
 ### Kite 功能增強
-- [ ] **Portfolio View 強化**：
-  - [ ] 即時盈虧更新頻率優化
+- [x] **Portfolio View 強化**：
+  - [x] 即時盈虧更新（30秒自動刷新）
   - [ ] 策略條件監控（停損/停利警示）
 - [ ] **即時通知系統**：
   - [ ] 停損/停利觸發通知
@@ -54,9 +73,9 @@
 - [ ] **資料品質**：
   - [ ] Smart Suffix Retry（.TW vs .TWO 自動偵測上市/櫃）
   - [ ] 中文公司名稱自動抓取穩定化
-- [ ] **策略護欄**：
-  - [ ] BOSS 策略批次建議（10-15 批）
-  - [ ] OFFICE 策略批次建議（3-5 批）
+- [x] **策略護欄**：
+  - [x] BOSS 策略批次建議（10-15 批）- 已在轉換時自動設定
+  - [x] OFFICE 策略批次建議（3-5 批）- 已在轉換時自動設定
 
 ### LifeOS 模組 MVP
 - [ ] **Habit Tracker 後端**：

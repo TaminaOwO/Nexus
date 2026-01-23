@@ -7,7 +7,7 @@ import { StockInspector } from "./components/StockInspector";
 import { TradeJournal } from "./components/TradeJournal";
 import { TradeHistory } from "./components/TradeHistory";
 import { Watchlist } from "./components/Watchlist";
-import { StructureType, StrategyType } from "./types";
+import { StructureType, StrategyType, SubStrategyType } from "./types";
 import "./kite.css";
 
 // Determine strategy based on structure
@@ -19,10 +19,19 @@ function getStrategy(structure: StructureType): StrategyType {
 
 type ViewType = "active" | "watchlist" | "history";
 
+interface WatchlistConversionData {
+    symbol: string;
+    companyName: string;
+    targetPrice: number;
+    strategy: "OFFICE" | "BOSS";
+    subStrategy: SubStrategyType;
+}
+
 function Kite() {
     const windState = useWindHistory();
     const [activeView, setActiveView] = useState<ViewType>("active");
     const [inspectorSymbol, setInspectorSymbol] = useState<string>("");
+    const [conversionData, setConversionData] = useState<WatchlistConversionData | null>(null);
 
     // Calculate structure and gate at dashboard level
     const structure = useMemo(
@@ -42,6 +51,13 @@ function Kite() {
 
     const handleWatchlistSelect = (symbol: string) => {
         setInspectorSymbol(symbol);
+        setConversionData(null); // Clear conversion data when just viewing
+        setActiveView("active");
+    };
+
+    const handleWatchlistConvert = (data: WatchlistConversionData) => {
+        setInspectorSymbol(data.symbol);
+        setConversionData(data);
         setActiveView("active");
     };
 
@@ -83,6 +99,8 @@ function Kite() {
                             structure={structure}
                             initialSymbol={inspectorSymbol}
                             currentWind={windState.todayWind}
+                            conversionData={conversionData}
+                            onConversionComplete={() => setConversionData(null)}
                         />
                         <TradeJournal />
                     </>
@@ -92,6 +110,7 @@ function Kite() {
                         structure={structure}
                         currentWind={windState.todayWind}
                         onStockSelect={handleWatchlistSelect}
+                        onConvertToTrade={handleWatchlistConvert}
                     />
                 )}
                 {activeView === "history" && (

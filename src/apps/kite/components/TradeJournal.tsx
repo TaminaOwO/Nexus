@@ -79,6 +79,8 @@ export function TradeJournal() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [showAlertModal, setShowAlertModal] = useState(false);
+    const [autoRefresh, setAutoRefresh] = useState(true);
+    const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
 
     // Settlement Modal State
     const [showSettleModal, setShowSettleModal] = useState(false);
@@ -89,8 +91,10 @@ export function TradeJournal() {
     });
     const [settling, setSettling] = useState(false);
 
-    const fetchPortfolio = useCallback(async () => {
-        setLoading(true);
+    const fetchPortfolio = useCallback(async (silent = false) => {
+        if (!silent) {
+            setLoading(true);
+        }
         setError(null);
         try {
             const response = await fetch(`${API_BASE}/portfolio`);
@@ -99,6 +103,7 @@ export function TradeJournal() {
             }
             const data: PortfolioData = await response.json();
             setPortfolio(data);
+            setLastRefresh(new Date());
 
             // Show alert modal if there are alerts
             if (data.alerts && data.alerts.length > 0) {
@@ -107,13 +112,27 @@ export function TradeJournal() {
         } catch (err) {
             setError(err instanceof Error ? err.message : "Error loading portfolio");
         } finally {
-            setLoading(false);
+            if (!silent) {
+                setLoading(false);
+            }
         }
     }, []);
 
+    // Initial fetch
     useEffect(() => {
         fetchPortfolio();
     }, [fetchPortfolio]);
+
+    // Auto-refresh every 30 seconds
+    useEffect(() => {
+        if (!autoRefresh) return;
+
+        const interval = setInterval(() => {
+            fetchPortfolio(true); // Silent refresh
+        }, 30000); // 30 seconds
+
+        return () => clearInterval(interval);
+    }, [autoRefresh, fetchPortfolio]);
 
     // Open settlement modal
     const openSettleModal = (holding: Holding) => {
@@ -302,9 +321,24 @@ export function TradeJournal() {
 
             <div className="journal-header">
                 <h2>📊 Portfolio Manager</h2>
-                <button className="refresh-btn" onClick={fetchPortfolio}>
-                    🔄 Refresh
-                </button>
+                <div className="header-controls">
+                    <div className="refresh-info">
+                        <span className="last-update">
+                            Last: {lastRefresh.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                        </span>
+                        <label className="auto-refresh-toggle">
+                            <input
+                                type="checkbox"
+                                checked={autoRefresh}
+                                onChange={(e) => setAutoRefresh(e.target.checked)}
+                            />
+                            <span>Auto (30s)</span>
+                        </label>
+                    </div>
+                    <button className="refresh-btn" onClick={() => fetchPortfolio()}>
+                        🔄 Refresh
+                    </button>
+                </div>
             </div>
 
             {/* Summary Cards */}

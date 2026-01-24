@@ -3,11 +3,10 @@
    ============================================ */
 
 .trade-journal {
-    background: var(--bg-card);
-    backdrop-filter: blur(12px);
-    border: 1px solid var(--glass-border);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
     border-radius: var(--radius-xl);
-    box-shadow: var(--glass-shadow);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     padding: 2rem;
     margin-top: 2rem;
 }
@@ -71,8 +70,8 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.75rem 1.5rem;
-    background: var(--bg-input);
-    border: 1px solid var(--glass-border);
+    background: var(--bg-surface);
+    border: 2px solid var(--border-default);
     border-radius: var(--radius-lg);
     color: var(--text-primary);
     font-size: 0.95rem;
@@ -82,8 +81,8 @@
 }
 
 .refresh-btn:hover {
-    background: var(--bg-card-hover);
-    border-color: var(--office-primary);
+    background: var(--bg-hover);
+    border-color: var(--office);
     transform: translateY(-2px);
 }
 
@@ -98,7 +97,8 @@
 }
 
 .summary-card {
-    background: var(--bg-input);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
     border-radius: var(--radius-xl);
     padding: 1.5rem;
     display: flex;
@@ -109,6 +109,7 @@
 
 .summary-card:hover {
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .summary-card .label {
@@ -132,7 +133,7 @@
 
 .summary-card.pl.up {
     border-left: 4px solid var(--success);
-    box-shadow: inset 0 0 40px var(--success-glow);
+    background: rgba(22, 163, 74, 0.05);
 }
 
 .summary-card.pl.up .value,
@@ -142,7 +143,7 @@
 
 .summary-card.pl.down {
     border-left: 4px solid var(--danger);
-    box-shadow: inset 0 0 40px var(--danger-glow);
+    background: rgba(239, 68, 68, 0.05);
 }
 
 .summary-card.pl.down .value,
@@ -160,26 +161,28 @@
 }
 
 .holding-card {
-    background: var(--bg-input);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
     border-radius: var(--radius-xl);
     padding: 1.5rem;
-    border-left: 4px solid var(--office-primary);
+    border-left: 4px solid var(--office);
     transition: all 0.2s ease;
 }
 
 .holding-card:hover {
-    background: var(--bg-card-hover);
+    background: var(--bg-surface);
     transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .holding-card.office {
-    border-left-color: var(--office-primary);
-    box-shadow: inset 0 0 40px var(--office-glow);
+    border-left-color: var(--office);
+    background: rgba(59, 130, 246, 0.02);
 }
 
 .holding-card.boss {
-    border-left-color: var(--boss-primary);
-    box-shadow: inset 0 0 40px var(--boss-glow);
+    border-left-color: var(--boss);
+    background: rgba(245, 158, 11, 0.02);
 }
 
 .holding-header {
@@ -248,23 +251,24 @@
 
 .strategy-badge.office,
 .holding-card.office .strategy-badge {
-    background: var(--office-glow);
-    color: var(--office-text);
-    border: 1px solid var(--office-border);
+    background: #DBEAFE;
+    color: #1E40AF;
+    border: 1px solid #93C5FD;
 }
 
 .strategy-badge.boss,
 .holding-card.boss .strategy-badge {
-    background: var(--boss-glow);
-    color: var(--boss-text);
-    border: 1px solid var(--boss-border);
+    background: #FEF3C7;
+    color: #B45309;
+    border: 1px solid #FCD34D;
 }
 
 .days-held {
     font-size: 0.9rem;
     color: var(--text-muted);
     padding: 0.375rem 0.75rem;
-    background: var(--bg-card);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
     border-radius: 9999px;
 }
 
@@ -287,8 +291,8 @@
 
 .holding-alert-tag {
     padding: 0.75rem 1rem;
-    background: rgba(234, 179, 8, 0.1);
-    border: 1px solid rgba(234, 179, 8, 0.2);
+    background: rgba(234, 179, 8, 0.08);
+    border: 1px solid rgba(234, 179, 8, 0.15);
     border-radius: var(--radius-lg);
     font-size: 0.9rem;
     color: var(--warning);
@@ -305,7 +309,7 @@
     gap: 0.5rem;
     height: 2.75rem;
     padding: 0 1.5rem;
-    background: linear-gradient(135deg, #10b981, #14b8a6);
+    background: var(--success);
     border: none;
     border-radius: var(--radius-lg);
     color: white;
@@ -317,7 +321,7 @@
 
 .settle-action-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
 }
 
 /* ============================================
@@ -326,8 +330,7 @@
 .alert-modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -336,12 +339,12 @@
 }
 
 .alert-modal {
-    background: linear-gradient(145deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.98));
+    background: var(--bg-elevated);
     border: 2px solid var(--danger);
     border-radius: var(--radius-xl);
     width: 100%;
     max-width: 520px;
-    box-shadow: 0 0 60px rgba(239, 68, 68, 0.3);
+    box-shadow: 0 24px 64px rgba(239, 68, 68, 0.2);
     animation: alertShake 0.4s ease;
 }
 
@@ -374,7 +377,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1.5rem 2rem;
-    border-bottom: 1px solid var(--glass-border);
+    border-bottom: 1px solid var(--border-subtle);
 }
 
 .alert-modal-header h3 {
@@ -390,12 +393,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--bg-input);
-    border: none;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
     border-radius: 50%;
     color: var(--text-secondary);
     font-size: 1.25rem;
     cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: var(--danger);
+    color: var(--danger);
 }
 
 .alert-modal-body {
@@ -415,21 +425,21 @@
 }
 
 .alert-item.stop_loss {
-    background: var(--danger-glow);
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    color: #f87171;
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: var(--danger);
 }
 
 .alert-item.take_profit {
-    background: var(--success-glow);
-    border: 1px solid rgba(16, 185, 129, 0.3);
-    color: #4ade80;
+    background: rgba(22, 163, 74, 0.08);
+    border: 1px solid rgba(22, 163, 74, 0.2);
+    color: var(--success);
 }
 
 .alert-item.force_sell,
 .alert-item.strategy_rule {
-    background: rgba(234, 179, 8, 0.1);
-    border: 1px solid rgba(234, 179, 8, 0.3);
+    background: rgba(234, 179, 8, 0.08);
+    border: 1px solid rgba(234, 179, 8, 0.2);
     color: var(--warning);
 }
 
@@ -438,29 +448,41 @@
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
     padding: 1.5rem 2rem;
-    border-top: 1px solid var(--glass-border);
+    border-top: 1px solid var(--border-subtle);
 }
 
 .btn-ignore {
     height: 3rem;
-    background: var(--bg-input);
-    border: 1px solid var(--glass-border);
+    background: var(--bg-surface);
+    border: 2px solid var(--border-default);
     border-radius: var(--radius-lg);
     color: var(--text-secondary);
     font-size: 1rem;
     font-weight: 500;
     cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-ignore:hover {
+    background: var(--bg-hover);
+    border-color: var(--text-secondary);
 }
 
 .btn-action {
     height: 3rem;
-    background: linear-gradient(135deg, #ef4444, #dc2626);
+    background: var(--danger);
     border: none;
     border-radius: var(--radius-lg);
     color: white;
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-action:hover {
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+    transform: translateY(-2px);
 }
 
 /* ============================================
@@ -469,8 +491,7 @@
 .settle-modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -479,15 +500,15 @@
 }
 
 .settle-modal {
-    background: linear-gradient(145deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.98));
-    border: 1px solid rgba(16, 185, 129, 0.3);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-default);
     border-radius: var(--radius-xl);
     width: 100%;
     max-width: 460px;
     max-height: 90vh;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.1);
 }
 
 .settle-modal .modal-header {
@@ -495,7 +516,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1.5rem 2rem;
-    border-bottom: 1px solid var(--glass-border);
+    border-bottom: 1px solid var(--border-subtle);
 }
 
 .settle-modal .modal-header h3 {
@@ -544,17 +565,18 @@
 }
 
 .strategy-tag.boss {
-    background: var(--boss-glow);
-    color: var(--boss-text);
+    background: #FEF3C7;
+    color: #B45309;
 }
 
 .strategy-tag.office {
-    background: var(--office-glow);
-    color: var(--office-text);
+    background: #DBEAFE;
+    color: #1E40AF;
 }
 
 .settle-summary {
-    background: var(--bg-input);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
     border-radius: var(--radius-lg);
     padding: 1rem;
     margin-bottom: 1.5rem;
@@ -587,12 +609,13 @@
 .settle-modal .form-group textarea {
     width: 100%;
     padding: 0.875rem 1rem;
-    background: var(--bg-input);
-    border: 2px solid transparent;
+    background: var(--bg-elevated);
+    border: 2px solid var(--border-default);
     border-radius: var(--radius-md);
     color: var(--text-primary);
     font-size: 1rem;
     font-family: var(--font-mono);
+    transition: all 0.2s ease;
 }
 
 .settle-modal .form-group textarea {
@@ -605,7 +628,7 @@
 .settle-modal .form-group textarea:focus {
     outline: none;
     border-color: var(--success);
-    box-shadow: 0 0 0 3px var(--success-glow);
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
 }
 
 /* P&L Preview */
@@ -617,13 +640,13 @@
 }
 
 .pl-preview.up {
-    background: var(--success-glow);
-    border: 1px solid rgba(16, 185, 129, 0.3);
+    background: rgba(22, 163, 74, 0.08);
+    border: 1px solid rgba(22, 163, 74, 0.2);
 }
 
 .pl-preview.down {
-    background: var(--danger-glow);
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 .pl-preview .pl-label {
@@ -662,13 +685,13 @@
 
 .settle-modal .modal-footer {
     padding: 1.5rem 2rem;
-    border-top: 1px solid var(--glass-border);
+    border-top: 1px solid var(--border-subtle);
 }
 
 .settle-btn {
     width: 100%;
     height: 3.25rem;
-    background: linear-gradient(135deg, #10b981, #14b8a6);
+    background: var(--success);
     border: none;
     border-radius: var(--radius-lg);
     color: white;
@@ -680,7 +703,7 @@
 
 .settle-btn:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
 }
 
 .settle-btn:disabled {
@@ -716,8 +739,8 @@
 
 .error-message {
     padding: 1.25rem;
-    background: var(--danger-glow);
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.2);
     border-radius: var(--radius-lg);
     color: var(--danger);
     text-align: center;
@@ -730,16 +753,16 @@
     gap: 0.75rem;
     margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
+    border-top: 1px solid var(--border-subtle);
 }
 
 .settle-action-btn {
     flex: 1;
     padding: 0.75rem 1rem;
-    background: var(--success-soft, rgba(34, 197, 94, 0.15));
-    border: 1px solid var(--success, #22c55e);
+    background: rgba(22, 163, 74, 0.1);
+    border: 2px solid var(--success);
     border-radius: var(--radius-md, 8px);
-    color: var(--success, #22c55e);
+    color: var(--success);
     font-weight: 600;
     font-size: 0.9rem;
     cursor: pointer;
@@ -747,24 +770,24 @@
 }
 
 .settle-action-btn:hover {
-    background: var(--success, #22c55e);
-    color: #0a0a0b;
+    background: var(--success);
+    color: white;
     transform: translateY(-1px);
 }
 
 .delete-action-btn {
     padding: 0.75rem 1rem;
-    background: var(--danger-soft, rgba(239, 68, 68, 0.15));
-    border: 1px solid var(--danger, #ef4444);
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid var(--danger);
     border-radius: var(--radius-md, 8px);
-    color: var(--danger, #ef4444);
+    color: var(--danger);
     font-size: 1rem;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .delete-action-btn:hover {
-    background: var(--danger, #ef4444);
+    background: var(--danger);
     color: white;
     transform: translateY(-1px);
 }

@@ -12,21 +12,25 @@
 .tracker-header h2 {
     font-size: 1.5rem;
     font-weight: 700;
+    color: #0F172A;
+    font-family: 'Inter', sans-serif;
 }
 
 .add-habit-btn {
-    background: var(--bg-elevated);
-    border: 1px solid var(--border-default);
-    color: var(--text-primary);
+    background: #FFFFFF;
+    border: 1px solid #DEE2E6;
+    color: #0F172A;
     padding: 0.5rem 1rem;
-    border-radius: var(--radius-lg);
+    border-radius: 0.75rem;
     cursor: pointer;
     transition: all 0.2s ease;
+    font-family: 'Inter', sans-serif;
 }
 
 .add-habit-btn:hover {
-    border-color: var(--accent);
-    color: var(--accent);
+    border-color: #CC7A60;
+    color: #CC7A60;
+    background: rgba(204, 122, 96, 0.05);
 }
 
 .habit-list {
@@ -40,21 +44,23 @@
     align-items: center;
     gap: 1rem;
     padding: 1rem;
-    background: var(--bg-input);
-    border: 1px solid transparent;
-    border-radius: var(--radius-lg);
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 0.75rem;
     cursor: pointer;
     transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .habit-row:hover {
-    background: var(--bg-hover);
+    border-color: #CC7A60;
+    box-shadow: 0 4px 12px rgba(204, 122, 96, 0.15);
     transform: translateY(-1px);
 }
 
 .habit-row.completed {
-    background: rgba(34, 197, 94, 0.1);
-    border-color: rgba(34, 197, 94, 0.2);
+    background: #F0FDF4;
+    border-color: #86EFAC;
 }
 
 /* Custom Hand-Drawn Checkbox */
@@ -99,17 +105,19 @@
 .habit-text {
     font-size: 1rem;
     font-weight: 500;
+    color: #0F172A;  /* Dark slate for readability */
 }
 
 .habit-row.completed .habit-text {
     text-decoration: line-through;
-    color: var(--text-muted);
+    color: #94A3B8;  /* Lighter gray for completed */
 }
 
 .habit-streak {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: #CC7A60;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
 }
 
 .more-habits {

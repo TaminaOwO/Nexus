@@ -1,11 +1,12 @@
 /* Watchlist Component Styles */
 
 .watchlist-container {
-    background: var(--bg-surface, rgba(30, 41, 59, 0.5));
-    border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
     border-radius: var(--radius-lg, 16px);
     padding: var(--space-md, 16px);
     margin-bottom: var(--space-md, 16px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", sans-serif);
 }
 
@@ -25,10 +26,10 @@
 
 .add-btn {
     padding: 0.5rem 1rem;
-    background: rgba(8, 145, 178, 0.2);
-    border: 1px solid rgba(8, 145, 178, 0.5);
+    background: rgba(8, 145, 178, 0.1);
+    border: 2px solid rgba(8, 145, 178, 0.3);
     border-radius: 0.5rem;
-    color: #67e8f9;
+    color: #0891b2;
     font-size: 0.9rem;
     font-weight: 500;
     cursor: pointer;
@@ -36,13 +37,14 @@
 }
 
 .add-btn:hover {
-    background: rgba(8, 145, 178, 0.3);
+    background: rgba(8, 145, 178, 0.15);
+    border-color: #0891b2;
 }
 
 /* Add Form */
 .add-form {
-    background: rgba(30, 41, 59, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
     border-radius: 0.75rem;
     padding: 1rem;
     margin-bottom: 1rem;
@@ -60,16 +62,24 @@
 .form-row select {
     flex: 1;
     padding: 0.625rem 0.75rem;
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--bg-elevated);
+    border: 2px solid var(--border-default);
     border-radius: 0.5rem;
-    color: var(--text-primary, #f5f5f7);
+    color: var(--text-primary);
     font-size: 0.9rem;
     font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+.form-row input:focus,
+.form-row select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(204, 122, 96, 0.15);
 }
 
 .form-row input::placeholder {
-    color: var(--text-muted, #64748b);
+    color: var(--text-muted);
 }
 
 .form-row input:disabled {
@@ -79,14 +89,21 @@
 
 .add-form textarea {
     padding: 0.625rem 0.75rem;
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--bg-elevated);
+    border: 2px solid var(--border-default);
     border-radius: 0.5rem;
-    color: var(--text-primary, #f5f5f7);
+    color: var(--text-primary);
     font-size: 0.9rem;
     font-family: inherit;
     min-height: 60px;
     resize: vertical;
+    transition: all 0.2s ease;
+}
+
+.add-form textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(204, 122, 96, 0.15);
 }
 
 /* Strategy Button Group */
@@ -103,24 +120,24 @@
     justify-content: center;
     gap: 0.5rem;
     padding: 0.5rem 0.75rem;
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--bg-elevated);
+    border: 2px solid var(--border-default);
     border-radius: 0.5rem;
-    color: var(--text-secondary, #8e8e93);
+    color: var(--text-secondary);
     font-size: 0.85rem;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .strategy-btn:hover {
-    background: rgba(30, 41, 59, 0.8);
-    border-color: rgba(255, 255, 255, 0.2);
+    background: var(--bg-hover);
+    border-color: var(--border-default);
 }
 
 .strategy-btn.active {
-    background: rgba(8, 145, 178, 0.2);
-    border-color: rgba(8, 145, 178, 0.5);
-    color: #67e8f9;
+    background: rgba(8, 145, 178, 0.1);
+    border-color: #0891b2;
+    color: #0891b2;
 }
 
 .strategy-btn img {
@@ -130,7 +147,7 @@
 
 .submit-btn {
     padding: 0.75rem;
-    background: linear-gradient(135deg, #0891b2, #06b6d4);
+    background: #0891b2;
     border: none;
     border-radius: 0.5rem;
     color: white;
@@ -142,7 +159,7 @@
 
 .submit-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(8, 145, 178, 0.3);
+    box-shadow: 0 4px 12px rgba(8, 145, 178, 0.25);
 }
 
 /* Entries List */
@@ -161,8 +178,8 @@
 
 /* Entry Card */
 .watchlist-entry {
-    background: rgba(30, 41, 59, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
     border-radius: 0.75rem;
     padding: 1rem;
     cursor: pointer;
@@ -170,17 +187,18 @@
 }
 
 .watchlist-entry:hover {
-    background: rgba(30, 41, 59, 0.6);
-    border-color: rgba(255, 255, 255, 0.12);
+    background: var(--bg-surface);
+    border-color: var(--border-default);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .watchlist-entry.status-ready {
-    border-left: 3px solid #10b981;
-    background: rgba(16, 185, 129, 0.08);
+    border-left: 3px solid var(--success);
+    background: rgba(22, 163, 74, 0.05);
 }
 
 .watchlist-entry.status-entered {
-    border-left: 3px solid #6366f1;
+    border-left: 3px solid var(--office);
     opacity: 0.6;
 }
 
@@ -238,13 +256,13 @@
 }
 
 .price-diff.below-target {
-    background: rgba(16, 185, 129, 0.2);
-    color: #34d399;
+    background: rgba(22, 163, 74, 0.1);
+    color: var(--success);
 }
 
 .price-diff.above-target {
-    background: rgba(239, 68, 68, 0.2);
-    color: #f87171;
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
 }
 
 .strategy-info {
@@ -257,10 +275,11 @@
     align-items: center;
     gap: 0.25rem;
     padding: 0.25rem 0.5rem;
-    background: rgba(8, 145, 178, 0.15);
+    background: rgba(8, 145, 178, 0.1);
+    border: 1px solid rgba(8, 145, 178, 0.2);
     border-radius: 0.375rem;
     font-size: 0.8rem;
-    color: #67e8f9;
+    color: #0891b2;
 }
 
 /* Checklist Progress */
@@ -283,25 +302,25 @@
 }
 
 .progress-count.all-pass {
-    color: #10b981;
+    color: var(--success);
 }
 
 .checklist-progress .progress-bar {
     height: 4px;
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--bg-surface);
     border-radius: 2px;
     overflow: hidden;
 }
 
 .checklist-progress .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #0891b2, #06b6d4);
+    background: #0891b2;
     border-radius: 2px;
     transition: width 0.3s ease;
 }
 
 .checklist-progress .progress-fill.all-pass {
-    background: linear-gradient(90deg, #10b981, #34d399);
+    background: var(--success);
 }
 
 .notes {
@@ -330,37 +349,38 @@
 }
 
 .action-btn.enter.enabled {
-    background: linear-gradient(135deg, #10b981, #34d399);
+    background: var(--success);
     border: none;
     color: white;
 }
 
 .action-btn.enter.enabled:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
 }
 
 .action-btn.enter.disabled {
-    background: rgba(100, 116, 139, 0.3);
-    border: 1px solid rgba(100, 116, 139, 0.5);
-    color: #64748b;
+    background: var(--bg-surface);
+    border: 2px solid var(--border-default);
+    color: var(--text-muted);
     cursor: not-allowed;
 }
 
 .action-btn.delete {
     background: transparent;
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    color: #f87171;
+    border: 2px solid rgba(239, 68, 68, 0.3);
+    color: var(--danger);
 }
 
 .action-btn.delete:hover {
     background: rgba(239, 68, 68, 0.1);
+    border-color: var(--danger);
 }
 
 /* Mini Checklist */
 .mini-checklist {
-    background: rgba(15, 23, 42, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
     border-radius: 0.5rem;
     padding: 0.625rem;
     margin-bottom: 0.75rem;
@@ -381,7 +401,7 @@
 }
 
 .mini-count.all-pass {
-    color: #10b981;
+    color: var(--success);
 }
 
 .mini-conditions {
@@ -400,13 +420,13 @@
 }
 
 .mini-condition.met {
-    background: rgba(16, 185, 129, 0.1);
-    color: #34d399;
+    background: rgba(22, 163, 74, 0.1);
+    color: var(--success);
 }
 
 .mini-condition.unmet {
     background: rgba(239, 68, 68, 0.1);
-    color: #f87171;
+    color: var(--danger);
 }
 
 .mini-icon {

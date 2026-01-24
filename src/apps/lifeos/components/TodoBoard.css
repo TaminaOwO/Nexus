@@ -23,19 +23,21 @@
 }
 
 .column-header h3 {
-    font-size: 0.9rem;
-    font-weight: 700;
+    font-size: 0.875rem;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin: 0;
+    color: #64748B;
+    font-family: 'Inter', sans-serif;
 }
 
 .column-header .count {
-    background: var(--bg-elevated);
+    background: #F7F8FA;
+    color: #64748B;
     padding: 0.1rem 0.5rem;
     border-radius: 999px;
     font-size: 0.75rem;
-    color: var(--text-secondary);
 }
 
 .task-list {
@@ -46,43 +48,43 @@
 }
 
 .task-card {
-    background: var(--bg-input);
+    background: #FFFFFF;
     padding: 1rem;
-    border-radius: var(--radius-lg);
-    border: 1px solid transparent;
+    border-radius: 0.75rem;
+    border: 1px solid #E2E8F0;
     cursor: grab;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
 .task-card:hover {
     transform: translateY(-2px);
-    border-color: var(--border-strong);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    border-color: #CBD5E1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .task-text {
     font-size: 0.95rem;
-    color: var(--text-primary);
+    color: #0F172A;  /* Dark slate for readability */
     margin-bottom: 0.5rem;
     line-height: 1.4;
 }
 
 .task-tag {
     display: inline-block;
-    font-size: 0.7rem;
-    padding: 0.2rem 0.5rem;
-    background: var(--bg-elevated);
-    color: var(--text-secondary);
-    border-radius: 4px;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    background: #DBEAFE;
+    color: #2563EB;
+    border-radius: 0.375rem;
     font-weight: 500;
 }
 
 .empty-state {
-    color: var(--text-muted);
+    color: #94A3B8;  /* Light gray for hints */
     font-size: 0.85rem;
     text-align: center;
     padding: 1rem;
-    border: 1px dashed var(--border-default);
-    border-radius: var(--radius-lg);
+    border: 1px dashed #DEE2E6;
+    border-radius: 0.75rem;
 }

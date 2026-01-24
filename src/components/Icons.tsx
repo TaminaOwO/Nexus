@@ -194,6 +194,7 @@ export const LoaderIcon = ({ size = 20, className = "", color = "currentColor", 
         strokeLinecap="round"
         strokeLinejoin="round"
         className={`animate-spin ${className}`}
+        style={style}
     >
         <line x1="12" y1="2" x2="12" y2="6" />
         <line x1="12" y1="18" x2="12" y2="22" />

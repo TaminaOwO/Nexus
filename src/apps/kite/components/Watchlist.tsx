@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { StructureType, SubStrategyType, WindType, QuoteData, STRATEGY_LABELS, SUB_STRATEGY_LABELS } from "../types";
 import { getStrategyChecklist, getChecklistStatus } from "../utils/strategyChecklist";
 import { IconCompany, IconBOSS } from "../../../components/HandDrawnIcons";
+import { TargetIcon, CheckCircleIcon, SearchIcon } from "../../../components/Icons";
 import "./Watchlist.css";
 
 const API_BASE = "/api/kite";
@@ -186,9 +187,9 @@ export function Watchlist({ structure, currentWind, onStockSelect, onConvertToTr
 
     const getStatusIcon = (status: string) => {
         switch (status) {
-            case "READY": return "🎯";
-            case "ENTERED": return "✅";
-            default: return "👀";
+            case "READY": return <TargetIcon size={16} />;
+            case "ENTERED": return <CheckCircleIcon size={16} />;
+            default: return <SearchIcon size={16} />;
         }
     };
 

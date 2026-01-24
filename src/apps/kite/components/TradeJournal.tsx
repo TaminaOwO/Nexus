@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { IconBOSS, IconCompany } from "../../../components/HandDrawnIcons";
+import { AlertTriangleIcon, CheckCircleIcon } from "../../../components/Icons";
 import "./TradeJournal.css";
 
 interface StrategySnapshot {
@@ -210,7 +211,7 @@ export function TradeJournal() {
     if (error) {
         return (
             <div className="trade-journal">
-                <div className="error-message">⚠️ {error}</div>
+                <div className="error-message"><AlertTriangleIcon size={16} /> {error}</div>
             </div>
         );
     }
@@ -224,7 +225,7 @@ export function TradeJournal() {
                 <div className="alert-modal-overlay" onClick={() => setShowAlertModal(false)}>
                     <div className="alert-modal" onClick={(e) => e.stopPropagation()}>
                         <div className="alert-modal-header">
-                            <h3>⚠️ Action Required!</h3>
+                            <h3><AlertTriangleIcon size={20} /> Action Required!</h3>
                             <button className="modal-close" onClick={() => setShowAlertModal(false)}>×</button>
                         </div>
                         <div className="alert-modal-body">
@@ -251,7 +252,7 @@ export function TradeJournal() {
                 <div className="settle-modal-overlay" onClick={() => setShowSettleModal(false)}>
                     <div className="settle-modal" onClick={(e) => e.stopPropagation()}>
                         <div className="modal-header">
-                            <h3>✅ 平倉結算 Settle Trade</h3>
+                            <h3><CheckCircleIcon size={20} /> 平倉結算 Settle Trade</h3>
                             <button className="modal-close" onClick={() => setShowSettleModal(false)}>×</button>
                         </div>
                         <div className="modal-body">
@@ -412,14 +413,14 @@ export function TradeJournal() {
                                     className="settle-action-btn"
                                     onClick={() => openSettleModal(holding)}
                                 >
-                                    ✅ 平倉 Settle
+                                    <CheckCircleIcon size={16} /> 平倉 Settle
                                 </button>
                                 <button
                                     className="delete-action-btn"
                                     onClick={() => deleteTrade(holding)}
                                     title="刪除 Delete"
                                 >
-                                    🗑️
+                                    ×
                                 </button>
                             </div>
                         </div>

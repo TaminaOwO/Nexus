@@ -9,7 +9,20 @@
       "Bash(npm install:*)",
       "Bash(go list:*)",
       "Bash(find:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(go run:*)",
+      "Bash(timeout /t 3)",
+      "Bash(curl:*)",
+      "Bash(taskkill:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(tasklist:*)",
+      "Bash(timeout /t 5)",
+      "Bash(powershell -Command \"Stop-Process -Id 19588 -Force\")",
+      "Bash(sqlite3:*)",
+      "Bash(npm run dev:*)",
+      "Bash(wc:*)",
+      "Bash(Stop-Process -Id 27168 -Force)"
     ]
   }
 }

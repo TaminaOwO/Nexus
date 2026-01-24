@@ -517,39 +517,39 @@ textarea:focus {
 
 /* Design Tokens */
 :root {
-  /* Colors - Dark Minimalist */
-  --bg-base: #0a0a0b;
-  --bg-elevated: #141416;
-  --bg-surface: #1c1c1f;
-  --bg-hover: #252528;
+  /* Colors - Light Minimalist */
+  --bg-base: #F9FAFB;
+  --bg-elevated: #FFFFFF;
+  --bg-surface: #F7F8FA;
+  --bg-hover: #F1F3F5;
 
   /* Borders */
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-default: rgba(255, 255, 255, 0.1);
-  --border-strong: rgba(255, 255, 255, 0.2);
+  --border-subtle: #E9ECEF;
+  --border-default: #DEE2E6;
+  --border-strong: #CED4DA;
 
   /* Text */
-  --text-primary: #f5f5f7;
-  --text-secondary: #8e8e93;
-  --text-muted: #636366;
+  --text-primary: #0F172A;
+  --text-secondary: #64748B;
+  --text-muted: #94A3B8;
 
   /* Accent */
-  --accent: #0a84ff;
-  --accent-soft: rgba(10, 132, 255, 0.15);
+  --accent: #CC7A60;
+  --accent-soft: rgba(204, 122, 96, 0.1);
 
   /* Semantic */
-  --success: #30d158;
-  --success-soft: rgba(48, 209, 88, 0.15);
-  --danger: #ff453a;
-  --danger-soft: rgba(255, 69, 58, 0.15);
-  --warning: #ffd60a;
-  --warning-soft: rgba(255, 214, 10, 0.15);
+  --success: #16A34A;
+  --success-soft: rgba(22, 163, 74, 0.1);
+  --danger: #EF4444;
+  --danger-soft: rgba(239, 68, 68, 0.1);
+  --warning: #F59E0B;
+  --warning-soft: rgba(245, 158, 11, 0.1);
 
-  /* Strategy Colors */
-  --office: #5e5ce6;
-  --office-soft: rgba(94, 92, 230, 0.15);
-  --boss: #ff9f0a;
-  --boss-soft: rgba(255, 159, 10, 0.15);
+  /* Strategy Colors (Pastel) */
+  --office: #3B82F6;
+  --office-soft: rgba(59, 130, 246, 0.1);
+  --boss: #F59E0B;
+  --boss-soft: rgba(245, 158, 11, 0.1);
 
   /* Spacing */
   --space-xs: 4px;
@@ -565,8 +565,8 @@ textarea:focus {
   --radius-full: 9999px;
 
   /* Typography */
-  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
   /* Safe Areas (iOS) */
   --safe-top: env(safe-area-inset-top);
@@ -618,7 +618,7 @@ textarea {
   justify-content: space-around;
   padding: var(--space-sm) var(--space-md);
   padding-bottom: calc(var(--space-sm) + var(--safe-bottom));
-  background: rgba(20, 20, 22, 0.85);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   border-top: 1px solid var(--border-subtle);
@@ -640,7 +640,7 @@ textarea {
   gap: 2px;
   padding: var(--space-sm) var(--space-md);
   text-decoration: none;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.02em;
@@ -648,7 +648,8 @@ textarea {
 }
 
 .nav a:hover,
-.nav a:active {
+.nav a:active,
+.nav a.active {
   color: var(--accent);
 }
 
@@ -768,6 +769,7 @@ textarea {
     padding: var(--space-md) var(--space-xl);
     border-top: none;
     border-bottom: 1px solid var(--border-subtle);
+    background: rgba(255, 255, 255, 0.9);
   }
 
   .nav-brand {

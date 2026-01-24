@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { getLastNTradingDays } from "../hooks/useWindHistory";
 import { WindType, WindRecord, StructureType, GateLight, WIND_LABELS, STRUCTURE_LABELS } from "../types";
 import { IconStrongWind, IconTurbulence, IconGust, IconNoWind, IconWind, IconSettings } from "../../../components/HandDrawnIcons";
+import { GreenLightIcon, YellowLightIcon, RedLightIcon } from "../../../components/Icons";
 import "./WindCockpit.css";
 
 const API_BASE = "/api/kite";
@@ -31,11 +32,11 @@ interface WindCockpitUIProps {
     gateLight: GateLight;
 }
 
-// Gate light emoji mapping (icons only, no text)
-const GATE_LIGHT_EMOJI: Record<GateLight, string> = {
-    GREEN: "🟢",
-    YELLOW: "🟡",
-    RED: "🔴",
+// Gate light icon mapping (SVG icons)
+const GATE_LIGHT_ICON: Record<GateLight, JSX.Element> = {
+    GREEN: <GreenLightIcon size={24} />,
+    YELLOW: <YellowLightIcon size={24} />,
+    RED: <RedLightIcon size={24} />,
 };
 
 export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUIProps) {
@@ -178,7 +179,7 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                         </span>
                     </div>
                     <div className="gate-light-icon">
-                        {GATE_LIGHT_EMOJI[gateLight]}
+                        {GATE_LIGHT_ICON[gateLight]}
                     </div>
                 </div>
             </div>
@@ -228,10 +229,10 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                     onClick={() => setDevModeOpen(!devModeOpen)}
                     style={{
                         padding: '0.75rem 1.25rem',
-                        background: 'rgba(30, 41, 59, 0.6)',
-                        border: '1px solid rgba(255,255,255,0.1)',
+                        background: '#F7F8FA',
+                        border: '1px solid #DEE2E6',
                         borderRadius: '0.5rem',
-                        color: '#94a3b8',
+                        color: '#64748B',
                         fontSize: '0.95rem',
                         fontWeight: 500,
                         cursor: 'pointer',
@@ -264,19 +265,19 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                     <div
                         onClick={(e) => e.stopPropagation()}
                         style={{
-                            background: 'linear-gradient(145deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.98))',
-                            border: '1px solid rgba(8, 145, 178, 0.3)',
+                            background: '#FFFFFF',
+                            border: '1px solid #DEE2E6',
                             borderRadius: '1rem',
                             width: '100%',
                             maxWidth: '420px',
                             padding: '1.5rem',
-                            boxShadow: '0 24px 64px rgba(0,0,0,0.5)',
+                            boxShadow: '0 24px 64px rgba(0,0,0,0.15)',
                         }}
                     >
-                        <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1rem', color: '#67e8f9' }}>
+                        <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1rem', color: '#0F172A' }}>
                             📥 設定上週循環
                         </h3>
-                        <p style={{ fontSize: '0.9rem', color: '#94a3b8', marginBottom: '1.5rem' }}>
+                        <p style={{ fontSize: '0.9rem', color: '#64748B', marginBottom: '1.5rem' }}>
                             選擇上週的市場循環狀態，作為本週循環計算的基準。
                         </p>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem' }}>
@@ -293,8 +294,8 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                                             flexDirection: 'column',
                                             alignItems: 'center',
                                             gap: '0.5rem',
-                                            background: isSelected ? 'rgba(8, 145, 178, 0.3)' : 'rgba(30, 41, 59, 0.6)',
-                                            border: isSelected ? '2px solid #06b6d4' : '1px solid rgba(255,255,255,0.1)',
+                                            background: isSelected ? '#DBEAFE' : '#F7F8FA',
+                                            border: isSelected ? '2px solid #3B82F6' : '1px solid #DEE2E6',
                                             borderRadius: '0.75rem',
                                             cursor: 'pointer',
                                             transition: 'all 0.2s ease',
@@ -302,8 +303,8 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                                     >
                                         <span style={{ fontSize: '2rem' }}>{info.emoji}</span>
                                         <div style={{ textAlign: "center" }}>
-                                            <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#f1f5f9' }}>{info.zh}</div>
-                                            <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>{info.en}</div>
+                                            <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#0F172A' }}>{info.zh}</div>
+                                            <div style={{ fontSize: '0.7rem', color: '#64748B' }}>{info.en}</div>
                                         </div>
                                     </button>
                                 );
@@ -337,11 +338,11 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                     flexDirection: 'column',
                     gap: '0.75rem',
                     padding: '1rem',
-                    background: 'rgba(30, 41, 59, 0.5)',
+                    background: '#F7F8FA',
                     borderRadius: '0.75rem',
                     marginTop: '1rem',
                 }}>
-                    <p style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: '0.5rem' }}>
+                    <p style={{ fontSize: '0.85rem', color: '#64748B', marginBottom: '0.5rem' }}>
                         編輯過去 5 個交易日的風度紀錄。
                     </p>
                     {editableDays.map((day) => (
@@ -350,7 +351,7 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                             alignItems: 'center',
                             justifyContent: 'space-between',
                         }}>
-                            <span style={{ color: '#94a3b8', fontSize: '0.9rem', width: '6rem' }}>
+                            <span style={{ color: '#64748B', fontSize: '0.9rem', width: '6rem' }}>
                                 {day.label} ({day.date.slice(5)})
                             </span>
                             <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -368,12 +369,12 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                                                 display: 'flex',
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
-                                                background: isSelected ? 'rgba(99, 102, 241, 0.3)' : 'rgba(55, 65, 81, 0.6)',
-                                                border: 'none',
+                                                background: isSelected ? '#DBEAFE' : '#FFFFFF',
+                                                border: isSelected ? '2px solid #3B82F6' : '1px solid #DEE2E6',
                                                 borderRadius: '0.5rem',
                                                 cursor: 'pointer',
                                                 transition: 'all 0.2s ease',
-                                                boxShadow: isSelected ? '0 0 0 2px #6366f1' : 'none',
+                                                boxShadow: isSelected ? '0 0 0 2px rgba(59, 130, 246, 0.2)' : 'none',
                                             }}
                                         >
                                             <WindIcon type={windType} className="w-6 h-6" />

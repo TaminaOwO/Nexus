@@ -3,11 +3,10 @@
    ============================================ */
 
 .trade-history {
-    background: var(--bg-card);
-    backdrop-filter: blur(12px);
-    border: 1px solid var(--glass-border);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
     border-radius: var(--radius-xl);
-    box-shadow: var(--glass-shadow);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     padding: 2rem;
 }
 
@@ -37,8 +36,8 @@
     gap: 0.5rem;
     height: 3rem;
     padding: 0 1.5rem;
-    background: var(--bg-input);
-    border: 1px solid var(--glass-border);
+    background: var(--bg-surface);
+    border: 2px solid var(--border-default);
     border-radius: var(--radius-lg);
     color: var(--text-primary);
     font-size: 0.95rem;
@@ -48,8 +47,8 @@
 }
 
 .analytics-btn:hover {
-    background: var(--bg-card-hover);
-    border-color: var(--office-primary);
+    background: var(--bg-hover);
+    border-color: var(--office);
     transform: translateY(-2px);
 }
 
@@ -59,7 +58,7 @@
     gap: 0.5rem;
     height: 3rem;
     padding: 0 1.75rem;
-    background: linear-gradient(135deg, var(--office-primary), #8b5cf6);
+    background: var(--office);
     border: none;
     border-radius: var(--radius-lg);
     color: white;
@@ -71,7 +70,7 @@
 
 .import-action-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
 }
 
 /* ============================================
@@ -85,7 +84,8 @@
 }
 
 .stat-card {
-    background: var(--bg-input);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
     border-radius: var(--radius-xl);
     padding: 1.75rem;
     display: flex;
@@ -97,6 +97,7 @@
 
 .stat-card:hover {
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .stat-label {
@@ -119,7 +120,7 @@
 
 .stat-card.pl.up {
     border-left: 4px solid var(--success);
-    box-shadow: inset 0 0 40px var(--success-glow);
+    background: rgba(22, 163, 74, 0.05);
 }
 
 .stat-card.pl.up .stat-value {
@@ -128,7 +129,7 @@
 
 .stat-card.pl.down {
     border-left: 4px solid var(--danger);
-    box-shadow: inset 0 0 40px var(--danger-glow);
+    background: rgba(239, 68, 68, 0.05);
 }
 
 .stat-card.pl.down .stat-value {
@@ -136,19 +137,20 @@
 }
 
 .stat-card.best {
-    border-left: 4px solid var(--boss-primary);
-    box-shadow: inset 0 0 40px var(--boss-glow);
+    border-left: 4px solid var(--boss);
+    background: rgba(245, 158, 11, 0.05);
 }
 
 .stat-card.best .stat-value {
-    color: var(--boss-text);
+    color: var(--boss);
 }
 
 /* ============================================
    History Table
    ============================================ */
 .history-table {
-    background: var(--bg-input);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
     border-radius: var(--radius-xl);
     overflow: hidden;
 }
@@ -163,8 +165,8 @@
 }
 
 .history-table .table-header {
-    background: var(--bg-card);
-    border-bottom: 1px solid var(--glass-border);
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-subtle);
     font-size: 0.85rem;
     color: var(--text-secondary);
     text-transform: uppercase;
@@ -173,7 +175,7 @@
 }
 
 .history-table .table-row {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid var(--border-subtle);
     font-size: 0.95rem;
     transition: all 0.2s ease;
 }
@@ -183,7 +185,7 @@
 }
 
 .history-table .table-row:hover {
-    background: rgba(255, 255, 255, 0.02);
+    background: var(--bg-surface);
 }
 
 .history-table .col-date {
@@ -219,15 +221,15 @@
 }
 
 .history-table .col-strategy.boss {
-    background: var(--boss-glow);
-    color: var(--boss-text);
-    border: 1px solid var(--boss-border);
+    background: #FEF3C7;
+    color: #B45309;
+    border: 1px solid #FCD34D;
 }
 
 .history-table .col-strategy.office {
-    background: var(--office-glow);
-    color: var(--office-text);
-    border: 1px solid var(--office-border);
+    background: #DBEAFE;
+    color: #1E40AF;
+    border: 1px solid #93C5FD;
 }
 
 .history-table .col-pl,
@@ -258,8 +260,7 @@
 .import-modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -268,8 +269,8 @@
 }
 
 .import-modal {
-    background: var(--bg-surface, rgba(28, 28, 31, 0.98));
-    border: 1px solid var(--border-default, rgba(255, 255, 255, 0.1));
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-default);
     border-radius: var(--radius-lg, 16px);
     width: 100%;
     max-width: 540px;
@@ -278,6 +279,7 @@
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.1);
 }
 
 .import-modal .modal-header {
@@ -285,13 +287,13 @@
     justify-content: space-between;
     align-items: center;
     padding: 1.5rem 2rem;
-    border-bottom: 1px solid var(--glass-border);
+    border-bottom: 1px solid var(--border-subtle);
 }
 
 .import-modal .modal-header h3 {
     font-size: 1.25rem;
     font-weight: 700;
-    color: var(--office-text);
+    color: var(--office);
     margin: 0;
 }
 
@@ -301,12 +303,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--bg-input);
-    border: none;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
     border-radius: 50%;
     color: var(--text-secondary);
     font-size: 1.25rem;
     cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: var(--danger);
+    color: var(--danger);
 }
 
 .import-modal .modal-body {
@@ -339,8 +348,8 @@
     max-width: 100%;
     box-sizing: border-box;
     padding: 0.875rem 1rem;
-    background: var(--bg-input);
-    border: 2px solid transparent;
+    background: var(--bg-elevated);
+    border: 2px solid var(--border-default);
     border-radius: var(--radius-md);
     color: var(--text-primary);
     font-size: 1rem;
@@ -355,8 +364,8 @@
 .import-modal .form-group input:focus,
 .import-modal .form-group select:focus {
     outline: none;
-    border-color: var(--office-primary);
-    box-shadow: 0 0 0 3px var(--office-glow);
+    border-color: var(--office);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
 .import-modal .form-group select {
@@ -368,8 +377,9 @@
 }
 
 .import-modal .form-group input[readonly] {
-    background: var(--office-glow);
-    border-color: var(--office-border);
+    background: #DBEAFE;
+    border-color: #93C5FD;
+    color: #1E40AF;
 }
 
 .edit-btn {
@@ -387,13 +397,13 @@
 
 .import-modal .modal-footer {
     padding: 1.5rem 2rem;
-    border-top: 1px solid var(--glass-border);
+    border-top: 1px solid var(--border-subtle);
 }
 
 .import-btn {
     width: 100%;
     height: 3.25rem;
-    background: linear-gradient(135deg, var(--office-primary), #8b5cf6);
+    background: var(--office);
     border: none;
     border-radius: var(--radius-lg);
     color: white;
@@ -405,7 +415,7 @@
 
 .import-btn:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
 }
 
 .import-btn:disabled {
@@ -441,8 +451,8 @@
 
 .error-message {
     padding: 1.25rem;
-    background: var(--danger-glow);
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.2);
     border-radius: var(--radius-lg);
     color: var(--danger);
     text-align: center;
@@ -538,9 +548,9 @@
 .analytics-section {
     margin: 2rem 0;
     padding: 1.5rem;
-    background: rgba(15, 23, 42, 0.4);
+    background: var(--bg-surface);
     border-radius: var(--radius-lg);
-    border: 1px solid var(--glass-border);
+    border: 1px solid var(--border-subtle);
 }
 
 .analytics-section h3 {
@@ -558,8 +568,8 @@
 }
 
 .strategy-stat-card {
-    background: var(--bg-input);
-    border: 1px solid var(--glass-border);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
     padding: 1rem;
     transition: all 0.2s ease;
@@ -567,7 +577,8 @@
 
 .strategy-stat-card:hover {
     transform: translateY(-2px);
-    border-color: var(--office-primary);
+    border-color: var(--office);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .strategy-stat-header {
@@ -576,7 +587,7 @@
     gap: 0.75rem;
     margin-bottom: 0.75rem;
     padding-bottom: 0.75rem;
-    border-bottom: 1px solid var(--glass-border);
+    border-bottom: 1px solid var(--border-subtle);
 }
 
 .strategy-name {
@@ -639,10 +650,10 @@
 
 .month-bar-container {
     height: 2rem;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--bg-surface);
     border-radius: var(--radius-sm);
     overflow: hidden;
-    border: 1px solid var(--glass-border);
+    border: 1px solid var(--border-subtle);
 }
 
 .month-bar-fill {
@@ -651,11 +662,11 @@
 }
 
 .month-bar-fill.up {
-    background: linear-gradient(90deg, var(--success), rgba(16, 185, 129, 0.6));
+    background: var(--success);
 }
 
 .month-bar-fill.down {
-    background: linear-gradient(90deg, var(--danger), rgba(239, 68, 68, 0.6));
+    background: var(--danger);
 }
 
 .month-value {

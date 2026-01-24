@@ -224,7 +224,7 @@ export function StockChart({
 
         // Add MACD series
         const macdLineSeries = macdChart.addLineSeries({
-            color: "#06b6d4", // Cyan
+            color: "#3B82F6", // Blue
             lineWidth: 1,
         });
 
@@ -382,7 +382,7 @@ export function StockChart({
                             <>
                                 <div className="chart-area" ref={chartContainerRef} />
                                 <div className="macd-legend">
-                                    <div className="legend-item macd" style={{ color: '#06b6d4' }}>● MACD</div>
+                                    <div className="legend-item macd" style={{ color: '#3B82F6' }}>● MACD</div>
                                     <div className="legend-item signal" style={{ color: '#f59e0b' }}>● Signal</div>
                                     <div className="legend-item histogram" style={{ color: '#26a69a' }}>■ Histogram</div>
                                 </div>

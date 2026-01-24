@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { QuoteData, StructureType, SubStrategyType, WindType, SUB_STRATEGY_LABELS } from "../types";
 import { getStrategyChecklist, getChecklistStatus, ConditionItem } from "../utils/strategyChecklist";
+import { CheckCircleIcon, XCircleIcon } from "../../../components/Icons";
 import "./StrategyChecklist.css";
 
 interface StrategyChecklistProps {
@@ -53,7 +54,7 @@ export function StrategyChecklist({
 
             {status.allPassed && (
                 <div className="all-pass-message">
-                    ✅ 所有條件達成! All conditions met!
+                    <CheckCircleIcon size={18} /> 所有條件達成! All conditions met!
                 </div>
             )}
         </div>
@@ -64,7 +65,7 @@ function ConditionRow({ condition }: { condition: ConditionItem }) {
     return (
         <div className={`condition-row ${condition.met ? "met" : "unmet"}`}>
             <span className="check-icon">
-                {condition.met ? "☑️" : "☐"}
+                {condition.met ? <CheckCircleIcon size={18} color="#10b981" /> : <XCircleIcon size={18} color="#94A3B8" />}
             </span>
             <div className="condition-content">
                 <span className="condition-label">{condition.label}</span>

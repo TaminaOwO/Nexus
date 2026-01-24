@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { IconBOSS, IconCompany } from "../../../components/HandDrawnIcons";
+import { AlertTriangleIcon } from "../../../components/Icons";
 import "./TradeHistory.css";
 
 interface ClosedTrade {
@@ -248,10 +249,10 @@ export function TradeHistory() {
                         className="import-modal"
                         onClick={(e) => e.stopPropagation()}
                         style={{
-                            background: 'linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(10, 15, 30, 0.98))',
-                            border: '1px solid rgba(255,255,255,0.1)',
+                            background: '#FFFFFF',
+                            border: '1px solid #DEE2E6',
                             borderRadius: '1rem',
-                            boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
+                            boxShadow: '0 24px 64px rgba(0,0,0,0.2)',
                             width: '95vw',
                             maxWidth: '500px',
                             maxHeight: '90vh',
@@ -263,9 +264,9 @@ export function TradeHistory() {
                             justifyContent: 'space-between',
                             alignItems: 'center',
                             padding: '1.25rem 1.5rem',
-                            borderBottom: '1px solid rgba(255,255,255,0.1)',
+                            borderBottom: '1px solid #DEE2E6',
                         }}>
-                            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0 }}>➕ 匯入歷史交易 Import Past Trade</h3>
+                            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0, color: '#0F172A' }}>➕ 匯入歷史交易 Import Past Trade</h3>
                             <button
                                 onClick={() => setShowImport(false)}
                                 style={{
@@ -274,10 +275,10 @@ export function TradeHistory() {
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    background: 'rgba(255,255,255,0.05)',
+                                    background: '#F7F8FA',
                                     border: 'none',
                                     borderRadius: '50%',
-                                    color: '#94a3b8',
+                                    color: '#64748B',
                                     fontSize: '1.25rem',
                                     cursor: 'pointer',
                                 }}
@@ -358,15 +359,15 @@ export function TradeHistory() {
                                 alignItems: 'center',
                                 justifyContent: 'space-between',
                                 padding: '0.75rem 1rem',
-                                background: isActiveHolding ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255,255,255,0.03)',
-                                border: isActiveHolding ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(255,255,255,0.1)',
+                                background: isActiveHolding ? '#D1FAE5' : '#F7F8FA',
+                                border: isActiveHolding ? '1px solid #10B981' : '1px solid #DEE2E6',
                                 borderRadius: '0.75rem',
                             }}>
                                 <div>
-                                    <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>
+                                    <div style={{ fontWeight: 600, fontSize: '0.95rem', color: '#0F172A' }}>
                                         📦 還在庫存中 (Still Holding)
                                     </div>
-                                    <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+                                    <div style={{ fontSize: '0.8rem', color: '#64748B' }}>
                                         Toggle ON for active positions without exit data
                                     </div>
                                 </div>
@@ -375,7 +376,7 @@ export function TradeHistory() {
                                     style={{
                                         width: '3.5rem',
                                         height: '1.75rem',
-                                        background: isActiveHolding ? '#10b981' : 'rgba(255,255,255,0.2)',
+                                        background: isActiveHolding ? '#10b981' : '#DEE2E6',
                                         border: 'none',
                                         borderRadius: '9999px',
                                         cursor: 'pointer',
@@ -593,7 +594,7 @@ export function TradeHistory() {
                 )
             }
 
-            {error && <div className="error-message">⚠️ {error}</div>}
+            {error && <div className="error-message"><AlertTriangleIcon size={16} /> {error}</div>}
         </div>
     );
 }

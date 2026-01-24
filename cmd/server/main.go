@@ -9,6 +9,8 @@ import (
 	"nexus/internal/database"
 	kiteHandler "nexus/internal/modules/kite/handler"
 	"nexus/internal/modules/kite/model"
+	lifeosHandler "nexus/internal/modules/lifeos/handler"
+	lifeosModel "nexus/internal/modules/lifeos/model"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -24,7 +26,16 @@ func main() {
 	database.Init()
 
 	// Auto Migrate
-	database.DB.AutoMigrate(&model.WindRecord{}, &model.TradeEntry{}, &model.CycleSetting{}, &model.WatchlistEntry{}, &model.NotificationLog{})
+	database.DB.AutoMigrate(
+		&model.WindRecord{},
+		&model.TradeEntry{},
+		&model.CycleSetting{},
+		&model.WatchlistEntry{},
+		&model.NotificationLog{},
+		&lifeosModel.Habit{},
+		&lifeosModel.HabitLog{},
+		&lifeosModel.Task{},
+	)
 
 	r := gin.Default()
 
@@ -46,6 +57,21 @@ func main() {
 		lifeos.GET("/ping", func(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{"message": "LifeOS Module Online"})
 		})
+
+		// Habit Routes
+		lifeos.GET("/habits", lifeosHandler.GetHabits)
+		lifeos.POST("/habits", lifeosHandler.CreateHabit)
+		lifeos.PUT("/habits/:id", lifeosHandler.UpdateHabit)
+		lifeos.DELETE("/habits/:id", lifeosHandler.DeleteHabit)
+		lifeos.GET("/habits/:id/logs", lifeosHandler.GetHabitLogs)
+		lifeos.POST("/habits/:id/check", lifeosHandler.CheckHabit)
+
+		// Task Routes
+		lifeos.GET("/tasks", lifeosHandler.GetTasks)
+		lifeos.POST("/tasks", lifeosHandler.CreateTask)
+		lifeos.PUT("/tasks/:id", lifeosHandler.UpdateTask)
+		lifeos.DELETE("/tasks/:id", lifeosHandler.DeleteTask)
+		lifeos.PATCH("/tasks/:id/move", lifeosHandler.MoveTask)
 	}
 
 	// Kite Stock Module Routes

@@ -12,6 +12,7 @@ import {
 } from "../types";
 import { getStrategyVerdict } from "../utils/strategyDiagnosis";
 import { IconCompany, IconBOSS, IconLifeOS } from "../../../components/HandDrawnIcons";
+import { CheckboxIcon, SearchIcon, BookOpenIcon, TrendingUpIcon, LoaderIcon, DollarSignIcon, TagIcon, TargetIcon, StopCircleIcon, CheckCircleIcon, AlertTriangleIcon, XCircleIcon } from "../../../components/Icons";
 import { StrategyChecklist } from "./StrategyChecklist";
 import { StockChart } from "./StockChart";
 import "./StockInspector.css";
@@ -265,8 +266,7 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                 <div style={{
                     position: 'fixed',
                     inset: 0,
-                    background: 'rgba(0,0,0,0.85)',
-                    backdropFilter: 'blur(8px)',
+                    background: 'rgba(0,0,0,0.5)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -274,14 +274,14 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                     padding: '1rem',
                 }} onClick={() => setShowTradeModal(false)}>
                     <div style={{
-                        background: 'linear-gradient(145deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.98))',
-                        border: '1px solid rgba(255,255,255,0.1)',
+                        background: '#FFFFFF',
+                        border: '1px solid #DEE2E6',
                         borderRadius: '1rem',
                         width: '100%',
                         maxWidth: '520px',
                         maxHeight: '90vh',
                         overflowY: 'auto',
-                        boxShadow: '0 24px 64px rgba(0,0,0,0.5)',
+                        boxShadow: '0 24px 64px rgba(0,0,0,0.2)',
                     }} onClick={(e) => e.stopPropagation()}>
                         {/* Header */}
                         <div style={{
@@ -289,9 +289,11 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                             justifyContent: 'space-between',
                             alignItems: 'center',
                             padding: '1.25rem 1.5rem',
-                            borderBottom: '1px solid rgba(255,255,255,0.1)',
+                            borderBottom: '1px solid #DEE2E6',
                         }}>
-                            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0 }}>📝 記錄交易 Log Trade</h3>
+                            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0, color: '#0F172A', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <BookOpenIcon size={20} /> 記錄交易 Log Trade
+                            </h3>
                             <button
                                 onClick={() => setShowTradeModal(false)}
                                 style={{
@@ -300,10 +302,10 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    background: 'rgba(255,255,255,0.05)',
+                                    background: '#F7F8FA',
                                     border: 'none',
                                     borderRadius: '50%',
-                                    color: '#94a3b8',
+                                    color: '#64748B',
                                     fontSize: '1.25rem',
                                     cursor: 'pointer',
                                 }}
@@ -332,7 +334,7 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                             {/* Price & Shares Row */}
                             <div className="form-row">
                                 <div className="form-group">
-                                    <label>🏷️ 價格 Price</label>
+                                    <label><DollarSignIcon size={14} /> 價格 Price</label>
                                     <input
                                         type="number"
                                         step="0.01"
@@ -343,7 +345,7 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                                     <span className="form-hint">系統價: ${formatPrice(quote.price)}</span>
                                 </div>
                                 <div className="form-group">
-                                    <label>📦 股數 Shares</label>
+                                    <label><TagIcon size={14} /> 股數 Shares</label>
                                     <input
                                         type="number"
                                         min="1"
@@ -359,7 +361,7 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                             {/* Batches Row */}
                             <div className="form-row">
                                 <div className="form-group">
-                                    <label>💰 預計分批 Batches</label>
+                                    <label><DollarSignIcon size={14} /> 預計分批 Batches</label>
                                     <input
                                         type="number"
                                         min="1"
@@ -370,7 +372,7 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                                     <span className="form-hint">建議: {getSuggestedBatches()}</span>
                                 </div>
                                 <div className="form-group">
-                                    <label>🎯 第幾批 Current</label>
+                                    <label><TargetIcon size={14} /> 第幾批 Current</label>
                                     <input
                                         type="number"
                                         min="1"
@@ -384,7 +386,7 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
 
                             {/* Exit Plan */}
                             <div className="exit-plan-card">
-                                <div className="exit-plan-title">🛑 出場計畫 Exit Plan</div>
+                                <div className="exit-plan-title"><StopCircleIcon size={16} /> 出場計畫 Exit Plan</div>
                                 <div className="form-row">
                                     <div className="form-group">
                                         <label>停損價 Stop Loss *</label>
@@ -416,7 +418,9 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                                 <div className="auto-captured-grid">
                                     <div className="captured-item">
                                         <div className="captured-label">Strategy</div>
-                                        <div className="captured-value">{activeStrategy === "BOSS" ? "🛡️" : "🏢"}</div>
+                                        <div className="captured-value">
+                                            {activeStrategy === "BOSS" ? <IconBOSS className="w-5 h-5" /> : <IconCompany className="w-5 h-5" />}
+                                        </div>
                                     </div>
                                     <div className="captured-item">
                                         <div className="captured-label">Cycle</div>
@@ -435,7 +439,7 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                         {/* Footer */}
                         <div style={{
                             padding: '1.25rem 1.5rem',
-                            borderTop: '1px solid rgba(255,255,255,0.1)',
+                            borderTop: '1px solid #DEE2E6',
                         }}>
                             {tradeSuccess ? (
                                 <div style={{
@@ -446,7 +450,7 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                                     color: '#6ee7b7',
                                     fontSize: '1.1rem',
                                     fontWeight: 600,
-                                }}>✅ 交易已記錄!</div>
+                                }}><CheckCircleIcon size={18} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }} /> 交易已記錄!</div>
                             ) : (
                                 <button
                                     onClick={saveTrade}
@@ -481,52 +485,20 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
             </div>
 
             {/* Layer 1: Strategy Tabs */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+            <div className="strategy-tabs">
                 <button
+                    className={`strategy-tab ${activeStrategy === "OFFICE" ? "active office" : ""}`}
                     onClick={() => setActiveStrategy("OFFICE")}
-                    style={{
-                        height: '5rem',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '0.5rem',
-                        background: activeStrategy === "OFFICE"
-                            ? 'rgba(99, 102, 241, 0.15)'
-                            : 'var(--bg-surface)',
-                        border: activeStrategy === "OFFICE" ? '2px solid #6366f1' : '1px solid var(--border-default)',
-                        borderRadius: '0.75rem',
-                        color: activeStrategy === "OFFICE" ? '#818cf8' : 'var(--text-secondary)',
-                        cursor: 'pointer',
-                        boxShadow: activeStrategy === "OFFICE" ? '0 8px 24px rgba(99, 102, 241, 0.2)' : 'none',
-                        transition: 'all 0.2s ease',
-                    }}
                 >
                     <IconCompany className="w-8 h-8" />
-                    <span style={{ fontWeight: 700, fontSize: '1rem' }}>Office Worker</span>
+                    <span style={{ fontSize: '1rem', fontWeight: 600 }}>OFFICE 策略</span>
                 </button>
                 <button
+                    className={`strategy-tab ${activeStrategy === "BOSS" ? "active boss" : ""}`}
                     onClick={() => setActiveStrategy("BOSS")}
-                    style={{
-                        height: '5rem',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '0.5rem',
-                        background: activeStrategy === "BOSS"
-                            ? 'rgba(245, 158, 11, 0.15)'
-                            : 'var(--bg-surface)',
-                        border: activeStrategy === "BOSS" ? '2px solid #f59e0b' : '1px solid var(--border-default)',
-                        borderRadius: '0.75rem',
-                        color: activeStrategy === "BOSS" ? '#fbbf24' : 'var(--text-secondary)',
-                        cursor: 'pointer',
-                        boxShadow: activeStrategy === "BOSS" ? '0 8px 24px rgba(245, 158, 11, 0.2)' : 'none',
-                        transition: 'all 0.2s ease',
-                    }}
                 >
                     <IconBOSS className="w-8 h-8" />
-                    <span style={{ fontWeight: 700, fontSize: '1rem' }}>Boss Strategy</span>
+                    <span style={{ fontSize: '1rem', fontWeight: 600 }}>BOSS 策略</span>
                 </button>
             </div>
 
@@ -542,13 +514,13 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                                 alignItems: 'center',
                                 gap: '0.5rem',
                                 background: officeSubStrategy === "STRONG_WEEKLY"
-                                    ? 'rgba(99, 102, 241, 0.2)'
+                                    ? '#DBEAFE'
                                     : 'transparent',
                                 border: officeSubStrategy === "STRONG_WEEKLY"
-                                    ? '2px solid #6366f1'
-                                    : '1px solid rgba(255,255,255,0.2)',
+                                    ? '2px solid #3B82F6'
+                                    : '1px solid #DEE2E6',
                                 borderRadius: '9999px',
-                                color: officeSubStrategy === "STRONG_WEEKLY" ? '#a5b4fc' : '#94a3b8',
+                                color: officeSubStrategy === "STRONG_WEEKLY" ? '#3B82F6' : '#64748B',
                                 fontSize: '0.95rem',
                                 fontWeight: 500,
                                 cursor: 'pointer',
@@ -562,13 +534,13 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                             style={{
                                 padding: '0.75rem 1.5rem',
                                 background: officeSubStrategy === "WEEKLY_TREND"
-                                    ? 'rgba(99, 102, 241, 0.2)'
+                                    ? '#DBEAFE'
                                     : 'transparent',
                                 border: officeSubStrategy === "WEEKLY_TREND"
-                                    ? '2px solid #6366f1'
-                                    : '1px solid rgba(255,255,255,0.2)',
+                                    ? '2px solid #3B82F6'
+                                    : '1px solid #DEE2E6',
                                 borderRadius: '9999px',
-                                color: officeSubStrategy === "WEEKLY_TREND" ? '#a5b4fc' : '#94a3b8',
+                                color: officeSubStrategy === "WEEKLY_TREND" ? '#3B82F6' : '#64748B',
                                 fontSize: '0.95rem',
                                 fontWeight: 500,
                                 cursor: 'pointer',
@@ -585,13 +557,13 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                             style={{
                                 padding: '0.75rem 1.5rem',
                                 background: bossSubStrategy === "WEEKLY_PULLBACK"
-                                    ? 'rgba(245, 158, 11, 0.2)'
+                                    ? '#FEF3C7'
                                     : 'transparent',
                                 border: bossSubStrategy === "WEEKLY_PULLBACK"
                                     ? '2px solid #f59e0b'
-                                    : '1px solid rgba(255,255,255,0.2)',
+                                    : '1px solid #DEE2E6',
                                 borderRadius: '9999px',
-                                color: bossSubStrategy === "WEEKLY_PULLBACK" ? '#fcd34d' : '#94a3b8',
+                                color: bossSubStrategy === "WEEKLY_PULLBACK" ? '#D97706' : '#64748B',
                                 fontSize: '0.95rem',
                                 fontWeight: 500,
                                 cursor: 'pointer',
@@ -605,20 +577,20 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                             style={{
                                 padding: '0.75rem 1.5rem',
                                 background: bossSubStrategy === "CHEAP_ACQUISITION"
-                                    ? 'rgba(245, 158, 11, 0.2)'
+                                    ? '#FEF3C7'
                                     : 'transparent',
                                 border: bossSubStrategy === "CHEAP_ACQUISITION"
                                     ? '2px solid #f59e0b'
-                                    : '1px solid rgba(255,255,255,0.2)',
+                                    : '1px solid #DEE2E6',
                                 borderRadius: '9999px',
-                                color: bossSubStrategy === "CHEAP_ACQUISITION" ? '#fcd34d' : '#94a3b8',
+                                color: bossSubStrategy === "CHEAP_ACQUISITION" ? '#D97706' : '#64748B',
                                 fontSize: '0.95rem',
                                 fontWeight: 500,
                                 cursor: 'pointer',
                                 transition: 'all 0.2s ease',
                             }}
                         >
-                            🏷️ 廉價收購
+                            <TagIcon size={14} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }} /> 廉價收購
                         </button>
                     </>
                 )}
@@ -626,7 +598,7 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
 
             {isDisabled ? (
                 <div className="inspector-disabled">
-                    <p>🔴 Gate is STOP - Office Worker Strategy Disabled</p>
+                    <p><StopCircleIcon size={18} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }} /> Gate is STOP - Office Worker Strategy Disabled</p>
                     <p className="hint">Switch to Boss Strategy for pullback analysis</p>
                 </div>
             ) : (
@@ -644,42 +616,32 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                                 flex: 1,
                                 height: '3.5rem',
                                 padding: '0 1.5rem',
-                                background: 'rgba(15, 23, 42, 0.6)',
-                                border: '2px solid rgba(255,255,255,0.1)',
+                                background: '#FFFFFF',
+                                border: '2px solid #DEE2E6',
                                 borderRadius: '0.75rem',
-                                color: '#f1f5f9',
+                                color: '#0F172A',
                                 fontSize: '1.25rem',
                                 outline: 'none',
                             }}
                         />
                         <button
+                            className="search-btn"
                             onClick={fetchQuote}
                             disabled={loading || !symbol.trim()}
+                            aria-label="搜尋股票"
                             style={{
-                                width: '3.5rem',
-                                height: '3.5rem',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                background: activeStrategy === "BOSS"
-                                    ? 'linear-gradient(135deg, #d97706, #f59e0b)'
-                                    : 'linear-gradient(135deg, #4f46e5, #6366f1)',
-                                border: 'none',
-                                borderRadius: '0.75rem',
-                                fontSize: '1.5rem',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s ease',
+                                background: activeStrategy === "BOSS" ? '#f59e0b' : '#3B82F6',
                                 opacity: loading || !symbol.trim() ? 0.5 : 1,
                             }}
                         >
-                            {loading ? "⏳" : "🔍"}
+                            {loading ? <LoaderIcon size={20} /> : <SearchIcon size={20} />}
                         </button>
                     </div>
 
                     {/* Error Display */}
                     {error && (
                         <div className="error-message">
-                            ⚠️ {error}
+                            <AlertTriangleIcon size={16} /> {error}
                         </div>
                     )}
 
@@ -687,49 +649,31 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                     {quote && (
                         <div className="quote-card">
                             {/* Stock Info Header - 2 Column Grid */}
-                            <div className="stock-header-grid">
+                            <div className="info-cards-grid">
                                 {/* Price Card */}
-                                <div style={{
-                                    background: 'rgba(30, 41, 59, 0.5)',
-                                    padding: '1.25rem',
-                                    borderRadius: '1rem',
-                                    border: '1px solid rgba(255,255,255,0.08)',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                }}>
-                                    <div style={{ fontSize: '0.875rem', color: '#94a3b8', marginBottom: '0.25rem' }}>
+                                <div className="info-card">
+                                    <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
                                         {quote.company_name} ({quote.symbol})
                                     </div>
-                                    <div style={{ fontSize: '2.5rem', fontFamily: 'monospace', fontWeight: 700, color: '#ffffff', letterSpacing: '-0.025em' }}>
+                                    <div style={{ fontSize: '2.5rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.025em' }}>
                                         ${formatPrice(quote.price)}
                                     </div>
                                     <div style={{
                                         fontSize: '1.125rem',
                                         fontWeight: 700,
                                         marginTop: '0.25rem',
-                                        color: quote.change_percent >= 0 ? '#ef4444' : '#10b981',
+                                        color: quote.change_percent >= 0 ? 'var(--danger)' : 'var(--success)',
                                     }}>
                                         {quote.change_percent >= 0 ? '↑' : '↓'} {formatPercent(quote.change_percent)}
                                     </div>
                                 </div>
 
                                 {/* Trade Value Card */}
-                                <div style={{
-                                    background: 'rgba(30, 41, 59, 0.5)',
-                                    padding: '1.25rem',
-                                    borderRadius: '1rem',
-                                    border: '1px solid rgba(255,255,255,0.08)',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                }}>
-                                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>
+                                <div className="info-card">
+                                    <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>
                                         Trade Value
                                     </div>
-                                    <div style={{ fontSize: '2rem', fontFamily: 'monospace', fontWeight: 700, color: '#fbbf24' }}>
+                                    <div style={{ fontSize: '2rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#fbbf24' }}>
                                         {formatTradeValue(quote.trade_value)}
                                     </div>
                                     {isHot && (
@@ -742,92 +686,43 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                                             fontSize: '0.75rem',
                                             fontWeight: 700,
                                         }}>
-                                            🔥 Hot
+                                            Hot
                                         </div>
                                     )}
                                 </div>
                             </div>
 
                             {/* Action Buttons */}
-                            <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem' }}>
-                                <button
-                                    onClick={openTradeModal}
-                                    style={{
-                                        flex: 1,
-                                        padding: '0.75rem',
-                                        background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(168, 85, 247, 0.3))',
-                                        border: '1px solid rgba(99, 102, 241, 0.4)',
-                                        borderRadius: '0.75rem',
-                                        color: '#c7d2fe',
-                                        fontSize: '1rem',
-                                        fontWeight: 600,
-                                        cursor: 'pointer',
-                                        transition: 'all 0.2s ease',
-                                    }}
-                                >
-                                    📝 記錄進場
+                            <div className="action-buttons">
+                                <button className="action-btn record" onClick={openTradeModal}>
+                                    <BookOpenIcon size={18} /> 記錄進場
                                 </button>
-                                <button
-                                    onClick={() => setShowChart(true)}
-                                    style={{
-                                        flex: 1,
-                                        padding: '0.75rem',
-                                        background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(6, 182, 212, 0.2))',
-                                        border: '1px solid rgba(16, 185, 129, 0.4)',
-                                        borderRadius: '0.75rem',
-                                        color: '#6ee7b7',
-                                        fontSize: '1rem',
-                                        fontWeight: 600,
-                                        cursor: 'pointer',
-                                        transition: 'all 0.2s ease',
-                                    }}
-                                >
-                                    📈 K線圖
+                                <button className="action-btn chart" onClick={() => setShowChart(true)}>
+                                    <TrendingUpIcon size={18} /> K線圖
                                 </button>
                             </div>
 
                             {/* Boss: Revenue YOY Verification Tile */}
                             {activeStrategy === "BOSS" && (
                                 <div
+                                    className="validation-check"
                                     onClick={() => setRevenueYoyChecked(!revenueYoyChecked)}
-                                    style={{
-                                        width: '100%',
-                                        padding: '1rem',
-                                        borderRadius: '0.75rem',
-                                        border: revenueYoyChecked ? '2px solid #10b981' : '2px solid rgba(75, 85, 99, 0.6)',
-                                        background: revenueYoyChecked ? 'rgba(16, 185, 129, 0.15)' : 'rgba(30, 41, 59, 0.5)',
-                                        cursor: 'pointer',
-                                        transition: 'all 0.2s ease',
-                                        marginBottom: '1rem',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '1rem',
-                                        boxShadow: revenueYoyChecked ? '0 0 15px rgba(16, 185, 129, 0.3)' : 'none',
+                                    onKeyDown={(e) => {
+                                        if (e.key === ' ' || e.key === 'Enter') {
+                                            e.preventDefault();
+                                            setRevenueYoyChecked(!revenueYoyChecked);
+                                        }
                                     }}
+                                    role="checkbox"
+                                    aria-checked={revenueYoyChecked}
+                                    tabIndex={0}
                                 >
-                                    <div style={{
-                                        width: '2rem',
-                                        height: '2rem',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        fontSize: '1.5rem',
-                                    }}>
-                                        {revenueYoyChecked ? '✅' : '⬜'}
-                                    </div>
+                                    <CheckboxIcon checked={revenueYoyChecked} size={28} />
                                     <div>
-                                        <div style={{
-                                            fontSize: '1.125rem',
-                                            fontWeight: 700,
-                                            color: revenueYoyChecked ? '#a7f3d0' : '#9ca3af',
-                                        }}>
+                                        <div style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                                             營收爆發檢查 (YOY &gt; 30%)
                                         </div>
-                                        <div style={{
-                                            fontSize: '0.875rem',
-                                            opacity: 0.7,
-                                            color: revenueYoyChecked ? '#a7f3d0' : '#9ca3af',
-                                        }}>
+                                        <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
                                             Confirm single-month revenue growth is strong
                                         </div>
                                     </div>
@@ -844,7 +739,6 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                                     borderRadius: '0.75rem',
                                     borderLeft: '6px solid',
                                     marginTop: '1.5rem',
-                                    backdropFilter: 'blur(8px)',
                                     boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
                                     ...(verdict.status === 'BUY' ? {
                                         background: 'rgba(6, 78, 59, 0.4)',
@@ -862,7 +756,7 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                                         fontSize: '2rem',
                                         lineHeight: 1,
                                     }}>
-                                        {verdict.status === 'BUY' ? '✅' : verdict.status === 'WAIT' ? '⚠️' : '🚫'}
+                                        {verdict.status === 'BUY' ? <CheckCircleIcon size={48} /> : verdict.status === 'WAIT' ? <AlertTriangleIcon size={48} /> : <XCircleIcon size={48} />}
                                     </div>
                                     {/* Content */}
                                     <div style={{ flex: 1 }}>
@@ -874,9 +768,9 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                                                 : verdict.status === 'WAIT' ? '#fcd34d'
                                                     : '#fca5a5',
                                         }}>
-                                            {verdict.status === 'BUY' ? '🟢 Buy Signal - 可進場'
-                                                : verdict.status === 'WAIT' ? '🟡 Caution - 觀察中'
-                                                    : '🔴 Stop - 不建議'}
+                                            {verdict.status === 'BUY' ? 'Buy Signal - 可進場'
+                                                : verdict.status === 'WAIT' ? 'Caution - 觀察中'
+                                                    : 'Stop - 不建議'}
                                         </div>
                                         <div style={{
                                             fontSize: '0.95rem',
@@ -910,7 +804,7 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                                                     padding: '0.75rem',
                                                     borderRadius: '0.5rem',
                                                 }}>
-                                                    <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>💰 分批策略</div>
+                                                    <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}><DollarSignIcon size={12} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }} /> 分批策略</div>
                                                     <div style={{ fontSize: '0.95rem', fontWeight: 600 }}>{verdict.batchAdvice}</div>
                                                 </div>
                                                 <div style={{
@@ -918,7 +812,7 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                                                     padding: '0.75rem',
                                                     borderRadius: '0.5rem',
                                                 }}>
-                                                    <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>🎯 進場點</div>
+                                                    <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}><TargetIcon size={12} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }} /> 進場點</div>
                                                     <div style={{ fontSize: '0.95rem', fontWeight: 600 }}>{verdict.entryAdvice}</div>
                                                 </div>
                                             </div>
@@ -935,57 +829,57 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                                 marginTop: '1.5rem',
                             }}>
                                 <div style={{
-                                    background: 'rgba(30, 41, 59, 0.4)',
+                                    background: '#F7F8FA',
                                     padding: '1rem',
                                     borderRadius: '0.75rem',
-                                    border: '1px solid rgba(255,255,255,0.08)',
+                                    border: '1px solid #DEE2E6',
                                 }}>
-                                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>Weekly MACD</div>
-                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', fontWeight: 700, color: quote.macd_weekly_trend === 'UP' ? '#ef4444' : quote.macd_weekly_trend === 'DOWN' ? '#10b981' : '#94a3b8' }}>
+                                    <div style={{ fontSize: '0.7rem', color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>Weekly MACD</div>
+                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', fontWeight: 700, color: quote.macd_weekly_trend === 'UP' ? '#ef4444' : quote.macd_weekly_trend === 'DOWN' ? '#10b981' : '#64748B' }}>
                                         {quote.macd_weekly_trend === "UP" ? "↑ UP" : quote.macd_weekly_trend === "DOWN" ? "↓ DOWN" : "→ FLAT"}
                                     </div>
                                 </div>
                                 <div style={{
-                                    background: 'rgba(30, 41, 59, 0.4)',
+                                    background: '#F7F8FA',
                                     padding: '1rem',
                                     borderRadius: '0.75rem',
-                                    border: '1px solid rgba(255,255,255,0.08)',
+                                    border: '1px solid #DEE2E6',
                                 }}>
-                                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>Daily MACD Days</div>
+                                    <div style={{ fontSize: '0.7rem', color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>Daily MACD Days</div>
                                     <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', fontWeight: 700, color: quote.macd_histogram_days > 0 ? '#ef4444' : '#10b981' }}>
                                         {quote.macd_histogram_days > 0 ? `↑ +${quote.macd_histogram_days}` : `↓ ${quote.macd_histogram_days}`} Days
                                     </div>
                                 </div>
                                 <div style={{
-                                    background: 'rgba(30, 41, 59, 0.4)',
+                                    background: '#F7F8FA',
                                     padding: '1rem',
                                     borderRadius: '0.75rem',
-                                    border: '1px solid rgba(255,255,255,0.08)',
+                                    border: '1px solid #DEE2E6',
                                 }}>
-                                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>vs 5MA</div>
+                                    <div style={{ fontSize: '0.7rem', color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>vs 5MA</div>
                                     <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', fontWeight: 700, color: quote.price >= quote.ma5 ? '#ef4444' : '#10b981' }}>
                                         {quote.price >= quote.ma5 ? '↑' : '↓'} ${formatPrice(quote.ma5)}
                                     </div>
                                 </div>
                                 <div style={{
-                                    background: 'rgba(30, 41, 59, 0.4)',
+                                    background: '#F7F8FA',
                                     padding: '1rem',
                                     borderRadius: '0.75rem',
-                                    border: '1px solid rgba(255,255,255,0.08)',
+                                    border: '1px solid #DEE2E6',
                                 }}>
-                                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>vs 20MA (月線)</div>
+                                    <div style={{ fontSize: '0.7rem', color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>vs 20MA (月線)</div>
                                     <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', fontWeight: 700, color: quote.deviation_ma20 >= 0 ? '#ef4444' : '#10b981' }}>
                                         {quote.deviation_ma20 >= 0 ? '↑' : '↓'} {formatPercent(quote.deviation_ma20)}
                                     </div>
                                 </div>
                                 <div style={{
-                                    background: 'rgba(30, 41, 59, 0.4)',
+                                    background: '#F7F8FA',
                                     padding: '1rem',
                                     borderRadius: '0.75rem',
-                                    border: '1px solid rgba(255,255,255,0.08)',
+                                    border: '1px solid #DEE2E6',
                                     gridColumn: 'span 2',
                                 }}>
-                                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>vs 60MA (季線)</div>
+                                    <div style={{ fontSize: '0.7rem', color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>vs 60MA (季線)</div>
                                     <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', fontWeight: 700, color: quote.deviation_ma60 >= 0 ? '#ef4444' : '#10b981' }}>
                                         {quote.deviation_ma60 >= 0 ? '↑' : '↓'} {formatPercent(quote.deviation_ma60)}
                                     </div>

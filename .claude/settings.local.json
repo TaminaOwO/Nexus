@@ -22,7 +22,12 @@
       "Bash(sqlite3:*)",
       "Bash(npm run dev:*)",
       "Bash(wc:*)",
-      "Bash(Stop-Process -Id 27168 -Force)"
+      "Bash(Stop-Process -Id 27168 -Force)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: Replace all emoji with SVG icons across Kite module\n\n- Created comprehensive Icons.tsx library with 15 SVG icons\n- Replaced traffic light emoji \\(🔴🟢🟡\\) in WindCockpit\n- Replaced strategy icons \\(🛡️🏢\\) in StockInspector\n- Replaced checkmarks \\(✅☑️☐\\) in StrategyChecklist\n- Replaced alerts \\(⚠️\\) in TradeHistory and TradeJournal\n- Replaced status icons \\(🎯✅👀\\) in Watchlist\n- All icons now use consistent SVG system for cross-platform compatibility\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git checkout:*)",
+      "Bash(git push:*)",
+      "Bash(git commit:*)",
+      "Bash(git merge:*)"
     ]
   }
 }

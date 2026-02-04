@@ -209,10 +209,10 @@ The inspector supports two main strategies with sub-strategies:
 
 | Main Strategy | Sub-Strategy | Chinese | Use Case |
 |---------------|--------------|---------|----------|
-| **Office Worker** 🏢 | Strong Weekly | 強勢週/追漲 | Chase momentum in uptrends |
-| **Office Worker** 🏢 | Weekly Trend | 週趨勢/買拉回 | Buy pullbacks in established trends |
-| **Boss** 🛡️ | Weekly Pullback | 週拉回 | Enter on weekly retracements |
-| **Boss** 🛡️ | Cheap Acquisition | 廉價收購 | Accumulate at deep discounts |
+| **Office Worker**  | Strong Weekly | 強勢週/追漲 | Chase momentum in uptrends |
+| **Office Worker**  | Weekly Trend | 週趨勢/買拉回 | Buy pullbacks in established trends |
+| **Boss**  | Weekly Pullback | 週拉回 | Enter on weekly retracements |
+| **Boss**  | Cheap Acquisition | 廉價收購 | Accumulate at deep discounts |
 
 #### Quote Data Displayed
 

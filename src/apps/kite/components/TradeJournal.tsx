@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { IconBOSS, IconCompany } from "../../../components/HandDrawnIcons";
-import { AlertTriangleIcon, CheckCircleIcon } from "../../../components/Icons";
+import { AlertTriangleIcon, CheckCircleIcon, RefreshIcon, PortfolioManagerIcon, PiggyBankIcon, ChartLineIcon, ChartCandlestickIcon, MailboxIcon } from "../../../components/Icons";
 import "./TradeJournal.css";
 
 interface StrategySnapshot {
@@ -321,7 +321,7 @@ export function TradeJournal() {
             )}
 
             <div className="journal-header">
-                <h2>📊 Portfolio Manager</h2>
+                <h2><PortfolioManagerIcon size={24} style={{ display: 'inline-block', verticalAlign: 'text-top', marginRight: '2px' }} /> Portfolio Manager</h2>
                 <div className="header-controls">
                     <div className="refresh-info">
                         <span className="last-update">
@@ -337,7 +337,7 @@ export function TradeJournal() {
                         </label>
                     </div>
                     <button className="refresh-btn" onClick={() => fetchPortfolio()}>
-                        🔄 Refresh
+                        <RefreshIcon size={16} /> Refresh
                     </button>
                 </div>
             </div>
@@ -346,15 +346,15 @@ export function TradeJournal() {
             {portfolio && (
                 <div className="summary-cards">
                     <div className="summary-card">
-                        <span className="label">💵 Total Cost</span>
+                        <span className="label"><PiggyBankIcon size={16} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }} /> Total Cost</span>
                         <span className="value">{formatMoney(portfolio.total_cost)}</span>
                     </div>
                     <div className="summary-card">
-                        <span className="label">📈 Market Value</span>
+                        <span className="label"><ChartLineIcon size={16} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }} /> Market Value</span>
                         <span className="value">{formatMoney(portfolio.market_value)}</span>
                     </div>
                     <div className={`summary-card pl ${portfolio.total_pl >= 0 ? "up" : "down"}`}>
-                        <span className="label">📊 Total P/L</span>
+                        <span className="label"><ChartCandlestickIcon size={16} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }} /> Total P/L</span>
                         <span className="value">
                             {formatMoney(portfolio.total_pl)}
                             <span className="pct">{formatPercent(portfolio.total_pl_percent)}</span>
@@ -428,7 +428,7 @@ export function TradeJournal() {
                 </div>
             ) : (
                 <div className="empty-state">
-                    <p>📭 No open positions</p>
+                    <p><MailboxIcon size={20} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }} /> No open positions</p>
                     <p className="hint">Use Stock Inspector to record new trades</p>
                 </div>
             )}

@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { StructureType, SubStrategyType, WindType, QuoteData, STRATEGY_LABELS, SUB_STRATEGY_LABELS } from "../types";
 import { getStrategyChecklist, getChecklistStatus } from "../utils/strategyChecklist";
 import { IconCompany, IconBOSS } from "../../../components/HandDrawnIcons";
-import { TargetIcon, CheckCircleIcon, SearchIcon } from "../../../components/Icons";
+import { TargetIcon, CheckCircleIcon, SearchIcon, PawPrintIcon } from "../../../components/Icons";
 import "./Watchlist.css";
 
 const API_BASE = "/api/kite";
@@ -204,7 +204,7 @@ export function Watchlist({ structure, currentWind, onStockSelect, onConvertToTr
     return (
         <div className="watchlist-container">
             <div className="watchlist-header">
-                <h2>📋 Watchlist</h2>
+                <h2><PawPrintIcon size={20} style={{ display: 'inline-block', verticalAlign: 'text-top', marginRight: '6px' }} /> Watchlist</h2>
                 <button
                     className="add-btn"
                     onClick={() => setIsAdding(!isAdding)}

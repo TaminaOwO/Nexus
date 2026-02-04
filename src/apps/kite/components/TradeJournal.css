@@ -5,7 +5,7 @@
 .trade-journal {
     background: var(--bg-elevated);
     border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-lg, 16px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     padding: 2rem;
     margin-top: 2rem;
@@ -822,10 +822,16 @@
     }
 }
 
+@media (max-width: 640px) {
+    .journal-header h2 {
+        font-size: 1.25rem;
+    }
+}
+
 /* Extra optimizations for small screens */
 @media (max-width: 480px) {
     .trade-journal {
-        padding: 0;
+        padding: 1rem;
     }
 
     .summary-cards {
@@ -860,7 +866,8 @@
 
     input,
     textarea {
-        font-size: 16px !important; /* Prevent zoom on iOS */
+        font-size: 16px !important;
+        /* Prevent zoom on iOS */
         min-height: 48px;
     }
 }

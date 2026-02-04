@@ -11,8 +11,8 @@ import {
     WindType,
 } from "../types";
 import { getStrategyVerdict } from "../utils/strategyDiagnosis";
-import { IconCompany, IconBOSS, IconLifeOS } from "../../../components/HandDrawnIcons";
-import { CheckboxIcon, SearchIcon, BookOpenIcon, TrendingUpIcon, LoaderIcon, DollarSignIcon, TagIcon, TargetIcon, StopCircleIcon, CheckCircleIcon, AlertTriangleIcon, XCircleIcon } from "../../../components/Icons";
+import { IconCompany, IconBOSS } from "../../../components/HandDrawnIcons";
+import { StockInspectorIcon, CheckboxIcon, SearchIcon, BookOpenIcon, TrendingUpIcon, LoaderIcon, DollarSignIcon, TagIcon, StrongWeekIcon, WeeklyPullbackIcon, WeeklyTrendIcon, TargetIcon, StopCircleIcon, CheckCircleIcon, AlertTriangleIcon, XCircleIcon, SpellCheckIcon, SaveIcon, BellRingIcon } from "../../../components/Icons";
 import { StrategyChecklist } from "./StrategyChecklist";
 import { StockChart } from "./StockChart";
 import "./StockInspector.css";
@@ -263,57 +263,18 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
         <div className={`stock-inspector ${isDisabled ? "disabled" : ""}`}>
             {/* Trade Modal */}
             {showTradeModal && quote && (
-                <div style={{
-                    position: 'fixed',
-                    inset: 0,
-                    background: 'rgba(0,0,0,0.5)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    zIndex: 1000,
-                    padding: '1rem',
-                }} onClick={() => setShowTradeModal(false)}>
-                    <div style={{
-                        background: '#FFFFFF',
-                        border: '1px solid #DEE2E6',
-                        borderRadius: '1rem',
-                        width: '100%',
-                        maxWidth: '520px',
-                        maxHeight: '90vh',
-                        overflowY: 'auto',
-                        boxShadow: '0 24px 64px rgba(0,0,0,0.2)',
-                    }} onClick={(e) => e.stopPropagation()}>
+                <div className="si-modal-overlay" onClick={() => setShowTradeModal(false)}>
+                    <div className="si-modal" onClick={(e) => e.stopPropagation()}>
                         {/* Header */}
-                        <div style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            padding: '1.25rem 1.5rem',
-                            borderBottom: '1px solid #DEE2E6',
-                        }}>
-                            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0, color: '#0F172A', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <div className="si-modal-header">
+                            <h3>
                                 <BookOpenIcon size={20} /> 記錄交易 Log Trade
                             </h3>
-                            <button
-                                onClick={() => setShowTradeModal(false)}
-                                style={{
-                                    width: '2.5rem',
-                                    height: '2.5rem',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    background: '#F7F8FA',
-                                    border: 'none',
-                                    borderRadius: '50%',
-                                    color: '#64748B',
-                                    fontSize: '1.25rem',
-                                    cursor: 'pointer',
-                                }}
-                            >×</button>
+                            <button className="si-modal-close" onClick={() => setShowTradeModal(false)}>×</button>
                         </div>
 
                         {/* Body */}
-                        <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                        <div className="si-modal-body">
                             {/* Strategy Badge */}
                             <div className="trade-form-strategy">
                                 <span className="strategy-icon">
@@ -414,7 +375,7 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
 
                             {/* Auto-captured Context */}
                             <div className="auto-captured">
-                                <div className="auto-captured-title">📊 自動擷取 Auto-Captured</div>
+                                <div className="auto-captured-title"><SpellCheckIcon size={14} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }} /> 自動擷取 Auto-Captured</div>
                                 <div className="auto-captured-grid">
                                     <div className="captured-item">
                                         <div className="captured-label">Strategy</div>
@@ -437,38 +398,16 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                         </div>
 
                         {/* Footer */}
-                        <div style={{
-                            padding: '1.25rem 1.5rem',
-                            borderTop: '1px solid #DEE2E6',
-                        }}>
+                        <div className="si-modal-footer">
                             {tradeSuccess ? (
-                                <div style={{
-                                    textAlign: 'center',
-                                    padding: '1rem',
-                                    background: 'rgba(16, 185, 129, 0.2)',
-                                    borderRadius: '0.75rem',
-                                    color: '#6ee7b7',
-                                    fontSize: '1.1rem',
-                                    fontWeight: 600,
-                                }}><CheckCircleIcon size={18} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }} /> 交易已記錄!</div>
+                                <div className="si-modal-success"><CheckCircleIcon size={18} /> 交易已記錄!</div>
                             ) : (
                                 <button
+                                    className="si-modal-save-btn"
                                     onClick={saveTrade}
                                     disabled={tradeSaving || tradeForm.entryPrice <= 0}
-                                    style={{
-                                        width: '100%',
-                                        height: '3.25rem',
-                                        background: 'linear-gradient(135deg, #10b981, #14b8a6)',
-                                        border: 'none',
-                                        borderRadius: '0.75rem',
-                                        color: 'white',
-                                        fontSize: '1.1rem',
-                                        fontWeight: 600,
-                                        cursor: tradeSaving || tradeForm.entryPrice <= 0 ? 'not-allowed' : 'pointer',
-                                        opacity: tradeSaving || tradeForm.entryPrice <= 0 ? 0.5 : 1,
-                                    }}
                                 >
-                                    {tradeSaving ? "保存中..." : "💾 儲存交易 Save Trade"}
+                                    {tradeSaving ? "保存中..." : <><SaveIcon size={16} /> 儲存交易 Save Trade</>}
                                 </button>
                             )}
                         </div>
@@ -478,7 +417,7 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
 
             {/* Header */}
             <div className="inspector-header">
-                <h2>📊 Stock Inspector</h2>
+                <h2><StockInspectorIcon size={20} style={{ display: 'inline-block', verticalAlign: 'text-top', marginRight: '2px' }} /> Stock Inspector</h2>
                 <span className="cycle-badge">
                     {structureInfo.emoji} {structureInfo.zh}
                 </span>
@@ -491,106 +430,47 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                     onClick={() => setActiveStrategy("OFFICE")}
                 >
                     <IconCompany className="w-8 h-8" />
-                    <span style={{ fontSize: '1rem', fontWeight: 600 }}>OFFICE 策略</span>
+                    <span style={{ fontSize: '1rem', fontWeight: 600 }}>OFFICE</span>
                 </button>
                 <button
                     className={`strategy-tab ${activeStrategy === "BOSS" ? "active boss" : ""}`}
                     onClick={() => setActiveStrategy("BOSS")}
                 >
                     <IconBOSS className="w-8 h-8" />
-                    <span style={{ fontSize: '1rem', fontWeight: 600 }}>BOSS 策略</span>
+                    <span style={{ fontSize: '1rem', fontWeight: 600 }}>BOSS</span>
                 </button>
             </div>
 
             {/* Layer 2: Sub-Strategy Pills */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1.5rem' }}>
+            <div className="si-sub-pills">
                 {activeStrategy === "OFFICE" ? (
                     <>
                         <button
+                            className={`si-sub-pill ${officeSubStrategy === "STRONG_WEEKLY" ? "active office" : ""}`}
                             onClick={() => setOfficeSubStrategy("STRONG_WEEKLY")}
-                            style={{
-                                padding: '0.75rem 1.5rem',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '0.5rem',
-                                background: officeSubStrategy === "STRONG_WEEKLY"
-                                    ? '#DBEAFE'
-                                    : 'transparent',
-                                border: officeSubStrategy === "STRONG_WEEKLY"
-                                    ? '2px solid #3B82F6'
-                                    : '1px solid #DEE2E6',
-                                borderRadius: '9999px',
-                                color: officeSubStrategy === "STRONG_WEEKLY" ? '#3B82F6' : '#64748B',
-                                fontSize: '0.95rem',
-                                fontWeight: 500,
-                                cursor: 'pointer',
-                                transition: 'all 0.2s ease',
-                            }}
                         >
-                            <IconLifeOS className="w-4 h-4" /> 強勢週/追漲
+                            <StrongWeekIcon size={14} /> 強勢週
                         </button>
                         <button
+                            className={`si-sub-pill ${officeSubStrategy === "WEEKLY_TREND" ? "active office" : ""}`}
                             onClick={() => setOfficeSubStrategy("WEEKLY_TREND")}
-                            style={{
-                                padding: '0.75rem 1.5rem',
-                                background: officeSubStrategy === "WEEKLY_TREND"
-                                    ? '#DBEAFE'
-                                    : 'transparent',
-                                border: officeSubStrategy === "WEEKLY_TREND"
-                                    ? '2px solid #3B82F6'
-                                    : '1px solid #DEE2E6',
-                                borderRadius: '9999px',
-                                color: officeSubStrategy === "WEEKLY_TREND" ? '#3B82F6' : '#64748B',
-                                fontSize: '0.95rem',
-                                fontWeight: 500,
-                                cursor: 'pointer',
-                                transition: 'all 0.2s ease',
-                            }}
                         >
-                            📉 週趨勢/買拉回
+                            <WeeklyTrendIcon size={14} /> 週趨勢
                         </button>
                     </>
                 ) : (
                     <>
                         <button
+                            className={`si-sub-pill ${bossSubStrategy === "WEEKLY_PULLBACK" ? "active boss" : ""}`}
                             onClick={() => setBossSubStrategy("WEEKLY_PULLBACK")}
-                            style={{
-                                padding: '0.75rem 1.5rem',
-                                background: bossSubStrategy === "WEEKLY_PULLBACK"
-                                    ? '#FEF3C7'
-                                    : 'transparent',
-                                border: bossSubStrategy === "WEEKLY_PULLBACK"
-                                    ? '2px solid #f59e0b'
-                                    : '1px solid #DEE2E6',
-                                borderRadius: '9999px',
-                                color: bossSubStrategy === "WEEKLY_PULLBACK" ? '#D97706' : '#64748B',
-                                fontSize: '0.95rem',
-                                fontWeight: 500,
-                                cursor: 'pointer',
-                                transition: 'all 0.2s ease',
-                            }}
                         >
-                            🔄 週拉回
+                            <WeeklyPullbackIcon size={14} /> 週拉回
                         </button>
                         <button
+                            className={`si-sub-pill ${bossSubStrategy === "CHEAP_ACQUISITION" ? "active boss" : ""}`}
                             onClick={() => setBossSubStrategy("CHEAP_ACQUISITION")}
-                            style={{
-                                padding: '0.75rem 1.5rem',
-                                background: bossSubStrategy === "CHEAP_ACQUISITION"
-                                    ? '#FEF3C7'
-                                    : 'transparent',
-                                border: bossSubStrategy === "CHEAP_ACQUISITION"
-                                    ? '2px solid #f59e0b'
-                                    : '1px solid #DEE2E6',
-                                borderRadius: '9999px',
-                                color: bossSubStrategy === "CHEAP_ACQUISITION" ? '#D97706' : '#64748B',
-                                fontSize: '0.95rem',
-                                fontWeight: 500,
-                                cursor: 'pointer',
-                                transition: 'all 0.2s ease',
-                            }}
                         >
-                            <TagIcon size={14} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }} /> 廉價收購
+                            <TagIcon size={14} /> 廉價收購
                         </button>
                     </>
                 )}
@@ -604,25 +484,15 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
             ) : (
                 <>
                     {/* Search Bar */}
-                    <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                    <div className="search-bar">
                         <input
                             type="text"
+                            className="si-search-input"
                             placeholder="Enter symbol (e.g., 2330, 4979)"
                             value={symbol}
                             onChange={(e) => setSymbol(e.target.value)}
                             onKeyDown={handleKeyDown}
                             disabled={loading}
-                            style={{
-                                flex: 1,
-                                height: '3.5rem',
-                                padding: '0 1.5rem',
-                                background: '#FFFFFF',
-                                border: '2px solid #DEE2E6',
-                                borderRadius: '0.75rem',
-                                color: '#0F172A',
-                                fontSize: '1.25rem',
-                                outline: 'none',
-                            }}
                         />
                         <button
                             className="search-btn"
@@ -652,40 +522,27 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                             <div className="info-cards-grid">
                                 {/* Price Card */}
                                 <div className="info-card">
-                                    <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
+                                    <div className="si-price-card-name">
                                         {quote.company_name} ({quote.symbol})
                                     </div>
-                                    <div style={{ fontSize: '2.5rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.025em' }}>
+                                    <div className="si-price-card-price">
                                         ${formatPrice(quote.price)}
                                     </div>
-                                    <div style={{
-                                        fontSize: '1.125rem',
-                                        fontWeight: 700,
-                                        marginTop: '0.25rem',
-                                        color: quote.change_percent >= 0 ? 'var(--danger)' : 'var(--success)',
-                                    }}>
+                                    <div className={`si-price-card-change ${quote.change_percent >= 0 ? 'up' : 'down'}`}>
                                         {quote.change_percent >= 0 ? '↑' : '↓'} {formatPercent(quote.change_percent)}
                                     </div>
                                 </div>
 
                                 {/* Trade Value Card */}
                                 <div className="info-card">
-                                    <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>
+                                    <div className="si-trade-value-label">
                                         Trade Value
                                     </div>
-                                    <div style={{ fontSize: '2rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#fbbf24' }}>
+                                    <div className="si-trade-value-number">
                                         {formatTradeValue(quote.trade_value)}
                                     </div>
                                     {isHot && (
-                                        <div style={{
-                                            marginTop: '0.5rem',
-                                            padding: '0.25rem 0.75rem',
-                                            background: 'rgba(239, 68, 68, 0.2)',
-                                            color: '#fca5a5',
-                                            borderRadius: '9999px',
-                                            fontSize: '0.75rem',
-                                            fontWeight: 700,
-                                        }}>
+                                        <div className="hot-badge">
                                             Hot
                                         </div>
                                     )}
@@ -719,10 +576,10 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                                 >
                                     <CheckboxIcon checked={revenueYoyChecked} size={28} />
                                     <div>
-                                        <div style={{ fontSize: '1.125rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                                        <div className="si-check-title">
                                             營收爆發檢查 (YOY &gt; 30%)
                                         </div>
-                                        <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                                        <div className="si-check-subtitle">
                                             Confirm single-month revenue growth is strong
                                         </div>
                                     </div>
@@ -731,89 +588,36 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
 
                             {/* Verdict Alert Card */}
                             {verdict && (
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'flex-start',
-                                    gap: '1rem',
-                                    padding: '1.25rem',
-                                    borderRadius: '0.75rem',
-                                    borderLeft: '6px solid',
-                                    marginTop: '1.5rem',
-                                    boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
-                                    ...(verdict.status === 'BUY' ? {
-                                        background: 'rgba(6, 78, 59, 0.4)',
-                                        borderLeftColor: '#10b981',
-                                    } : verdict.status === 'WAIT' ? {
-                                        background: 'rgba(120, 53, 15, 0.4)',
-                                        borderLeftColor: '#f59e0b',
-                                    } : {
-                                        background: 'rgba(127, 29, 29, 0.4)',
-                                        borderLeftColor: '#ef4444',
-                                    }),
-                                }}>
+                                <div className={`si-verdict-card ${verdict.status === 'BUY' ? 'buy' : verdict.status === 'WAIT' ? 'wait' : 'danger'}`}>
                                     {/* Icon */}
-                                    <div style={{
-                                        fontSize: '2rem',
-                                        lineHeight: 1,
-                                    }}>
+                                    <div className="si-verdict-icon">
                                         {verdict.status === 'BUY' ? <CheckCircleIcon size={48} /> : verdict.status === 'WAIT' ? <AlertTriangleIcon size={48} /> : <XCircleIcon size={48} />}
                                     </div>
                                     {/* Content */}
-                                    <div style={{ flex: 1 }}>
-                                        <div style={{
-                                            fontSize: '1.25rem',
-                                            fontWeight: 700,
-                                            marginBottom: '0.5rem',
-                                            color: verdict.status === 'BUY' ? '#6ee7b7'
-                                                : verdict.status === 'WAIT' ? '#fcd34d'
-                                                    : '#fca5a5',
-                                        }}>
+                                    <div className="si-verdict-content">
+                                        <div className={`si-verdict-title ${verdict.status === 'BUY' ? 'buy' : verdict.status === 'WAIT' ? 'wait' : 'danger'}`}>
                                             {verdict.status === 'BUY' ? 'Buy Signal - 可進場'
                                                 : verdict.status === 'WAIT' ? 'Caution - 觀察中'
                                                     : 'Stop - 不建議'}
                                         </div>
-                                        <div style={{
-                                            fontSize: '0.95rem',
-                                            color: 'rgba(255,255,255,0.85)',
-                                            lineHeight: 1.6,
-                                        }}>
+                                        <div className="si-verdict-message">
                                             {verdict.message}
                                         </div>
                                         {verdict.timeWarning && (
-                                            <div style={{
-                                                marginTop: '0.75rem',
-                                                fontSize: '0.9rem',
-                                                color: '#fbbf24',
-                                                background: 'rgba(245, 158, 11, 0.15)',
-                                                padding: '0.5rem 0.75rem',
-                                                borderRadius: '0.5rem',
-                                            }}>
-                                                ⏰ {verdict.timeWarning}
+                                            <div className="si-verdict-time-warning">
+                                                <BellRingIcon size={14} /> {verdict.timeWarning}
                                             </div>
                                         )}
                                         {/* Operational Guide (Boss only) */}
                                         {verdict.batchAdvice && verdict.entryAdvice && (
-                                            <div style={{
-                                                marginTop: '1rem',
-                                                display: 'grid',
-                                                gridTemplateColumns: '1fr 1fr',
-                                                gap: '0.75rem',
-                                            }}>
-                                                <div style={{
-                                                    background: 'rgba(0,0,0,0.2)',
-                                                    padding: '0.75rem',
-                                                    borderRadius: '0.5rem',
-                                                }}>
-                                                    <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}><DollarSignIcon size={12} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }} /> 分批策略</div>
-                                                    <div style={{ fontSize: '0.95rem', fontWeight: 600 }}>{verdict.batchAdvice}</div>
+                                            <div className="verdict-advice-grid">
+                                                <div className="verdict-advice-item">
+                                                    <div className="verdict-advice-label"><DollarSignIcon size={12} /> 分批策略</div>
+                                                    <div className="verdict-advice-value">{verdict.batchAdvice}</div>
                                                 </div>
-                                                <div style={{
-                                                    background: 'rgba(0,0,0,0.2)',
-                                                    padding: '0.75rem',
-                                                    borderRadius: '0.5rem',
-                                                }}>
-                                                    <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}><TargetIcon size={12} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }} /> 進場點</div>
-                                                    <div style={{ fontSize: '0.95rem', fontWeight: 600 }}>{verdict.entryAdvice}</div>
+                                                <div className="verdict-advice-item">
+                                                    <div className="verdict-advice-label"><TargetIcon size={12} /> 進場點</div>
+                                                    <div className="verdict-advice-value">{verdict.entryAdvice}</div>
                                                 </div>
                                             </div>
                                         )}
@@ -822,65 +626,34 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                             )}
 
                             {/* Technical Data Grid */}
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(2, 1fr)',
-                                gap: '1rem',
-                                marginTop: '1.5rem',
-                            }}>
-                                <div style={{
-                                    background: '#F7F8FA',
-                                    padding: '1rem',
-                                    borderRadius: '0.75rem',
-                                    border: '1px solid #DEE2E6',
-                                }}>
-                                    <div style={{ fontSize: '0.7rem', color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>Weekly MACD</div>
-                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', fontWeight: 700, color: quote.macd_weekly_trend === 'UP' ? '#ef4444' : quote.macd_weekly_trend === 'DOWN' ? '#10b981' : '#64748B' }}>
+                            <div className="technical-grid">
+                                <div className="tech-card">
+                                    <div className="tech-label">Weekly MACD</div>
+                                    <div className={`tech-value ${quote.macd_weekly_trend === 'UP' ? 'macd-up' : quote.macd_weekly_trend === 'DOWN' ? 'macd-down' : 'macd-flat'}`}>
                                         {quote.macd_weekly_trend === "UP" ? "↑ UP" : quote.macd_weekly_trend === "DOWN" ? "↓ DOWN" : "→ FLAT"}
                                     </div>
                                 </div>
-                                <div style={{
-                                    background: '#F7F8FA',
-                                    padding: '1rem',
-                                    borderRadius: '0.75rem',
-                                    border: '1px solid #DEE2E6',
-                                }}>
-                                    <div style={{ fontSize: '0.7rem', color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>Daily MACD Days</div>
-                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', fontWeight: 700, color: quote.macd_histogram_days > 0 ? '#ef4444' : '#10b981' }}>
+                                <div className="tech-card">
+                                    <div className="tech-label">Daily MACD Days</div>
+                                    <div className={`tech-value ${quote.macd_histogram_days > 0 ? 'macd-up' : 'macd-down'}`}>
                                         {quote.macd_histogram_days > 0 ? `↑ +${quote.macd_histogram_days}` : `↓ ${quote.macd_histogram_days}`} Days
                                     </div>
                                 </div>
-                                <div style={{
-                                    background: '#F7F8FA',
-                                    padding: '1rem',
-                                    borderRadius: '0.75rem',
-                                    border: '1px solid #DEE2E6',
-                                }}>
-                                    <div style={{ fontSize: '0.7rem', color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>vs 5MA</div>
-                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', fontWeight: 700, color: quote.price >= quote.ma5 ? '#ef4444' : '#10b981' }}>
+                                <div className="tech-card">
+                                    <div className="tech-label">vs 5MA</div>
+                                    <div className={`tech-value ${quote.price >= quote.ma5 ? 'macd-up' : 'macd-down'}`}>
                                         {quote.price >= quote.ma5 ? '↑' : '↓'} ${formatPrice(quote.ma5)}
                                     </div>
                                 </div>
-                                <div style={{
-                                    background: '#F7F8FA',
-                                    padding: '1rem',
-                                    borderRadius: '0.75rem',
-                                    border: '1px solid #DEE2E6',
-                                }}>
-                                    <div style={{ fontSize: '0.7rem', color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>vs 20MA (月線)</div>
-                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', fontWeight: 700, color: quote.deviation_ma20 >= 0 ? '#ef4444' : '#10b981' }}>
+                                <div className="tech-card">
+                                    <div className="tech-label">vs 20MA (月線)</div>
+                                    <div className={`tech-value ${quote.deviation_ma20 >= 0 ? 'macd-up' : 'macd-down'}`}>
                                         {quote.deviation_ma20 >= 0 ? '↑' : '↓'} {formatPercent(quote.deviation_ma20)}
                                     </div>
                                 </div>
-                                <div style={{
-                                    background: '#F7F8FA',
-                                    padding: '1rem',
-                                    borderRadius: '0.75rem',
-                                    border: '1px solid #DEE2E6',
-                                    gridColumn: 'span 2',
-                                }}>
-                                    <div style={{ fontSize: '0.7rem', color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>vs 60MA (季線)</div>
-                                    <div style={{ fontSize: '1.125rem', fontFamily: 'monospace', fontWeight: 700, color: quote.deviation_ma60 >= 0 ? '#ef4444' : '#10b981' }}>
+                                <div className="tech-card span-2">
+                                    <div className="tech-label">vs 60MA (季線)</div>
+                                    <div className={`tech-value ${quote.deviation_ma60 >= 0 ? 'macd-up' : 'macd-down'}`}>
                                         {quote.deviation_ma60 >= 0 ? '↑' : '↓'} {formatPercent(quote.deviation_ma60)}
                                     </div>
                                 </div>

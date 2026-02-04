@@ -76,9 +76,9 @@
 }
 
 .nav-tab.active {
-    background: var(--accent);
-    color: white;
+    color: var(--accent);
     box-shadow: 0 2px 8px rgba(204, 122, 96, 0.3);
+    background-color: color-mix(in oklab, var(--accent) 20%, transparent);
 }
 
 @media (min-width: 768px) {

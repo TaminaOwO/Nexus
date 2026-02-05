@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { IconBOSS, IconCompany } from "../../../components/HandDrawnIcons";
 import { AlertTriangleIcon, CheckCircleIcon, RefreshIcon, PortfolioManagerIcon, PiggyBankIcon, ChartLineIcon, ChartCandlestickIcon, MailboxIcon } from "../../../components/Icons";
 import "./TradeJournal.css";
@@ -82,6 +82,7 @@ export function TradeJournal() {
     const [showAlertModal, setShowAlertModal] = useState(false);
     const [autoRefresh, setAutoRefresh] = useState(true);
     const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
+    const dismissedAlertKeys = useRef<Set<string>>(new Set());
 
     // Settlement Modal State
     const [showSettleModal, setShowSettleModal] = useState(false);
@@ -106,9 +107,14 @@ export function TradeJournal() {
             setPortfolio(data);
             setLastRefresh(new Date());
 
-            // Show alert modal if there are alerts
+            // Show alert modal only if there are NEW alerts not yet dismissed
             if (data.alerts && data.alerts.length > 0) {
-                setShowAlertModal(true);
+                const hasNewAlert = data.alerts.some(
+                    (a) => !dismissedAlertKeys.current.has(`${a.trade_id}:${a.symbol}:${a.type}`)
+                );
+                if (hasNewAlert) {
+                    setShowAlertModal(true);
+                }
             }
         } catch (err) {
             setError(err instanceof Error ? err.message : "Error loading portfolio");
@@ -236,10 +242,16 @@ export function TradeJournal() {
                             ))}
                         </div>
                         <div className="alert-modal-footer">
-                            <button className="btn-ignore" onClick={() => setShowAlertModal(false)}>
+                            <button className="btn-ignore" onClick={() => {
+                                portfolio?.alerts?.forEach((a) => dismissedAlertKeys.current.add(`${a.trade_id}:${a.symbol}:${a.type}`));
+                                setShowAlertModal(false);
+                            }}>
                                 稍後處理 Ignore
                             </button>
-                            <button className="btn-action" onClick={() => setShowAlertModal(false)}>
+                            <button className="btn-action" onClick={() => {
+                                portfolio?.alerts?.forEach((a) => dismissedAlertKeys.current.add(`${a.trade_id}:${a.symbol}:${a.type}`));
+                                setShowAlertModal(false);
+                            }}>
                                 我知道了 Got it
                             </button>
                         </div>

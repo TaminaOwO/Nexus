@@ -5,10 +5,12 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"nexus/internal/database"
 	kiteHandler "nexus/internal/modules/kite/handler"
 	"nexus/internal/modules/kite/model"
+	kiteService "nexus/internal/modules/kite/service"
 	lifeosHandler "nexus/internal/modules/lifeos/handler"
 	lifeosModel "nexus/internal/modules/lifeos/model"
 
@@ -36,6 +38,9 @@ func main() {
 		&lifeosModel.HabitLog{},
 		&lifeosModel.Task{},
 	)
+
+	// Start background alert scanner (Portfolio + Watchlist → Discord)
+	kiteService.StartAlertScanner(3 * time.Minute)
 
 	r := gin.Default()
 

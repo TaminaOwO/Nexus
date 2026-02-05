@@ -5,10 +5,12 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"nexus/internal/database"
 	kiteHandler "nexus/internal/modules/kite/handler"
 	"nexus/internal/modules/kite/model"
+	kiteService "nexus/internal/modules/kite/service"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -25,6 +27,9 @@ func main() {
 
 	// Auto Migrate
 	database.DB.AutoMigrate(&model.WindRecord{}, &model.TradeEntry{}, &model.CycleSetting{}, &model.WatchlistEntry{}, &model.NotificationLog{})
+
+	// Start background alert scanner (Portfolio + Watchlist → Discord)
+	kiteService.StartAlertScanner(3 * time.Minute)
 
 	r := gin.Default()
 

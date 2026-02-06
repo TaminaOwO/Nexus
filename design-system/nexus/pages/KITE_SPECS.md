@@ -153,32 +153,86 @@ interface MACDResult {
 ## 6. API 端點
 
 ```
-GET    /api/kite/quote/:symbol     # 即時報價
-GET    /api/kite/chart/:symbol     # K線資料
-GET    /api/kite/watchlist         # 觀察清單
-POST   /api/kite/watchlist         # 新增觀察
-PUT    /api/kite/watchlist/:id     # 更新觀察
-DELETE /api/kite/watchlist/:id     # 刪除觀察
-GET    /api/kite/journal           # 交易記錄
-POST   /api/kite/journal           # 新增交易
-GET    /api/kite/portfolio         # 持倉
-GET    /api/kite/history           # 歷史績效
-GET    /api/kite/wind              # 風型記錄
-POST   /api/kite/wind              # 記錄風型
+GET    /api/kite/ping                  # 健康檢查
+GET    /api/kite/quote                 # 即時報價（支援多股票）
+GET    /api/kite/quotes                # 批量即時報價
+GET    /api/kite/chart                 # K線資料
+POST   /api/kite/journal               # 新增交易
+GET    /api/kite/journal               # 交易記錄
+GET    /api/kite/portfolio             # 持倉（含即時警報檢查）
+POST   /api/kite/trade/:id/settle      # 平倉結算
+DELETE /api/kite/trade/:id             # 刪除交易
+GET    /api/kite/history               # 歷史績效
+POST   /api/kite/import                # 匯入歷史交易
+
+# Wind Routes
+GET    /api/kite/wind/latest           # 最新風型
+GET    /api/kite/wind/history          # 風型歷史
+POST   /api/kite/wind                  # 記錄風型
+
+# Cycle Setting Routes
+GET    /api/kite/cycle                 # 獲取週期設定
+POST   /api/kite/cycle                 # 儲存週期設定
+DELETE /api/kite/cycle                 # 刪除週期設定
+
+# Watchlist Routes
+GET    /api/kite/watchlist             # 觀察清單
+GET    /api/kite/watchlist/:id         # 單筆觀察清單
+POST   /api/kite/watchlist             # 新增觀察
+PUT    /api/kite/watchlist/:id         # 更新觀察
+DELETE /api/kite/watchlist/:id         # 刪除觀察
+POST   /api/kite/watchlist/:id/convert # 轉為交易
+GET    /api/kite/watchlist/alerts      # 觀察清單警報
+
+# Webhook Test Route
+POST   /api/kite/test-webhook          # 測試 Discord 通知
 ```
 
 ---
 
-## 7. 待辦與優化 (from TODO)
+## 7. 警報通知系統
+
+### Discord 即時通知
+
+**觸發條件**：
+- **Portfolio 警報**（6 種條件）：
+  - 停損觸及（Stop Loss）
+  - 停利達標（Take Profit）
+  - 強制賣出（-10% 且無停損設定的非 BOSS 策略）
+  - 策略規則警示（BOSS: MA60-10%、OFFICE: 週線金叉反轉）
+
+- **Watchlist 警報**（2 種條件）：
+  - 目標價達標（Target Reached）
+  - 策略條件滿足（Strategy Met）
+
+**後台掃描**：
+- 每 3 分鐘自動掃描一次
+- 僅在有 OPEN 倉位或 WATCHING 觀察清單時執行
+- 防重複通知：24 小時內同一警報不重複發送
+
+**環境變數**：
+```bash
+DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
+DISCORD_NOTIFICATION_ENABLED=true
+```
+
+**測試端點**：
+```bash
+POST /api/kite/test-webhook
+```
+
+## 8. 待辦與優化 (from TODO)
 
 ### 立即處理
-- [ ] **Wind 持久化**：確保風型記錄存入 `WindRecord` 表格
+- [x] **Wind 持久化**：確保風型記錄存入 `WindRecord` 表格 ✅
+- [x] **Discord 通知系統**：停損/停利/策略規則警報 ✅
 - [ ] **MACD 精度**：修正 `calculateMACDDays` 誤差
 - [ ] **週趨勢邏輯**：DIF 斜率判斷
 
 ### 短期目標
-- [ ] **即時盈虧更新頻率優化**
-- [ ] **停損/停利觸發通知**（LINE Notify / Telegram）
+- [x] **即時盈虧更新**：30 秒自動刷新 ✅
+- [x] **警報系統**：Discord Webhook 整合 ✅
+- [ ] **LINE Notify / Telegram Bot** 擴展
 - [ ] **Smart Suffix Retry**：.TW vs .TWO 自動偵測
 
 ---
@@ -210,4 +264,4 @@ POST   /api/kite/wind              # 記錄風型
 
 ---
 
-*最後更新：2026-01-23*
+*最後更新：2026-02-06*

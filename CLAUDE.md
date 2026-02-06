@@ -95,6 +95,7 @@ Nexus/
 ### 外部整合
 - **Fugle API**：台股 K 線資料（注意日期範圍限制）
 - **TWSE API**：即時報價
+- **Discord Webhook**：即時警報通知系統（停損/停利/策略規則）
 
 ---
 
@@ -238,7 +239,12 @@ GitHub Push → Railway 自動建置 → Docker Image → 部署
 3. **Mobile First**：交易時間用手機看，版面必須響應式
 4. **持久化優先**：新 Entity 必須加入 `AutoMigrate`，存入 `/app/data/nexus.db`
 5. **繁體中文 UI**：介面以中文為主
+6. **文件同步**：每次重大功能完成後，更新以下文件：
+   - `CLAUDE.md`（全域指南）
+   - `design-system/nexus/pages/{MODULE}_SPECS.md`（模組規格）
+   - `design-system/nexus/MASTER.md`（設計系統）
+   - `TODO.md`（開發路線圖）
 
 ---
 
-*最後更新：2026-01-23*
+*最後更新：2026-02-06*

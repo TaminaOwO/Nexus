@@ -6,9 +6,9 @@
 
 ---
 
-**Project:** Nexus
-**Generated:** 2026-01-18 15:25:35
-**Category:** Financial Dashboard
+**Project:** Nexus (Personal Productivity Hub)
+**Last Updated:** 2026-02-06
+**Category:** Financial Dashboard + Life Management System
 
 ---
 
@@ -175,15 +175,18 @@
 
 - ❌ Light mode default
 - ❌ Slow rendering
+- ❌ Inconsistent module visual styles
 
 ### Additional Forbidden Patterns
 
-- ❌ **Emojis as icons** — Use SVG icons (Heroicons, Lucide, Simple Icons)
+- ❌ **Emojis as icons** — Use SVG icons (Heroicons, Lucide, Simple Icons) or custom hand-drawn icons
 - ❌ **Missing cursor:pointer** — All clickable elements must have cursor:pointer
 - ❌ **Layout-shifting hovers** — Avoid scale transforms that shift layout
-- ❌ **Low contrast text** — Maintain 4.5:1 minimum contrast ratio
+- ❌ **Low contrast text** — Maintain 4.5:1 minimum contrast ratio (especially on dark backgrounds)
 - ❌ **Instant state changes** — Always use transitions (150-300ms)
 - ❌ **Invisible focus states** — Focus states must be visible for a11y
+- ❌ **Fixed navbars hiding content** — Ensure proper padding/margin compensation
+- ❌ **Horizontal scroll on mobile** — All content must fit viewport width
 
 ---
 

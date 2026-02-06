@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"nexus/internal/database"
@@ -48,7 +49,7 @@ const (
 
 // SendPortfolioAlert - 發送 Portfolio 警示到 Discord
 func SendPortfolioAlert(alert Alert, holding PortfolioHolding) error {
-	webhookURL := os.Getenv("DISCORD_WEBHOOK_URL")
+	webhookURL := strings.TrimSpace(os.Getenv("DISCORD_WEBHOOK_URL"))
 	enabled := os.Getenv("DISCORD_NOTIFICATION_ENABLED")
 
 	if webhookURL == "" || enabled != "true" {
@@ -80,7 +81,7 @@ func SendPortfolioAlert(alert Alert, holding PortfolioHolding) error {
 
 // SendWatchlistAlert - 發送 Watchlist 警示到 Discord
 func SendWatchlistAlert(symbol, companyName, alertType, message string, currentPrice, targetPrice float64) error {
-	webhookURL := os.Getenv("DISCORD_WEBHOOK_URL")
+	webhookURL := strings.TrimSpace(os.Getenv("DISCORD_WEBHOOK_URL"))
 	enabled := os.Getenv("DISCORD_NOTIFICATION_ENABLED")
 
 	if webhookURL == "" || enabled != "true" {
@@ -282,7 +283,7 @@ func LogNotification(tradeID, symbol, alertType string) {
 
 // SendTestWebhook - 發送測試訊息
 func SendTestWebhook() error {
-	webhookURL := os.Getenv("DISCORD_WEBHOOK_URL")
+	webhookURL := strings.TrimSpace(os.Getenv("DISCORD_WEBHOOK_URL"))
 	if webhookURL == "" {
 		return fmt.Errorf("DISCORD_WEBHOOK_URL not configured")
 	}

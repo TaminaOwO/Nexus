@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -51,11 +52,13 @@ func SendPortfolioAlert(alert Alert, holding PortfolioHolding) error {
 	enabled := os.Getenv("DISCORD_NOTIFICATION_ENABLED")
 
 	if webhookURL == "" || enabled != "true" {
-		return nil // 未設定或未啟用，靜默跳過
+		log.Printf("[Discord] Skipped: webhook not configured or disabled")
+		return nil
 	}
 
 	// 檢查是否已發送過（防重複）
 	if HasSentNotification(holding.ID, "", alert.Type) {
+		log.Printf("[Discord] Skipped: already sent %s for trade %s", alert.Type, holding.ID)
 		return nil
 	}
 
@@ -65,11 +68,13 @@ func SendPortfolioAlert(alert Alert, holding PortfolioHolding) error {
 	// 發送 Webhook
 	err := sendWebhook(webhookURL, embed)
 	if err != nil {
+		log.Printf("[Discord] ERROR sending %s for %s: %v", alert.Type, alert.Symbol, err)
 		return err
 	}
 
 	// 記錄發送歷史
 	LogNotification(holding.ID, "", alert.Type)
+	log.Printf("[Discord] ✅ Sent %s for %s (%s)", alert.Type, alert.Symbol, holding.CompanyName)
 	return nil
 }
 
@@ -79,11 +84,13 @@ func SendWatchlistAlert(symbol, companyName, alertType, message string, currentP
 	enabled := os.Getenv("DISCORD_NOTIFICATION_ENABLED")
 
 	if webhookURL == "" || enabled != "true" {
+		log.Printf("[Discord] Skipped: webhook not configured or disabled")
 		return nil
 	}
 
 	// 檢查是否已發送過
 	if HasSentNotification("", symbol, alertType) {
+		log.Printf("[Discord] Skipped: already sent %s for symbol %s", alertType, symbol)
 		return nil
 	}
 
@@ -93,11 +100,13 @@ func SendWatchlistAlert(symbol, companyName, alertType, message string, currentP
 	// 發送 Webhook
 	err := sendWebhook(webhookURL, embed)
 	if err != nil {
+		log.Printf("[Discord] ERROR sending %s for %s: %v", alertType, symbol, err)
 		return err
 	}
 
 	// 記錄發送歷史
 	LogNotification("", symbol, alertType)
+	log.Printf("[Discord] ✅ Sent %s for %s (%s)", alertType, symbol, companyName)
 	return nil
 }
 
@@ -211,28 +220,38 @@ func sendWebhook(webhookURL string, embed DiscordEmbed) error {
 
 	jsonData, err := json.Marshal(payload)
 	if err != nil {
+		log.Printf("[Discord] Marshal error: %v", err)
 		return fmt.Errorf("failed to marshal webhook payload: %w", err)
 	}
 
+	log.Printf("[Discord] Sending webhook to Discord...")
 	resp, err := http.Post(webhookURL, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
+		log.Printf("[Discord] HTTP POST error: %v", err)
 		return fmt.Errorf("failed to send webhook: %w", err)
 	}
 	defer resp.Body.Close()
 
 	// Discord Webhook 成功返回 204 No Content
 	if resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusOK {
+		log.Printf("[Discord] Unexpected status: %d", resp.StatusCode)
 		return fmt.Errorf("discord webhook returned status %d", resp.StatusCode)
 	}
 
+	log.Printf("[Discord] Webhook sent successfully (status %d)", resp.StatusCode)
 	return nil
 }
 
-// HasSentNotification - 檢查是否已發送過此通知
+// HasSentNotification - 檢查過去 24 小時內是否已發送過此通知
 func HasSentNotification(tradeID, symbol, alertType string) bool {
 	var count int64
 
-	query := database.DB.Model(&model.NotificationLog{}).Where("alert_type = ?", alertType)
+	// 只檢查過去 24 小時內的記錄
+	cutoff := time.Now().Add(-24 * time.Hour)
+
+	query := database.DB.Model(&model.NotificationLog{}).
+		Where("alert_type = ?", alertType).
+		Where("sent_at > ?", cutoff)
 
 	if tradeID != "" {
 		query = query.Where("trade_id = ?", tradeID)
@@ -242,6 +261,11 @@ func HasSentNotification(tradeID, symbol, alertType string) bool {
 	}
 
 	query.Count(&count)
+
+	if count > 0 {
+		log.Printf("[Discord] Duplicate check: found %d recent notification(s) for %s", count, alertType)
+	}
+
 	return count > 0
 }
 

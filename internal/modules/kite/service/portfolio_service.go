@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"nexus/internal/modules/kite/model"
@@ -201,6 +202,7 @@ func GetPortfolio() (*PortfolioResponse, error) {
 
 		// Send Discord notifications for strategy alerts (after holding is defined)
 		for _, alert := range strategyAlerts {
+			log.Printf("[Alert] Strategy alert triggered: %s - %s", alert.Symbol, alert.Message)
 			go SendPortfolioAlert(alert, holding)
 		}
 
@@ -218,6 +220,7 @@ func GetPortfolio() (*PortfolioResponse, error) {
 					trade.CompanyName, currentPrice, trade.StopLossPrice),
 			}
 			alerts = append(alerts, alert)
+			log.Printf("[Alert] Stop Loss triggered: %s at $%.2f", trade.Symbol, currentPrice)
 			go SendPortfolioAlert(alert, holding)
 		}
 
@@ -230,6 +233,7 @@ func GetPortfolio() (*PortfolioResponse, error) {
 					trade.CompanyName, currentPrice, trade.TakeProfitPrice),
 			}
 			alerts = append(alerts, alert)
+			log.Printf("[Alert] Take Profit triggered: %s at $%.2f", trade.Symbol, currentPrice)
 			go SendPortfolioAlert(alert, holding)
 		}
 
@@ -243,6 +247,7 @@ func GetPortfolio() (*PortfolioResponse, error) {
 					trade.CompanyName, unrealizedPLPct, unrealizedPLPct),
 			}
 			alerts = append(alerts, alert)
+			log.Printf("[Alert] Force Sell triggered: %s with %.1f%% loss", trade.Symbol, unrealizedPLPct)
 			go SendPortfolioAlert(alert, holding)
 		}
 	}

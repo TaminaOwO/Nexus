@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"log"
 
 	"nexus/internal/database"
 	"nexus/internal/modules/kite/model"
@@ -47,6 +48,7 @@ func CheckWatchlistAlerts() ([]WatchlistAlert, error) {
 			alerts = append(alerts, alert)
 
 			// Send Discord notification
+			log.Printf("[Alert] Watchlist target reached: %s at $%.2f (target $%.2f)", entry.Symbol, currentPrice, entry.TargetPrice)
 			go SendWatchlistAlert(entry.Symbol, entry.CompanyName, "WATCHLIST_TARGET", alert.Message, currentPrice, entry.TargetPrice)
 		}
 
@@ -64,6 +66,7 @@ func CheckWatchlistAlerts() ([]WatchlistAlert, error) {
 			alerts = append(alerts, alert)
 
 			// Send Discord notification
+			log.Printf("[Alert] Watchlist strategy met: %s - %s", entry.Symbol, strategyMessage)
 			go SendWatchlistAlert(entry.Symbol, entry.CompanyName, "WATCHLIST_STRATEGY", alert.Message, currentPrice, entry.TargetPrice)
 		}
 	}

@@ -1,7 +1,7 @@
 # Nexus Project TODO List
 
-> **Last Updated**: 2026-01-23
-> **當前焦點**: Kite 模組優化完成 → LifeOS 核心 → ChoiceFit 初始化
+> **Last Updated**: 2026-02-06
+> **當前焦點**: Kite Discord 通知系統完成 ✅ → LifeOS 核心強化 → ChoiceFit 初始化
 
 ---
 
@@ -39,6 +39,16 @@
 - [x] Active 平倉彈窗垂直居中修復
 - [x] Wind 歷史循環 API 持久化（已驗證）
 
+### Kite 模組 - Discord 通知系統 (2026-02-06)
+- [x] Discord Webhook 基礎設施整合
+- [x] Portfolio 警報（停損/停利/強制賣出/策略規則）
+- [x] Watchlist 警報（目標價/策略條件）
+- [x] 後台掃描器（3 分鐘輪詢）
+- [x] 防重複通知機制（24 小時去重）
+- [x] 全面 Logging（調試追蹤）
+- [x] URL 解析錯誤修復（strings.TrimSpace）
+- [x] 前端警報彈窗防重複顯示
+
 ### 基礎建設
 - [x] Go + Gin 後端架構
 - [x] React + TypeScript 前端
@@ -67,11 +77,13 @@
   - [x] 即時盈虧更新（30秒自動刷新）
   - [x] 策略條件監控（停損/停利警示）
 - [x] **即時通知系統**：
-  - [x] Discord Webhook 整合
-  - [x] 停損/停利觸發通知
-  - [x] 觀察清單目標價到達通知
-  - [x] 策略規則警示通知
-  - [x] 防重複通知機制
+  - [x] Discord Webhook 整合 ✅ (2026-02-06)
+  - [x] 停損/停利觸發通知 ✅
+  - [x] 觀察清單目標價到達通知 ✅
+  - [x] 策略規則警示通知 ✅
+  - [x] 防重複通知機制（24 小時去重）✅
+  - [x] 後台掃描器（3 分鐘輪詢）✅
+  - [x] 全面 Logging 與錯誤追蹤 ✅
   - [ ] LINE Notify / Telegram Bot 串接（未來擴展）
 - [ ] **資料品質**：
   - [ ] Smart Suffix Retry（.TW vs .TWO 自動偵測上市/櫃）
@@ -81,15 +93,25 @@
   - [x] OFFICE 策略批次建議（3-5 批）- 已在轉換時自動設定
 
 ### LifeOS 模組 MVP
-- [ ] **Habit Tracker 後端**：
-  - [ ] `Habit` Model 建立
-  - [ ] CRUD API 實作
-  - [ ] Streak 計算邏輯
-- [ ] **Todo Board 後端**：
-  - [ ] `Task` Model 建立
-  - [ ] Kanban 狀態管理 API
+- [x] **Habit Tracker 後端**：
+  - [x] `Habit` Model 建立 ✅
+  - [x] CRUD API 實作 ✅
+  - [ ] Streak 計算邏輯強化
+- [x] **Todo Board 後端**：
+  - [x] `Task` Model 建立 ✅
+  - [x] Kanban 狀態管理 API ✅
+- [ ] **Habit Tracker 前端**：
+  - [ ] 習慣清單顯示
+  - [ ] 打卡介面
+  - [ ] Streak 視覺化
+- [ ] **Todo Board 前端**：
+  - [ ] Kanban 拖拉介面
+  - [ ] F.L.O.W. 分類標籤
+  - [ ] 優先級視覺化
 - [ ] **War Room Dashboard**：
   - [ ] 跨模組監控面板（Kite + LifeOS 指標）
+  - [ ] 每週執行力統計
+  - [ ] F.L.O.W. 能量條
 
 ---
 

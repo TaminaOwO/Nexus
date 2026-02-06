@@ -53,9 +53,39 @@
 
 ## 3. 技術規格 (Technical Specification)
 
-### 3.1 資料庫模型 (Go Struct)
+### 3.1 已實作資料庫模型
 
-**檔案路徑**：`internal/modules/lifeos/model/task.go`
+#### Habit Model (`internal/modules/lifeos/model/habit.go`)
+
+```go
+// Habit - 習慣定義
+type Habit struct {
+    ID           string    `gorm:"primaryKey" json:"id"`
+    Name         string    `json:"name"`
+    Frequency    string    `json:"frequency"`      // Daily / Weekly
+    TargetStreak int       `json:"target_streak"`
+    Icon         string    `json:"icon"`
+    Color        string    `json:"color"`
+    CreatedAt    time.Time `json:"created_at"`
+}
+
+// HabitLog - 習慣記錄
+type HabitLog struct {
+    ID        string    `gorm:"primaryKey" json:"id"`
+    HabitID   string    `json:"habit_id"`
+    Date      string    `json:"date"`     // YYYY-MM-DD
+    Status    string    `json:"status"`   // Done / Skipped / Missed
+    CreatedAt time.Time `json:"created_at"`
+}
+```
+
+#### Task Model (`internal/modules/lifeos/model/task.go`)
+
+**注意**：當前實作使用簡化的 Kanban 欄位（backlog/this_week/today/done），與原規格的 F.L.O.W. 分類不同。
+
+### 3.2 原規劃 Task Model（待重構）
+
+**檔案路徑**：`internal/modules/lifeos/model/task.go`（未來版本）
 
 ```go
 package model
@@ -110,20 +140,50 @@ type Task struct {
 }
 ```
 
-### 3.2 API 介面設計
+### 3.3 已實作 API 介面
 
 **Base URL**: `/api/lifeos`
 
+#### Habit Endpoints
+| Method | Endpoint | Description | Payload |
+|--------|----------|-------------|---------|
+| `GET` | `/habits` | 獲取習慣列表 | N/A |
+| `POST` | `/habits` | 新增習慣 | `{ name, frequency, target_streak, icon, color }` |
+| `PUT` | `/habits/:id` | 更新習慣 | `{ name, target_streak, icon, color }` |
+| `DELETE` | `/habits/:id` | 刪除習慣 | N/A |
+| `GET` | `/habits/:id/logs` | 獲取習慣記錄 | N/A |
+| `POST` | `/habits/:id/check` | 打卡 | `{ date, status }` |
+
+#### Task Endpoints
+| Method | Endpoint | Description | Payload |
+|--------|----------|-------------|---------|
+| `GET` | `/tasks` | 獲取任務列表 | N/A |
+| `POST` | `/tasks` | 新增任務 | `{ title, column, priority, description, due_date, tags }` |
+| `PUT` | `/tasks/:id` | 更新任務 | `{ title, description, priority, due_date, tags }` |
+| `DELETE` | `/tasks/:id` | 刪除任務 | N/A |
+| `PATCH` | `/tasks/:id/move` | 移動任務欄位 | `{ column, order }` |
+
+### 3.4 原規劃 API（F.L.O.W. 版本）
+
+**注意**：以下為原始規格，當前實作尚未包含 F.L.O.W. 分類
+
 | Method | Endpoint | Description | Payload / Params |
 |--------|----------|-------------|------------------|
-| `GET` | `/tasks` | 獲取任務列表 | `?status=TODO` (可選過濾) |
+| `GET` | `/tasks` | 獲取任務列表 | `?status=TODO&flow_type=L_LEVERAGE` (可選過濾) |
 | `POST` | `/tasks` | 新增戰略任務 | `{ title, flow_type, priority, ... }` |
 | `PUT` | `/tasks/:id` | 更新任務狀態 | `{ status: "DONE", completed_at: "..." }` |
 | `DELETE` | `/tasks/:id` | 移除任務 | N/A |
 
-### 3.3 資料庫遷移 (Migration)
+### 3.5 資料庫遷移 (Migration)
 
-必須在 `internal/database/db.go` 中註冊 Task 模型，確保 Railway 部署時會自動建立表格。
+**已完成**：在 `cmd/server/main.go` 中已註冊：
+```go
+database.DB.AutoMigrate(
+    &lifeosModel.Habit{},
+    &lifeosModel.HabitLog{},
+    &lifeosModel.Task{},
+)
+```
 
 ---
 
@@ -163,4 +223,39 @@ type Task struct {
 
 ---
 
-*最後更新：2026-01-23*
+## 6. 目前實作狀態 vs 原規劃差異
+
+### ✅ 已完成
+- [x] Habit Model 建立（`Habit` + `HabitLog`）
+- [x] Task Model 建立（簡化版 Kanban）
+- [x] Habit CRUD API（6 個端點）
+- [x] Task CRUD API（5 個端點）
+- [x] Database Migration（已註冊到 main.go）
+- [x] API 路由註冊（`/api/lifeos`）
+
+### ⚠️ 與原規劃差異
+| 原規劃 | 當前實作 | 狀態 |
+|--------|----------|------|
+| F.L.O.W. 分類系統 | 簡化 Kanban（backlog/this_week/today/done） | 需重構 |
+| FlowType (F/L/O/W/N) | 無此欄位 | 需新增 |
+| TaskStatus (TODO/DOING/DONE) | Column (string) | 需對齊 |
+| TaskPriority (HIGH/MEDIUM/LOW) | Priority (int 1-3) | 可用但需調整 |
+| CompletedAt 自動填入 | 無此邏輯 | 需實作 |
+
+### 🚧 進行中
+- [ ] Task Model 重構為 F.L.O.W. 版本
+- [ ] 前端 Habit Tracker UI
+- [ ] 前端 Todo Board UI
+- [ ] War Room Dashboard（跨模組整合）
+- [ ] F.L.O.W. 統計視覺化
+- [ ] 習慣 Streak 計算邏輯
+
+### 📝 待規劃
+- [ ] 時間追蹤功能
+- [ ] Pomodoro 整合
+- [ ] 每週/每月回顧報告
+- [ ] 遊戲化元素（經驗值、成就系統）
+
+---
+
+*最後更新：2026-02-06*

@@ -34,6 +34,10 @@ export function TodoBoard({ compact = false }: { compact?: boolean }) {
     const [quickAddColumn, setQuickAddColumn] = useState<string | null>(null);
     const [quickAddTitle, setQuickAddTitle] = useState("");
 
+    // Drag & Drop state
+    const [draggedTask, setDraggedTask] = useState<Task | null>(null);
+    const [dragOverColumn, setDragOverColumn] = useState<string | null>(null);
+
     useEffect(() => {
         loadTasks();
     }, []);
@@ -151,6 +155,25 @@ export function TodoBoard({ compact = false }: { compact?: boolean }) {
         }
     }
 
+    // ========== Drag & Drop Handlers ==========
+
+    async function handleDrop(targetColumn: string) {
+        if (!draggedTask || draggedTask.column === targetColumn) {
+            setDraggedTask(null);
+            setDragOverColumn(null);
+            return;
+        }
+        try {
+            await moveTask(draggedTask.id, { column: targetColumn });
+            await loadTasks();
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "移動失敗 Failed to move task");
+        } finally {
+            setDraggedTask(null);
+            setDragOverColumn(null);
+        }
+    }
+
     const displayColumns = compact
         ? columns.filter((c) => c.id === "today" || c.id === "this_week")
         : columns;
@@ -167,7 +190,13 @@ export function TodoBoard({ compact = false }: { compact?: boolean }) {
                         .sort((a, b) => a.order - b.order);
 
                     return (
-                        <div key={col.id} className="board-column">
+                        <div
+                            key={col.id}
+                            className={`board-column ${dragOverColumn === col.id ? "drag-over" : ""}`}
+                            onDragOver={(e) => { e.preventDefault(); setDragOverColumn(col.id); }}
+                            onDragLeave={(e) => { if (e.currentTarget === e.target || !e.currentTarget.contains(e.relatedTarget as Node)) setDragOverColumn(null); }}
+                            onDrop={(e) => { e.preventDefault(); handleDrop(col.id); }}
+                        >
                             <div className="column-header">
                                 <h3 style={{ color: col.color }}>{col.title}</h3>
                                 <div className="column-header-actions">
@@ -216,7 +245,10 @@ export function TodoBoard({ compact = false }: { compact?: boolean }) {
                                     return (
                                         <div
                                             key={task.id}
-                                            className={`task-card priority-${task.priority}`}
+                                            className={`task-card priority-${task.priority} ${draggedTask?.id === task.id ? "dragging" : ""}`}
+                                            draggable={!compact}
+                                            onDragStart={() => setDraggedTask(task)}
+                                            onDragEnd={() => { setDraggedTask(null); setDragOverColumn(null); }}
                                             onClick={() => !compact && openEditTask(task)}
                                         >
                                             <div className="task-card-header">

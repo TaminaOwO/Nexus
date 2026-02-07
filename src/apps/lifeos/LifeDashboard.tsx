@@ -2,6 +2,7 @@ import { useState } from "react";
 import { IconLifeOS, IconDashboard, IconSettings } from "../../components/HandDrawnIcons";
 import { HabitTracker } from "./components/HabitTracker";
 import { TodoBoard } from "./components/TodoBoard";
+import { OverviewStats } from "./components/OverviewStats";
 import "./LifeDashboard.css";
 
 export default function LifeDashboard() {
@@ -44,16 +45,19 @@ export default function LifeDashboard() {
 
             <main className="life-content">
                 {activeTab === 'overview' && (
-                    <div className="overview-grid">
-                        <section className="dashboard-section">
-                            <h2>Today's Habits</h2>
-                            <HabitTracker compact />
-                        </section>
-                        <section className="dashboard-section">
-                            <h2>Priority Tasks</h2>
-                            <TodoBoard compact />
-                        </section>
-                    </div>
+                    <>
+                        <OverviewStats />
+                        <div className="overview-grid">
+                            <section className="dashboard-section">
+                                <h2>Today's Habits</h2>
+                                <HabitTracker compact />
+                            </section>
+                            <section className="dashboard-section">
+                                <h2>Priority Tasks</h2>
+                                <TodoBoard compact />
+                            </section>
+                        </div>
+                    </>
                 )}
                 {activeTab === 'habits' && <HabitTracker />}
                 {activeTab === 'todos' && <TodoBoard />}

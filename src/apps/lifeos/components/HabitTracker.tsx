@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { fetchHabits, fetchHabitLogs, checkHabit, createHabit, updateHabit, deleteHabit } from "../api";
 import type { Habit, HabitLog } from "../types";
+import { HabitHeatmap } from "./HabitHeatmap";
 import "./HabitTracker.css";
 
 // Inline Hand-Drawn Check Icon
@@ -221,6 +222,11 @@ export function HabitTracker({ compact = false }: { compact?: boolean }) {
             </div>
             {compact && habits.length > 3 && (
                 <div className="more-habits">+ {habits.length - 3} more habits...</div>
+            )}
+
+            {/* ========== Heatmap ========== */}
+            {!compact && habits.length > 0 && (
+                <HabitHeatmap logs={logs} habits={habits} />
             )}
 
             {/* ========== Habit Modal ========== */}

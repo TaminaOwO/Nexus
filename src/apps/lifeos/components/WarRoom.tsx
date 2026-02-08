@@ -283,8 +283,9 @@ function useWarRoomData(): WarRoomData {
 
         const doneThisWeek = tasks.filter((t) => {
             if (t.column !== "done") return false;
-            const updated = new Date(t.updated_at);
-            return updated >= startOfWeek;
+            const dateStr = t.completed_at || t.updated_at;
+            const completed = new Date(dateStr);
+            return completed >= startOfWeek;
         }).length;
 
         return { completedToday, maxStreak, pendingTodayTasks, doneThisWeek };

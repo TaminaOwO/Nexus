@@ -39,6 +39,9 @@ func main() {
 		&lifeosModel.Task{},
 	)
 
+	// Backfill: 確保舊資料有 flow_type 預設值
+	database.DB.Exec("UPDATE tasks SET flow_type = 'NONE' WHERE flow_type = '' OR flow_type IS NULL")
+
 	// Start background alert scanner (Portfolio + Watchlist → Discord)
 	kiteService.StartAlertScanner(3 * time.Minute)
 
@@ -47,7 +50,7 @@ func main() {
 	// CORS middleware for frontend (only needed in dev mode)
 	r.Use(func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE, PATCH")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 		if c.Request.Method == "OPTIONS" {
 			c.AbortWithStatus(http.StatusNoContent)

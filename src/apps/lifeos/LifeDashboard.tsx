@@ -1,13 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IconLifeOS, IconDashboard, IconSettings } from "../../components/HandDrawnIcons";
 import { HabitTracker } from "./components/HabitTracker";
 import { TodoBoard } from "./components/TodoBoard";
 import { OverviewStats } from "./components/OverviewStats";
+import { FlowStats } from "./components/FlowStats";
 import { WarRoom } from "./components/WarRoom";
+import { fetchTasks } from "./api";
+import type { Task } from "./types";
 import "./LifeDashboard.css";
 
 export default function LifeDashboard() {
     const [activeTab, setActiveTab] = useState<'overview' | 'habits' | 'todos' | 'warroom'>('overview');
+    const [allTasks, setAllTasks] = useState<Task[]>([]);
+
+    useEffect(() => {
+        fetchTasks().then(setAllTasks).catch(() => {});
+    }, []);
 
     return (
         <div className="life-dashboard">
@@ -54,6 +62,7 @@ export default function LifeDashboard() {
                 {activeTab === 'overview' && (
                     <>
                         <OverviewStats />
+                        <FlowStats tasks={allTasks} />
                         <div className="overview-grid">
                             <section className="dashboard-section">
                                 <h2>Today's Habits</h2>

@@ -10,14 +10,23 @@ import (
 	"github.com/google/uuid"
 )
 
+// validFlowTypes - 合法的 F.L.O.W. 分類值
+var validFlowTypes = map[string]bool{
+	"F": true, "L": true, "O": true, "W": true, "NONE": true,
+}
+
 // GetTasks - GET /api/lifeos/tasks
 func GetTasks(c *gin.Context) {
 	column := c.Query("column")
+	flowType := c.Query("flow_type")
 
 	query := database.DB.Order("`order` asc, created_at desc")
 
 	if column != "" {
 		query = query.Where("column = ?", column)
+	}
+	if flowType != "" {
+		query = query.Where("flow_type = ?", flowType)
 	}
 
 	var tasks []model.Task
@@ -33,9 +42,25 @@ func CreateTask(c *gin.Context) {
 		return
 	}
 
+	// 驗證 FlowType
+	flowType := req.FlowType
+	if flowType == "" {
+		flowType = "NONE"
+	}
+	if !validFlowTypes[flowType] {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid flow_type. Must be F, L, O, W, or NONE"})
+		return
+	}
+
 	// 自動計算 Order（同欄位最大值 + 1）
 	var maxOrder int
 	database.DB.Model(&model.Task{}).Where("column = ?", req.Column).Select("COALESCE(MAX(`order`), 0)").Scan(&maxOrder)
+
+	now := time.Now()
+	var completedAt *time.Time
+	if req.Column == "done" {
+		completedAt = &now
+	}
 
 	task := model.Task{
 		ID:          uuid.New().String(),
@@ -45,9 +70,11 @@ func CreateTask(c *gin.Context) {
 		Priority:    req.Priority,
 		DueDate:     req.DueDate,
 		Tags:        req.Tags,
+		FlowType:    flowType,
 		Order:       maxOrder + 1,
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		CompletedAt: completedAt,
+		CreatedAt:   now,
+		UpdatedAt:   now,
 	}
 
 	result := database.DB.Create(&task)
@@ -89,6 +116,13 @@ func UpdateTask(c *gin.Context) {
 	}
 	if req.Tags != "" {
 		task.Tags = req.Tags
+	}
+	if req.FlowType != nil {
+		if !validFlowTypes[*req.FlowType] {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid flow_type. Must be F, L, O, W, or NONE"})
+			return
+		}
+		task.FlowType = *req.FlowType
 	}
 
 	task.UpdatedAt = time.Now()
@@ -134,7 +168,15 @@ func MoveTask(c *gin.Context) {
 	if req.Order > 0 {
 		task.Order = req.Order
 	}
-	task.UpdatedAt = time.Now()
+	now := time.Now()
+	task.UpdatedAt = now
+
+	// 移入 done → 自動設 CompletedAt；移出 done → 清除 CompletedAt
+	if req.Column == "done" && task.CompletedAt == nil {
+		task.CompletedAt = &now
+	} else if req.Column != "done" {
+		task.CompletedAt = nil
+	}
 
 	database.DB.Save(&task)
 	c.JSON(http.StatusOK, task)

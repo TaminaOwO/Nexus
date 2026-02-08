@@ -279,6 +279,57 @@
     font-weight: 500;
 }
 
+/* ========== F.L.O.W. Badge ========== */
+
+.flow-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.25rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+/* ========== F.L.O.W. Selector ========== */
+
+.flow-selector {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.flow-option {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.625rem 0.5rem;
+    background: #F7F8FA;
+    border: 2px solid #DEE2E6;
+    border-radius: 0.75rem;
+    color: #64748B;
+    font-size: 0.95rem;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.flow-option:hover {
+    border-color: #CBD5E1;
+    background: #F1F3F5;
+}
+
+.flow-option.selected {
+    font-weight: 800;
+}
+
+.flow-option-label {
+    font-size: 0.65rem;
+    font-weight: 500;
+    opacity: 0.8;
+}
+
 .empty-state {
     color: #94A3B8;
     font-size: 0.85rem;

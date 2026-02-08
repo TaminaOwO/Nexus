@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { fetchTasks, createTask, updateTask, deleteTask, moveTask } from "../api";
-import type { Task, CreateTaskRequest, UpdateTaskRequest } from "../types";
+import type { Task, CreateTaskRequest, UpdateTaskRequest, FlowType } from "../types";
+import { FLOW_CONFIG } from "../types";
 import "./TodoBoard.css";
 
 const COLUMN_ORDER = ["backlog", "this_week", "today", "done"];
@@ -28,6 +29,7 @@ export function TodoBoard({ compact = false }: { compact?: boolean }) {
         priority: 2,
         due_date: "",
         tags: "",
+        flow_type: "NONE" as FlowType,
     });
 
     // Quick-add state
@@ -65,6 +67,7 @@ export function TodoBoard({ compact = false }: { compact?: boolean }) {
             priority: 2,
             due_date: "",
             tags: "",
+            flow_type: "NONE",
         });
         setShowTaskModal(true);
     }
@@ -78,6 +81,7 @@ export function TodoBoard({ compact = false }: { compact?: boolean }) {
             priority: task.priority,
             due_date: task.due_date || "",
             tags: task.tags || "",
+            flow_type: task.flow_type || "NONE",
         });
         setShowTaskModal(true);
     }
@@ -93,6 +97,7 @@ export function TodoBoard({ compact = false }: { compact?: boolean }) {
                     priority: taskForm.priority,
                     due_date: taskForm.due_date || undefined,
                     tags: taskForm.tags,
+                    flow_type: taskForm.flow_type,
                 };
                 await updateTask(editingTask.id, updateData);
 
@@ -108,6 +113,7 @@ export function TodoBoard({ compact = false }: { compact?: boolean }) {
                     priority: taskForm.priority,
                     due_date: taskForm.due_date || undefined,
                     tags: taskForm.tags || undefined,
+                    flow_type: taskForm.flow_type,
                 };
                 await createTask(createData);
             }
@@ -272,6 +278,17 @@ export function TodoBoard({ compact = false }: { compact?: boolean }) {
                                                 )}
                                             </div>
                                             <div className="task-meta">
+                                                {task.flow_type && task.flow_type !== "NONE" && (
+                                                    <span
+                                                        className="flow-badge"
+                                                        style={{
+                                                            background: `${FLOW_CONFIG[task.flow_type].color}18`,
+                                                            color: FLOW_CONFIG[task.flow_type].color,
+                                                        }}
+                                                    >
+                                                        {task.flow_type}
+                                                    </span>
+                                                )}
                                                 {task.priority === 1 && <span className="priority-badge p1">!!!</span>}
                                                 {task.priority === 3 && <span className="priority-badge p3">Low</span>}
                                                 {task.due_date && <span className="due-date-badge">{task.due_date}</span>}
@@ -319,6 +336,27 @@ export function TodoBoard({ compact = false }: { compact?: boolean }) {
                                     onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
                                     placeholder="選填：任務細節..."
                                 />
+                            </div>
+                            <div className="form-group">
+                                <label>F.L.O.W. 分類</label>
+                                <div className="flow-selector">
+                                    {(Object.keys(FLOW_CONFIG) as FlowType[]).map((ft) => (
+                                        <button
+                                            key={ft}
+                                            type="button"
+                                            className={`flow-option ${taskForm.flow_type === ft ? "selected" : ""}`}
+                                            style={taskForm.flow_type === ft ? {
+                                                background: `${FLOW_CONFIG[ft].color}18`,
+                                                borderColor: FLOW_CONFIG[ft].color,
+                                                color: FLOW_CONFIG[ft].color,
+                                            } : undefined}
+                                            onClick={() => setTaskForm({ ...taskForm, flow_type: ft })}
+                                        >
+                                            {ft === "NONE" ? "—" : ft}
+                                            <span className="flow-option-label">{FLOW_CONFIG[ft].zh}</span>
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                             <div className="form-row">
                                 <div className="form-group">

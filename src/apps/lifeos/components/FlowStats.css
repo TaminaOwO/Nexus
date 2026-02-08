@@ -1,0 +1,148 @@
+.flow-stats {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-top: 1rem;
+}
+
+.flow-stats-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #64748B;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 1rem 0;
+}
+
+/* ========== Energy Distribution Bar ========== */
+
+.flow-distribution-bar {
+    display: flex;
+    height: 1.5rem;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: #F1F5F9;
+}
+
+.flow-distribution-segment {
+    transition: width 0.4s ease;
+    min-width: 0;
+}
+
+.flow-distribution-bar .flow-distribution-segment:first-child {
+    border-radius: 0.75rem 0 0 0.75rem;
+}
+
+.flow-distribution-bar .flow-distribution-segment:last-child {
+    border-radius: 0 0.75rem 0.75rem 0;
+}
+
+/* ========== Legend ========== */
+
+.flow-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 0.75rem;
+}
+
+.flow-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.8rem;
+    color: #475569;
+}
+
+.flow-legend-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.flow-legend-count {
+    font-weight: 600;
+    color: #0F172A;
+}
+
+/* ========== 4-Week Trend ========== */
+
+.flow-trend {
+    margin-top: 1.5rem;
+}
+
+.flow-trend-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #94A3B8;
+    margin: 0 0 0.75rem 0;
+}
+
+.flow-trend-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.75rem;
+    height: 100px;
+}
+
+.flow-trend-week {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.flow-trend-bar {
+    width: 100%;
+    display: flex;
+    flex-direction: column-reverse;
+    border-radius: 0.375rem;
+    overflow: hidden;
+    background: #F1F5F9;
+    min-height: 4px;
+}
+
+.flow-trend-segment {
+    width: 100%;
+    transition: height 0.4s ease;
+    min-height: 0;
+}
+
+.flow-trend-label {
+    font-size: 0.65rem;
+    color: #94A3B8;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.flow-trend-count {
+    font-size: 0.7rem;
+    color: #64748B;
+    font-weight: 600;
+}
+
+.flow-stats-empty {
+    text-align: center;
+    color: #94A3B8;
+    font-size: 0.85rem;
+    padding: 1rem;
+}
+
+/* ========== Mobile ========== */
+
+@media (max-width: 640px) {
+    .flow-stats {
+        padding: 1rem;
+    }
+
+    .flow-legend {
+        gap: 0.5rem;
+    }
+
+    .flow-trend-chart {
+        height: 80px;
+    }
+}

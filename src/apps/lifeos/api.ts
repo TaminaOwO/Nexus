@@ -7,6 +7,7 @@ import type {
   CreateTaskRequest,
   UpdateTaskRequest,
   MoveTaskRequest,
+  FlowType,
 } from "./types";
 
 const API_BASE = "/api/lifeos";
@@ -64,8 +65,12 @@ export async function checkHabit(habitId: string, data: CheckHabitRequest): Prom
 
 // ========== Task API ==========
 
-export async function fetchTasks(column?: string): Promise<Task[]> {
-  const url = column ? `${API_BASE}/tasks?column=${column}` : `${API_BASE}/tasks`;
+export async function fetchTasks(column?: string, flowType?: FlowType): Promise<Task[]> {
+  const params = new URLSearchParams();
+  if (column) params.set("column", column);
+  if (flowType) params.set("flow_type", flowType);
+  const qs = params.toString();
+  const url = qs ? `${API_BASE}/tasks?${qs}` : `${API_BASE}/tasks`;
   const res = await fetch(url);
   if (!res.ok) throw new Error("Failed to fetch tasks");
   return res.json();

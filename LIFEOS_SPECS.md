@@ -2,7 +2,7 @@
 
 > **模組路由**：`/admin` (或 `/lifeos`)
 > **資料表前綴**：`lifeos_` (建議)
-> **狀態**：🚧 MVP 開發中
+> **狀態**：✅ MVP 完成 (2026-02-08)
 
 ---
 
@@ -156,7 +156,8 @@ PATCH  /api/lifeos/tasks/:id/move      # 移動欄位
 
 ### War Room
 ```
-GET    /api/lifeos/dashboard           # 戰情室資料 (聚合)
+# 無後端聚合 API — War Room 採用前端 client-side 聚合
+# 直接呼叫 Kite + LifeOS 現有 API，保持模組隔離
 ```
 
 ---
@@ -196,26 +197,30 @@ GET    /api/lifeos/dashboard           # 戰情室資料 (聚合)
 
 ## 5. 開發路線 (Roadmap)
 
-### Phase 1：後端基礎
-- [ ] 建立 `internal/modules/lifeos/` 資料夾結構
-- [ ] 建立 `Habit` 與 `HabitLog` Model
-- [ ] 建立 `Task` Model
-- [ ] 實作 CRUD API
+### Phase 1：後端基礎 ✅
+- [x] 建立 `internal/modules/lifeos/` 資料夾結構
+- [x] 建立 `Habit` 與 `HabitLog` Model
+- [x] 建立 `Task` Model
+- [x] 實作 CRUD API
 
-### Phase 2：前端基礎
-- [ ] 建立 `src/apps/lifeos/` 路由與 Layout
-- [ ] 實作 Habit Tracker 頁面
-- [ ] 實作 Todo Board 頁面（含 Drag & Drop）
+### Phase 2：前端基礎 ✅
+- [x] 建立 `src/apps/lifeos/` 路由與 Layout
+- [x] 實作 Habit Tracker 頁面（CRUD + 打卡 + Streak Badge）
+- [x] 實作 Todo Board 頁面（CRUD + Quick Add + Drag & Drop）
 
-### Phase 3：整合
-- [ ] 實作 War Room Dashboard
-- [ ] 跨模組資料聚合 API
-- [ ] 完成動畫與互動細節
+### Phase 3：整合 ✅
+- [x] 實作 War Room Dashboard（跨模組 Kite + LifeOS 整合）
+- [x] 前端 client-side 資料聚合（保持模組隔離，不新增後端聚合 API）
+- [x] Overview Stats 統計卡片
+- [x] Habit Heatmap 熱力圖
 
-### Phase 4：優化
-- [ ] 熱力圖視覺化
+### Phase 4：優化（進行中）
+- [x] 熱力圖視覺化（GitHub 風格 16 週 Heatmap）
+- [ ] 完成動畫（Confetti / Checkmark）
 - [ ] 通知 / 提醒系統
 - [ ] 統計報表
+- [ ] F.L.O.W. 分類標籤
+- [ ] Freeze 卡（暫停不中斷 streak）
 
 ---
 
@@ -240,4 +245,4 @@ GET    /api/lifeos/dashboard           # 戰情室資料 (聚合)
 
 ---
 
-*最後更新：2026-01-23*
+*最後更新：2026-02-08*

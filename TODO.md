@@ -1,7 +1,7 @@
 # Nexus Project TODO List
 
-> **Last Updated**: 2026-02-06
-> **當前焦點**: Kite Discord 通知系統完成 ✅ → LifeOS 核心強化 → ChoiceFit 初始化
+> **Last Updated**: 2026-02-08
+> **當前焦點**: LifeOS MVP 完成 ✅ → ChoiceFit 初始化
 
 ---
 
@@ -49,6 +49,20 @@
 - [x] URL 解析錯誤修復（strings.TrimSpace）
 - [x] 前端警報彈窗防重複顯示
 
+### LifeOS 模組 - MVP 完成 (2026-02-08)
+- [x] Habit Tracker 完整 CRUD（新增/編輯/刪除習慣、每日打卡）
+- [x] Todo Board 完整 CRUD（新增/編輯/刪除任務、Quick Add）
+- [x] Kanban 拖拉移動（原生 HTML5 Drag & Drop）
+- [x] Habit Heatmap（GitHub 風格 16 週熱力圖）
+- [x] Overview Stats（4 指標統計卡片）
+- [x] War Room 戰情室（跨模組 Kite + LifeOS 整合面板）
+  - [x] Kite 摘要：P&L、持倉數、策略警報、風型、門燈
+  - [x] LifeOS 摘要：今日習慣、最長連勝、待辦、本週完成
+  - [x] 快速行動按鈕（跨模組導航）
+  - [x] 盤中 30 秒自動刷新 + Kite 離線 graceful degradation
+- [x] 字型統一修復（Modal 元件 font-family 繼承）
+- [x] 習慣名稱文字溢出修復（flex + text-overflow: ellipsis）
+
 ### 基礎建設
 - [x] Go + Gin 後端架構
 - [x] React + TypeScript 前端
@@ -63,10 +77,6 @@
 - [ ] **替換原生 Emoji 為 SVG Icon**：統一視覺風格，支持自訂顏色
 - [ ] **MACD 精度**：修正 `calculateMACDDays` 的 off-by-one 錯誤（如有）
 - [ ] **週趨勢邏輯**：改用 MACD DIF（藍線）斜率判斷，避免「週三假訊號」（如需）
-
-### LifeOS 後端整合
-- [ ] Habit Tracker 資料持久化
-- [ ] Todo Board CRUD API
 
 ---
 
@@ -92,26 +102,33 @@
   - [x] BOSS 策略批次建議（10-15 批）- 已在轉換時自動設定
   - [x] OFFICE 策略批次建議（3-5 批）- 已在轉換時自動設定
 
-### LifeOS 模組 MVP
+### LifeOS 模組 MVP ✅ (2026-02-08)
 - [x] **Habit Tracker 後端**：
   - [x] `Habit` Model 建立 ✅
   - [x] CRUD API 實作 ✅
-  - [ ] Streak 計算邏輯強化
+  - [x] HabitLog 打卡 API ✅
 - [x] **Todo Board 後端**：
   - [x] `Task` Model 建立 ✅
   - [x] Kanban 狀態管理 API ✅
-- [ ] **Habit Tracker 前端**：
-  - [ ] 習慣清單顯示
-  - [ ] 打卡介面
-  - [ ] Streak 視覺化
-- [ ] **Todo Board 前端**：
-  - [ ] Kanban 拖拉介面
+  - [x] Move Task API ✅
+- [x] **Habit Tracker 前端** ✅：
+  - [x] 習慣清單顯示 + CRUD Modal
+  - [x] 打卡介面（每日 toggle）
+  - [x] Streak 視覺化（X day streak badge）
+  - [x] GitHub 風格 Heatmap 熱力圖
+- [x] **Todo Board 前端** ✅：
+  - [x] Kanban 拖拉介面（HTML5 DnD）
+  - [x] Quick Add 快速新增
+  - [x] 優先級視覺化（!!!、normal、Low badge）
+- [x] **War Room Dashboard** ✅：
+  - [x] 跨模組監控面板（Kite P&L + 門燈 + LifeOS 指標）
+  - [x] 快速行動按鈕（跨模組導航）
+  - [x] 盤中自動刷新 + 離線 graceful degradation
+- [ ] **LifeOS 進階功能**（未來）：
   - [ ] F.L.O.W. 分類標籤
-  - [ ] 優先級視覺化
-- [ ] **War Room Dashboard**：
-  - [ ] 跨模組監控面板（Kite + LifeOS 指標）
+  - [ ] 完成動畫（Confetti / Checkmark）
+  - [ ] Freeze 卡（暫停不中斷 streak）
   - [ ] 每週執行力統計
-  - [ ] F.L.O.W. 能量條
 
 ---
 

@@ -3,10 +3,11 @@ import { IconLifeOS, IconDashboard, IconSettings } from "../../components/HandDr
 import { HabitTracker } from "./components/HabitTracker";
 import { TodoBoard } from "./components/TodoBoard";
 import { OverviewStats } from "./components/OverviewStats";
+import { WarRoom } from "./components/WarRoom";
 import "./LifeDashboard.css";
 
 export default function LifeDashboard() {
-    const [activeTab, setActiveTab] = useState<'overview' | 'habits' | 'todos'>('overview');
+    const [activeTab, setActiveTab] = useState<'overview' | 'habits' | 'todos' | 'warroom'>('overview');
 
     return (
         <div className="life-dashboard">
@@ -41,6 +42,12 @@ export default function LifeDashboard() {
                 >
                     Tasks
                 </button>
+                <button
+                    className={`tab-btn ${activeTab === 'warroom' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('warroom')}
+                >
+                    ⚡ War Room
+                </button>
             </div>
 
             <main className="life-content">
@@ -61,6 +68,7 @@ export default function LifeDashboard() {
                 )}
                 {activeTab === 'habits' && <HabitTracker />}
                 {activeTab === 'todos' && <TodoBoard />}
+                {activeTab === 'warroom' && <WarRoom onNavigateTab={setActiveTab} />}
             </main>
         </div>
     );

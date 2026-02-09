@@ -80,3 +80,22 @@ export interface MoveTaskRequest {
   column: string;
   order?: number;
 }
+
+// Reminder Types
+export type ReminderType = "HABIT_DAILY" | "TASK_DUE_SOON" | "TASK_OVERDUE";
+
+export interface ReminderSetting {
+  id: string;
+  type: ReminderType;
+  enabled: boolean;
+  reminder_time: string; // HH:MM
+  lead_days: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UpdateReminderRequest {
+  enabled?: boolean;
+  reminder_time?: string;
+  lead_days?: number;
+}

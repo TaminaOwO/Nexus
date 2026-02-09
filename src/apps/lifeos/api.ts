@@ -8,6 +8,8 @@ import type {
   UpdateTaskRequest,
   MoveTaskRequest,
   FlowType,
+  ReminderSetting,
+  UpdateReminderRequest,
 } from "./types";
 
 const API_BASE = "/api/lifeos";
@@ -111,4 +113,30 @@ export async function moveTask(id: string, data: MoveTaskRequest): Promise<Task>
   });
   if (!res.ok) throw new Error("Failed to move task");
   return res.json();
+}
+
+// ========== Reminder API ==========
+
+export async function fetchReminderSettings(): Promise<ReminderSetting[]> {
+  const res = await fetch(`${API_BASE}/reminders`);
+  if (!res.ok) throw new Error("Failed to fetch reminder settings");
+  return res.json();
+}
+
+export async function updateReminderSetting(
+  type: string,
+  data: UpdateReminderRequest
+): Promise<ReminderSetting> {
+  const res = await fetch(`${API_BASE}/reminders/${type}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Failed to update reminder setting");
+  return res.json();
+}
+
+export async function testReminderWebhook(): Promise<void> {
+  const res = await fetch(`${API_BASE}/reminders/test`, { method: "POST" });
+  if (!res.ok) throw new Error("Failed to send test notification");
 }

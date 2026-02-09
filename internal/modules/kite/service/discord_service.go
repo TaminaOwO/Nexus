@@ -1,58 +1,27 @@
 package service
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"log"
-	"net/http"
-	"os"
-	"strings"
 	"time"
 
 	"nexus/internal/database"
 	"nexus/internal/modules/kite/model"
+	"nexus/pkg/discord"
 )
 
-// Discord Embed 結構
-type DiscordEmbed struct {
-	Title       string         `json:"title"`
-	Description string         `json:"description"`
-	Color       int            `json:"color"`
-	Fields      []EmbedField   `json:"fields"`
-	Timestamp   string         `json:"timestamp"`
-	Footer      *EmbedFooter   `json:"footer,omitempty"`
-}
-
-type EmbedField struct {
-	Name   string `json:"name"`
-	Value  string `json:"value"`
-	Inline bool   `json:"inline"`
-}
-
-type EmbedFooter struct {
-	Text string `json:"text"`
-}
-
-type DiscordWebhookPayload struct {
-	Embeds []DiscordEmbed `json:"embeds"`
-}
-
-// Alert Type 顏色定義
+// Kite 專用顏色（保留語意別名）
 const (
-	ColorStopLoss     = 15548997 // 紅色
-	ColorForceSell    = 15548997 // 紅色
-	ColorTakeProfit   = 5763719  // 綠色
-	ColorStrategyRule = 16098851 // 橘色
-	ColorWatchlist    = 3447003  // 藍色
+	ColorStopLoss     = discord.ColorRed
+	ColorForceSell    = discord.ColorRed
+	ColorTakeProfit   = discord.ColorGreen
+	ColorStrategyRule = discord.ColorOrange
+	ColorWatchlist    = discord.ColorBlue
 )
 
 // SendPortfolioAlert - 發送 Portfolio 警示到 Discord
 func SendPortfolioAlert(alert Alert, holding PortfolioHolding) error {
-	webhookURL := strings.TrimSpace(os.Getenv("DISCORD_WEBHOOK_URL"))
-	enabled := os.Getenv("DISCORD_NOTIFICATION_ENABLED")
-
-	if webhookURL == "" || enabled != "true" {
+	if !discord.IsEnabled() {
 		log.Printf("[Discord] Skipped: webhook not configured or disabled")
 		return nil
 	}
@@ -67,7 +36,7 @@ func SendPortfolioAlert(alert Alert, holding PortfolioHolding) error {
 	embed := buildPortfolioEmbed(alert, holding)
 
 	// 發送 Webhook
-	err := sendWebhook(webhookURL, embed)
+	err := discord.SendEmbed(embed)
 	if err != nil {
 		log.Printf("[Discord] ERROR sending %s for %s: %v", alert.Type, alert.Symbol, err)
 		return err
@@ -81,10 +50,7 @@ func SendPortfolioAlert(alert Alert, holding PortfolioHolding) error {
 
 // SendWatchlistAlert - 發送 Watchlist 警示到 Discord
 func SendWatchlistAlert(symbol, companyName, alertType, message string, currentPrice, targetPrice float64) error {
-	webhookURL := strings.TrimSpace(os.Getenv("DISCORD_WEBHOOK_URL"))
-	enabled := os.Getenv("DISCORD_NOTIFICATION_ENABLED")
-
-	if webhookURL == "" || enabled != "true" {
+	if !discord.IsEnabled() {
 		log.Printf("[Discord] Skipped: webhook not configured or disabled")
 		return nil
 	}
@@ -99,7 +65,7 @@ func SendWatchlistAlert(symbol, companyName, alertType, message string, currentP
 	embed := buildWatchlistEmbed(symbol, companyName, alertType, message, currentPrice, targetPrice)
 
 	// 發送 Webhook
-	err := sendWebhook(webhookURL, embed)
+	err := discord.SendEmbed(embed)
 	if err != nil {
 		log.Printf("[Discord] ERROR sending %s for %s: %v", alertType, symbol, err)
 		return err
@@ -112,7 +78,7 @@ func SendWatchlistAlert(symbol, companyName, alertType, message string, currentP
 }
 
 // buildPortfolioEmbed - 建立 Portfolio 警示 Embed
-func buildPortfolioEmbed(alert Alert, holding PortfolioHolding) DiscordEmbed {
+func buildPortfolioEmbed(alert Alert, holding PortfolioHolding) discord.Embed {
 	var color int
 	var title string
 
@@ -136,7 +102,7 @@ func buildPortfolioEmbed(alert Alert, holding PortfolioHolding) DiscordEmbed {
 
 	description := fmt.Sprintf("**%s %s**\n%s", alert.Symbol, holding.CompanyName, alert.Message)
 
-	fields := []EmbedField{
+	fields := []discord.EmbedField{
 		{Name: "當前價格", Value: fmt.Sprintf("$%.2f", holding.CurrentPrice), Inline: true},
 		{Name: "進場價格", Value: fmt.Sprintf("$%.2f", holding.EntryPrice), Inline: true},
 		{Name: "未實現損益", Value: fmt.Sprintf("%.2f%%", holding.UnrealizedPLPercent), Inline: true},
@@ -144,14 +110,14 @@ func buildPortfolioEmbed(alert Alert, holding PortfolioHolding) DiscordEmbed {
 
 	// 停損/停利顯示目標價
 	if alert.Type == "STOP_LOSS" && holding.StopLossPrice > 0 {
-		fields = append(fields, EmbedField{
+		fields = append(fields, discord.EmbedField{
 			Name:   "停損價",
 			Value:  fmt.Sprintf("$%.2f", holding.StopLossPrice),
 			Inline: true,
 		})
 	}
 	if alert.Type == "TAKE_PROFIT" && holding.TakeProfitPrice > 0 {
-		fields = append(fields, EmbedField{
+		fields = append(fields, discord.EmbedField{
 			Name:   "停利價",
 			Value:  fmt.Sprintf("$%.2f", holding.TakeProfitPrice),
 			Inline: true,
@@ -160,24 +126,24 @@ func buildPortfolioEmbed(alert Alert, holding PortfolioHolding) DiscordEmbed {
 
 	// 策略資訊
 	strategyText := fmt.Sprintf("%s - %s", holding.Strategy, holding.SubStrategy)
-	fields = append(fields, EmbedField{
+	fields = append(fields, discord.EmbedField{
 		Name:   "策略",
 		Value:  strategyText,
 		Inline: false,
 	})
 
-	return DiscordEmbed{
+	return discord.Embed{
 		Title:       title,
 		Description: description,
 		Color:       color,
 		Fields:      fields,
 		Timestamp:   time.Now().Format(time.RFC3339),
-		Footer:      &EmbedFooter{Text: "Kite Trading System"},
+		Footer:      &discord.EmbedFooter{Text: "Kite Trading System"},
 	}
 }
 
 // buildWatchlistEmbed - 建立 Watchlist 警示 Embed
-func buildWatchlistEmbed(symbol, companyName, alertType, message string, currentPrice, targetPrice float64) DiscordEmbed {
+func buildWatchlistEmbed(symbol, companyName, alertType, message string, currentPrice, targetPrice float64) discord.Embed {
 	var title string
 	var color int
 
@@ -191,56 +157,26 @@ func buildWatchlistEmbed(symbol, companyName, alertType, message string, current
 
 	description := fmt.Sprintf("**%s %s**\n%s", symbol, companyName, message)
 
-	fields := []EmbedField{
+	fields := []discord.EmbedField{
 		{Name: "當前價格", Value: fmt.Sprintf("$%.2f", currentPrice), Inline: true},
 	}
 
 	if targetPrice > 0 {
-		fields = append(fields, EmbedField{
+		fields = append(fields, discord.EmbedField{
 			Name:   "目標價",
 			Value:  fmt.Sprintf("$%.2f", targetPrice),
 			Inline: true,
 		})
 	}
 
-	return DiscordEmbed{
+	return discord.Embed{
 		Title:       title,
 		Description: description,
 		Color:       color,
 		Fields:      fields,
 		Timestamp:   time.Now().Format(time.RFC3339),
-		Footer:      &EmbedFooter{Text: "Kite Trading System"},
+		Footer:      &discord.EmbedFooter{Text: "Kite Trading System"},
 	}
-}
-
-// sendWebhook - 發送 Discord Webhook 請求
-func sendWebhook(webhookURL string, embed DiscordEmbed) error {
-	payload := DiscordWebhookPayload{
-		Embeds: []DiscordEmbed{embed},
-	}
-
-	jsonData, err := json.Marshal(payload)
-	if err != nil {
-		log.Printf("[Discord] Marshal error: %v", err)
-		return fmt.Errorf("failed to marshal webhook payload: %w", err)
-	}
-
-	log.Printf("[Discord] Sending webhook to Discord...")
-	resp, err := http.Post(webhookURL, "application/json", bytes.NewBuffer(jsonData))
-	if err != nil {
-		log.Printf("[Discord] HTTP POST error: %v", err)
-		return fmt.Errorf("failed to send webhook: %w", err)
-	}
-	defer resp.Body.Close()
-
-	// Discord Webhook 成功返回 204 No Content
-	if resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusOK {
-		log.Printf("[Discord] Unexpected status: %d", resp.StatusCode)
-		return fmt.Errorf("discord webhook returned status %d", resp.StatusCode)
-	}
-
-	log.Printf("[Discord] Webhook sent successfully (status %d)", resp.StatusCode)
-	return nil
 }
 
 // HasSentNotification - 檢查過去 24 小時內是否已發送過此通知
@@ -283,18 +219,13 @@ func LogNotification(tradeID, symbol, alertType string) {
 
 // SendTestWebhook - 發送測試訊息
 func SendTestWebhook() error {
-	webhookURL := strings.TrimSpace(os.Getenv("DISCORD_WEBHOOK_URL"))
-	if webhookURL == "" {
-		return fmt.Errorf("DISCORD_WEBHOOK_URL not configured")
-	}
-
-	embed := DiscordEmbed{
+	embed := discord.Embed{
 		Title:       "✅ Webhook 測試成功",
 		Description: "Kite Trading System Discord 通知已正確配置",
 		Color:       ColorTakeProfit,
 		Timestamp:   time.Now().Format(time.RFC3339),
-		Footer:      &EmbedFooter{Text: "Kite Trading System"},
+		Footer:      &discord.EmbedFooter{Text: "Kite Trading System"},
 	}
 
-	return sendWebhook(webhookURL, embed)
+	return discord.SendEmbed(embed)
 }

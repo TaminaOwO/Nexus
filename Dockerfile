@@ -39,8 +39,8 @@ FROM alpine:3.21
 
 WORKDIR /app
 
-# Install ca-certificates for HTTPS requests
-RUN apk --no-cache add ca-certificates
+# Install ca-certificates for HTTPS requests + tzdata for timezone support
+RUN apk --no-cache add ca-certificates tzdata
 
 # Create data directory for future database persistence
 RUN mkdir -p /app/data

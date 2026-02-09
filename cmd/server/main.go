@@ -13,6 +13,7 @@ import (
 	kiteService "nexus/internal/modules/kite/service"
 	lifeosHandler "nexus/internal/modules/lifeos/handler"
 	lifeosModel "nexus/internal/modules/lifeos/model"
+	lifeosService "nexus/internal/modules/lifeos/service"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -37,6 +38,8 @@ func main() {
 		&lifeosModel.Habit{},
 		&lifeosModel.HabitLog{},
 		&lifeosModel.Task{},
+		&lifeosModel.ReminderSetting{},
+		&lifeosModel.LifeOSNotificationLog{},
 	)
 
 	// Backfill: 確保舊資料有 flow_type 預設值
@@ -44,6 +47,9 @@ func main() {
 
 	// Start background alert scanner (Portfolio + Watchlist → Discord)
 	kiteService.StartAlertScanner(3 * time.Minute)
+
+	// Start LifeOS reminder scanner (Habits + Tasks → Discord)
+	lifeosService.StartReminderScanner(30 * time.Minute)
 
 	r := gin.Default()
 
@@ -80,6 +86,11 @@ func main() {
 		lifeos.PUT("/tasks/:id", lifeosHandler.UpdateTask)
 		lifeos.DELETE("/tasks/:id", lifeosHandler.DeleteTask)
 		lifeos.PATCH("/tasks/:id/move", lifeosHandler.MoveTask)
+
+		// Reminder Routes
+		lifeos.GET("/reminders", lifeosHandler.GetReminderSettings)
+		lifeos.PUT("/reminders/:type", lifeosHandler.UpdateReminderSetting)
+		lifeos.POST("/reminders/test", lifeosHandler.TestReminderWebhook)
 	}
 
 	// Kite Stock Module Routes

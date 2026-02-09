@@ -5,6 +5,7 @@ import { TodoBoard } from "./components/TodoBoard";
 import { OverviewStats } from "./components/OverviewStats";
 import { FlowStats } from "./components/FlowStats";
 import { WarRoom } from "./components/WarRoom";
+import { ReminderSettings } from "./components/ReminderSettings";
 import { fetchTasks } from "./api";
 import type { Task } from "./types";
 import "./LifeDashboard.css";
@@ -12,6 +13,7 @@ import "./LifeDashboard.css";
 export default function LifeDashboard() {
     const [activeTab, setActiveTab] = useState<'overview' | 'habits' | 'todos' | 'warroom'>('overview');
     const [allTasks, setAllTasks] = useState<Task[]>([]);
+    const [showSettings, setShowSettings] = useState(false);
 
     useEffect(() => {
         fetchTasks().then(setAllTasks).catch(() => {});
@@ -25,7 +27,7 @@ export default function LifeDashboard() {
                     <h1>LifeOS</h1>
                 </div>
                 <div className="header-actions">
-                    <button className="icon-btn">
+                    <button className="icon-btn" onClick={() => setShowSettings(true)}>
                         <IconSettings className="w-6 h-6" />
                     </button>
                 </div>
@@ -79,6 +81,8 @@ export default function LifeDashboard() {
                 {activeTab === 'todos' && <TodoBoard />}
                 {activeTab === 'warroom' && <WarRoom onNavigateTab={setActiveTab} />}
             </main>
+
+            {showSettings && <ReminderSettings onClose={() => setShowSettings(false)} />}
         </div>
     );
 }

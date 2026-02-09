@@ -1,5 +1,7 @@
 .todo-board {
     width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .board-grid {
@@ -625,5 +627,30 @@
 
     .btn-danger-outline {
         min-height: 48px;
+    }
+
+    /* FLOW selector: 2x2 grid on mobile */
+    .flow-selector {
+        flex-wrap: wrap;
+    }
+
+    .flow-option {
+        flex: 1 1 calc(50% - 0.25rem);
+        min-width: calc(50% - 0.25rem);
+        font-size: 0.85rem;
+        padding: 0.5rem 0.375rem;
+    }
+
+    .flow-option-label {
+        font-size: 0.6rem;
+    }
+
+    /* Task card actions spacing */
+    .task-card-header {
+        gap: 0.25rem;
+    }
+
+    .task-text {
+        font-size: 0.9rem;
     }
 }

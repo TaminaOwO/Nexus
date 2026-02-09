@@ -87,11 +87,25 @@ type Task struct {
     Priority    int       `json:"priority"`       // 1-3 (高/中/低)
     DueDate     *string   `json:"due_date"`       // 可選截止日
     Tags        string    `json:"tags"`           // 逗號分隔標籤
+    FlowType    string    `json:"flow_type"`      // F.L.O.W. 分類: focus/leverage/optimize/waste
     Order       int       `json:"order"`          // 欄內排序
     CreatedAt   time.Time `json:"created_at"`
     UpdatedAt   time.Time `json:"updated_at"`
 }
 ```
+
+#### F.L.O.W. 分類系統
+
+每個任務可標記能量類型，用於分析週執行力：
+
+| 類型 | 意義 | 顏色 |
+|------|------|------|
+| **🎯 Focus** | 高專注深度工作 | `#6366F1` 紫 |
+| **⚡ Leverage** | 高槓桿高回報 | `#F59E0B` 金 |
+| **🔧 Optimize** | 流程優化維護 | `#10B981` 綠 |
+| **🗑️ Waste** | 低價值可消除 | `#EF4444` 紅 |
+
+**FlowStats 元件**：Overview 頁顯示本週 F.L.O.W. 分佈橫條圖 + 最近 4 週趨勢
 
 #### 互動設計
 
@@ -216,10 +230,12 @@ PATCH  /api/lifeos/tasks/:id/move      # 移動欄位
 
 ### Phase 4：優化（進行中）
 - [x] 熱力圖視覺化（GitHub 風格 16 週 Heatmap）
+- [x] F.L.O.W. 分類系統（Focus / Leverage / Optimize / Waste）
+- [x] 每週執行力統計（FlowStats + 4 週趨勢圖）
+- [x] 手機版響應式修復（6 檔案、640px + 380px 斷點、overflow 防護）
 - [ ] 完成動畫（Confetti / Checkmark）
 - [ ] 通知 / 提醒系統
 - [ ] 統計報表
-- [ ] F.L.O.W. 分類標籤
 - [ ] Freeze 卡（暫停不中斷 streak）
 
 ---
@@ -245,4 +261,4 @@ PATCH  /api/lifeos/tasks/:id/move      # 移動欄位
 
 ---
 
-*最後更新：2026-02-08*
+*最後更新：2026-02-09*

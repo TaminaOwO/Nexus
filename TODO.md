@@ -1,6 +1,6 @@
 # Nexus Project TODO List
 
-> **Last Updated**: 2026-02-08
+> **Last Updated**: 2026-02-09
 > **當前焦點**: LifeOS MVP 完成 ✅ → ChoiceFit 初始化
 
 ---
@@ -62,6 +62,15 @@
   - [x] 盤中 30 秒自動刷新 + Kite 離線 graceful degradation
 - [x] 字型統一修復（Modal 元件 font-family 繼承）
 - [x] 習慣名稱文字溢出修復（flex + text-overflow: ellipsis）
+- [x] F.L.O.W. 分類系統（Focus / Leverage / Optimize / Waste 標籤）
+- [x] 每週執行力統計（FlowStats 元件 + 4 週趨勢圖）
+
+### LifeOS 模組 - 手機版跑版修復 (2026-02-09)
+- [x] 主容器 padding 2rem→1rem（640px 斷點）
+- [x] HabitHeatmap 溢出修復（overflow-x: auto + 380px 極小螢幕斷點）
+- [x] FLOW Selector 手機 2x2 網格排列
+- [x] WarRoom Quick Action 小螢幕字體縮放
+- [x] 全元件 box-sizing + overflow 防溢出
 
 ### 基礎建設
 - [x] Go + Gin 後端架構
@@ -125,10 +134,11 @@
   - [x] 快速行動按鈕（跨模組導航）
   - [x] 盤中自動刷新 + 離線 graceful degradation
 - [ ] **LifeOS 進階功能**（未來）：
-  - [ ] F.L.O.W. 分類標籤
+  - [x] F.L.O.W. 分類標籤 ✅ (2026-02-08)
+  - [x] 每週執行力統計 ✅ (2026-02-08)
+  - [x] 手機版跑版修復（6 檔案全面響應式修復）✅ (2026-02-09)
   - [ ] 完成動畫（Confetti / Checkmark）
   - [ ] Freeze 卡（暫停不中斷 streak）
-  - [ ] 每週執行力統計
 
 ---
 

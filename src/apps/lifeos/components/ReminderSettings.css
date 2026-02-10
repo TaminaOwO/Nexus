@@ -201,7 +201,8 @@
 }
 
 .reminder-field input[type="time"] {
-    width: 120px;
+    width: 160px;
+    min-width: 160px;
 }
 
 .reminder-field input[type="number"] {

@@ -44,18 +44,39 @@ const (
 	ColorCoral  = 13399392 // #CC7A60 (LifeOS accent)
 )
 
-// IsEnabled 檢查 Discord 通知是否已配置且啟用
+// IsEnabled 檢查 Discord 通知是否已配置且啟用（通用）
 func IsEnabled() bool {
 	url := strings.TrimSpace(os.Getenv("DISCORD_WEBHOOK_URL"))
 	enabled := os.Getenv("DISCORD_NOTIFICATION_ENABLED")
 	return url != "" && enabled == "true"
 }
 
-// SendEmbed 發送單一 Embed 到 Discord Webhook
+// IsEnabledFor 檢查指定 env key 的 webhook 是否已配置且啟用
+// 若該 key 無值，fallback 到通用 DISCORD_WEBHOOK_URL
+func IsEnabledFor(envKey string) bool {
+	url := GetWebhookURL(envKey)
+	enabled := os.Getenv("DISCORD_NOTIFICATION_ENABLED")
+	return url != "" && enabled == "true"
+}
+
+// GetWebhookURL 取得指定 env key 的 webhook URL，無值則 fallback 到通用 URL
+func GetWebhookURL(envKey string) string {
+	url := strings.TrimSpace(os.Getenv(envKey))
+	if url == "" {
+		url = strings.TrimSpace(os.Getenv("DISCORD_WEBHOOK_URL"))
+	}
+	return url
+}
+
+// SendEmbed 發送到預設 DISCORD_WEBHOOK_URL
 func SendEmbed(embed Embed) error {
-	webhookURL := strings.TrimSpace(os.Getenv("DISCORD_WEBHOOK_URL"))
+	return SendEmbedTo(strings.TrimSpace(os.Getenv("DISCORD_WEBHOOK_URL")), embed)
+}
+
+// SendEmbedTo 發送到指定的 webhook URL
+func SendEmbedTo(webhookURL string, embed Embed) error {
 	if webhookURL == "" {
-		return fmt.Errorf("DISCORD_WEBHOOK_URL not configured")
+		return fmt.Errorf("webhook URL not configured")
 	}
 
 	enabled := os.Getenv("DISCORD_NOTIFICATION_ENABLED")

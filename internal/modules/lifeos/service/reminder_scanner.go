@@ -23,8 +23,16 @@ func StartReminderScanner(interval time.Duration) {
 	}()
 }
 
+// LifeOS 專用 webhook env key
+const lifeosWebhookEnv = "DISCORD_LIFEOS_WEBHOOK_URL"
+
+func sendLifeOSEmbed(embed discord.Embed) error {
+	url := discord.GetWebhookURL(lifeosWebhookEnv)
+	return discord.SendEmbedTo(url, embed)
+}
+
 func runReminderScan() {
-	if !discord.IsEnabled() {
+	if !discord.IsEnabledFor(lifeosWebhookEnv) {
 		return
 	}
 
@@ -114,7 +122,7 @@ func scanHabitReminder(now time.Time) {
 		Footer:    &discord.EmbedFooter{Text: "LifeOS Reminder"},
 	}
 
-	if err := discord.SendEmbed(embed); err != nil {
+	if err := sendLifeOSEmbed(embed); err != nil {
 		log.Printf("[LifeOS Reminder] ERROR sending habit reminder: %v", err)
 		return
 	}
@@ -180,7 +188,7 @@ func scanTaskDueSoon(now time.Time) {
 			Footer:      &discord.EmbedFooter{Text: "LifeOS Reminder"},
 		}
 
-		if err := discord.SendEmbed(embed); err != nil {
+		if err := sendLifeOSEmbed(embed); err != nil {
 			log.Printf("[LifeOS Reminder] ERROR sending due-soon for task %s: %v", task.ID, err)
 			continue
 		}
@@ -233,7 +241,7 @@ func scanTaskOverdue(now time.Time) {
 		Footer:      &discord.EmbedFooter{Text: "LifeOS Reminder"},
 	}
 
-	if err := discord.SendEmbed(embed); err != nil {
+	if err := sendLifeOSEmbed(embed); err != nil {
 		log.Printf("[LifeOS Reminder] ERROR sending overdue reminder: %v", err)
 		return
 	}

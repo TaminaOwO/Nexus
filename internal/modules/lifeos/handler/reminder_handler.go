@@ -92,7 +92,8 @@ func TestReminderWebhook(c *gin.Context) {
 		Footer:      &discord.EmbedFooter{Text: "LifeOS Reminder"},
 	}
 
-	if err := discord.SendEmbed(embed); err != nil {
+	webhookURL := discord.GetWebhookURL("DISCORD_LIFEOS_WEBHOOK_URL")
+	if err := discord.SendEmbedTo(webhookURL, embed); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

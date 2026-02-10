@@ -13,7 +13,9 @@ import type {
   CycleStatusResponse,
   SkincareRoutine,
   SkincareCycleSetting,
+  SkincareScheduleRule,
   UpdateCycleRequest,
+  UpdateScheduleRuleRequest,
 } from "./types";
 
 const API_BASE = "/api/lifeos";
@@ -172,5 +174,23 @@ export async function fetchSkincareToday(): Promise<SkincareRoutine> {
 export async function fetchSkincareWeek(): Promise<SkincareRoutine[]> {
   const res = await fetch(`${API_BASE}/skincare/week`);
   if (!res.ok) throw new Error("Failed to fetch weekly skincare");
+  return res.json();
+}
+
+export async function fetchSkincareSchedule(): Promise<SkincareScheduleRule[]> {
+  const res = await fetch(`${API_BASE}/skincare/schedule`);
+  if (!res.ok) throw new Error("Failed to fetch schedule");
+  return res.json();
+}
+
+export async function updateSkincareSchedule(
+  rules: UpdateScheduleRuleRequest[]
+): Promise<SkincareScheduleRule[]> {
+  const res = await fetch(`${API_BASE}/skincare/schedule`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ rules }),
+  });
+  if (!res.ok) throw new Error("Failed to update schedule");
   return res.json();
 }

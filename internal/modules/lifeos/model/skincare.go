@@ -48,3 +48,33 @@ type UpdateCycleRequest struct {
 	CycleStartDate string `json:"cycle_start_date" binding:"required"`
 	CycleLength    int    `json:"cycle_length"`
 }
+
+// SkincareScheduleRule - 產品使用日排程（可自訂）
+type SkincareScheduleRule struct {
+	ID         string    `gorm:"primaryKey" json:"id"`
+	ProductKey string    `gorm:"uniqueIndex:idx_prod_phase" json:"product_key"` // retinol, boj_eye
+	Phase      string    `gorm:"uniqueIndex:idx_prod_phase" json:"phase"`       // follicular, luteal
+	Weekdays   string    `json:"weekdays"`                                       // "Tuesday,Friday"
+	MaxPerWeek int       `json:"max_per_week"`
+	Label      string    `json:"label"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
+}
+
+func (r *SkincareScheduleRule) BeforeCreate(tx *gorm.DB) error {
+	if r.ID == "" {
+		r.ID = uuid.New().String()
+	}
+	return nil
+}
+
+// BatchUpdateScheduleRequest - 批次更新排程
+type BatchUpdateScheduleRequest struct {
+	Rules []UpdateScheduleRuleRequest `json:"rules" binding:"required"`
+}
+
+type UpdateScheduleRuleRequest struct {
+	ProductKey string `json:"product_key" binding:"required"`
+	Phase      string `json:"phase" binding:"required"`
+	Weekdays   string `json:"weekdays" binding:"required"`
+}

@@ -1,10 +1,46 @@
 package service
 
 import (
+	"strings"
 	"time"
 
 	"nexus/internal/modules/lifeos/model"
 )
+
+// GetDefaultScheduleRules 預設排程規則
+func GetDefaultScheduleRules() []model.SkincareScheduleRule {
+	return []model.SkincareScheduleRule{
+		{ProductKey: "retinol", Phase: "follicular", Weekdays: "Tuesday,Friday", MaxPerWeek: 2, Label: "Innisfree Retinol"},
+		{ProductKey: "retinol", Phase: "luteal", Weekdays: "Wednesday", MaxPerWeek: 1, Label: "Innisfree Retinol"},
+		{ProductKey: "boj_eye", Phase: "follicular", Weekdays: "Monday,Thursday", MaxPerWeek: 2, Label: "BoJ Retinal Eye"},
+		{ProductKey: "boj_eye", Phase: "luteal", Weekdays: "Monday,Friday", MaxPerWeek: 2, Label: "BoJ Retinal Eye"},
+	}
+}
+
+// isScheduledDay 檢查當天是否為某產品的排程日
+func isScheduledDay(rules []model.SkincareScheduleRule, productKey, phase string, weekday time.Weekday) bool {
+	for _, rule := range rules {
+		if rule.ProductKey == productKey && rule.Phase == phase {
+			return containsWeekday(rule.Weekdays, weekday)
+		}
+	}
+	// 無自訂規則 → fallback 預設
+	for _, rule := range GetDefaultScheduleRules() {
+		if rule.ProductKey == productKey && rule.Phase == phase {
+			return containsWeekday(rule.Weekdays, weekday)
+		}
+	}
+	return false
+}
+
+func containsWeekday(weekdays string, weekday time.Weekday) bool {
+	for _, d := range strings.Split(weekdays, ",") {
+		if strings.TrimSpace(d) == weekday.String() {
+			return true
+		}
+	}
+	return false
+}
 
 // DeterminePhase 根據 cycleDay 判斷週期階段
 func DeterminePhase(cycleDay int) (phase, phaseLabel, mode string) {
@@ -29,7 +65,6 @@ func CalculateCycleDay(cycleStartDate string, cycleLength int, targetDate time.T
 
 	days := int(targetDate.Sub(start).Hours()/24) + 1 // Day 1 = start date
 	if days <= 0 {
-		// 目標日期在起始日之前，往回推算
 		days = cycleLength - ((-days) % cycleLength)
 		if days == 0 {
 			days = cycleLength
@@ -42,7 +77,7 @@ func CalculateCycleDay(cycleStartDate string, cycleLength int, targetDate time.T
 }
 
 // GenerateDailySkincare 產生單日保養建議
-func GenerateDailySkincare(cycleDay int, targetDate time.Time) model.SkincareRoutine {
+func GenerateDailySkincare(cycleDay int, targetDate time.Time, rules []model.SkincareScheduleRule) model.SkincareRoutine {
 	phase, phaseLabel, mode := DeterminePhase(cycleDay)
 	weekday := targetDate.Weekday()
 
@@ -62,11 +97,11 @@ func GenerateDailySkincare(cycleDay int, targetDate time.Time) model.SkincareRou
 	case "menstrual":
 		buildMenstrual(&routine, cycleDay, weekday)
 	case "follicular":
-		buildFollicular(&routine, weekday)
+		buildFollicular(&routine, weekday, rules)
 	case "ovulation":
 		buildOvulation(&routine, weekday)
 	case "luteal":
-		buildLuteal(&routine, weekday)
+		buildLuteal(&routine, weekday, rules)
 	}
 
 	return routine
@@ -99,8 +134,9 @@ func buildMenstrual(r *model.SkincareRoutine, cycleDay int, weekday time.Weekday
 
 // === Follicular Phase (Day 8-14) — Glow but Controlled ===
 
-func buildFollicular(r *model.SkincareRoutine, weekday time.Weekday) {
-	isRetinolNight := weekday == time.Tuesday || weekday == time.Friday
+func buildFollicular(r *model.SkincareRoutine, weekday time.Weekday, rules []model.SkincareScheduleRule) {
+	isRetinolNight := isScheduledDay(rules, "retinol", "follicular", weekday)
+	isBojNight := !isRetinolNight && isScheduledDay(rules, "boj_eye", "follicular", weekday)
 
 	// AM
 	r.AM = append(r.AM, model.SkincareStep{Product: "Menomeno B3"})
@@ -109,19 +145,15 @@ func buildFollicular(r *model.SkincareRoutine, weekday time.Weekday) {
 
 	// PM
 	if isRetinolNight {
-		// Retinol nights (Tue/Fri) — max 2x/week
 		r.PM = append(r.PM, model.SkincareStep{Product: "IRITA Essence"})
 		r.PM = append(r.PM, model.SkincareStep{Product: "Innisfree Retinol", Badge: "Pea Size"})
 		r.PM = append(r.PM, model.SkincareStep{Product: "IRITA B5"})
-		// BoJ Retinal Eye 不可與 Face Retinol 同晚
-		r.Banned = append(r.Banned, "🚫 今晚使用 Retinol — 禁用儀器、禁用 BoJ Retinal Eye")
+		r.Banned = append(r.Banned, "今晚使用 Retinol — 禁用儀器、禁用 BoJ Retinal Eye")
 	} else {
-		// Non-retinol nights
 		r.PM = append(r.PM, model.SkincareStep{Product: "IRITA Essence"})
 		r.PM = append(r.PM, model.SkincareStep{Product: "IRITA B5"})
 		r.PM = append(r.PM, model.SkincareStep{Product: "Booster Pro + Essence", Badge: "導入模式", Optional: true})
-		// BoJ Retinal Eye 可在非 Retinol 晚使用（上限 2 晚/週，建議 Mon/Thu）
-		if weekday == time.Monday || weekday == time.Thursday {
+		if isBojNight {
 			r.PM = append(r.PM, model.SkincareStep{Product: "BoJ Retinal Eye", Badge: "限 2 晚/週", Optional: true})
 		}
 	}
@@ -135,12 +167,12 @@ func buildOvulation(r *model.SkincareRoutine, weekday time.Weekday) {
 	r.AM = append(r.AM, model.SkincareStep{Product: "Menomeno B3"})
 	r.AM = append(r.AM, model.SkincareStep{Product: "IRITA Lotion"})
 
-	// PM — Stridex 僅使用一次（排卵期第一天）
-	isStridexDay := weekday != time.Sunday // 排卵期內任一天，避開週日
+	// PM
+	isStridexDay := weekday != time.Sunday
 	if isStridexDay {
 		r.PM = append(r.PM, model.SkincareStep{
 			Product: "Stridex",
-			Badge:   "⚠️ T-Zone Only, 1 分鐘後沖洗",
+			Badge:   "T-Zone, 1 分鐘沖洗",
 		})
 	}
 	r.PM = append(r.PM, model.SkincareStep{Product: "IRITA Essence"})
@@ -156,8 +188,9 @@ func buildOvulation(r *model.SkincareRoutine, weekday time.Weekday) {
 
 // === Luteal Phase (Day 17-28) — Calm > Treat ===
 
-func buildLuteal(r *model.SkincareRoutine, weekday time.Weekday) {
-	isRetinolNight := weekday == time.Wednesday
+func buildLuteal(r *model.SkincareRoutine, weekday time.Weekday, rules []model.SkincareScheduleRule) {
+	isRetinolNight := isScheduledDay(rules, "retinol", "luteal", weekday)
+	isBojNight := !isRetinolNight && isScheduledDay(rules, "boj_eye", "luteal", weekday)
 
 	// AM
 	r.AM = append(r.AM, model.SkincareStep{Product: "Menomeno B3"})
@@ -166,40 +199,35 @@ func buildLuteal(r *model.SkincareRoutine, weekday time.Weekday) {
 
 	// PM
 	if isRetinolNight {
-		// Retinol night (Wed only) — max 1x/week
 		r.PM = append(r.PM, model.SkincareStep{Product: "Innisfree Retinol", Badge: "1x/週 限定"})
 		r.PM = append(r.PM, model.SkincareStep{Product: "IRITA B5"})
-		r.Banned = append(r.Banned, "🚫 今晚使用 Retinol — 禁用儀器、禁用 BoJ Retinal Eye")
+		r.Banned = append(r.Banned, "今晚使用 Retinol — 禁用儀器、禁用 BoJ Retinal Eye")
 	} else {
 		r.PM = append(r.PM, model.SkincareStep{Product: "IRITA Essence"})
 		r.PM = append(r.PM, model.SkincareStep{Product: "IRITA B5"})
-
-		// Medicube Device 可在非 Retinol 晚使用
 		r.PM = append(r.PM, model.SkincareStep{
 			Product:  "Medicube Device",
-			Badge:    "Derma Shot / MC Mode Only — No Induction",
+			Badge:    "Derma Shot / MC Mode",
 			Optional: true,
 		})
-
-		// BoJ Retinal Eye 可在非 Retinol 晚使用（限 2 晚/週，建議 Mon/Fri）
-		if weekday == time.Monday || weekday == time.Friday {
+		if isBojNight {
 			r.PM = append(r.PM, model.SkincareStep{Product: "BoJ Retinal Eye", Badge: "限 2 晚/週", Optional: true})
 		}
 	}
 
 	// 全期 BANNED
-	r.Banned = append(r.Banned, "❌ No Stridex（黃體期禁用酸類）")
-	r.Banned = append(r.Banned, "❌ Orange Oil")
-	r.Banned = append(r.Banned, "❌ Overnight Masks")
+	r.Banned = append(r.Banned, "No Stridex（黃體期禁用酸類）")
+	r.Banned = append(r.Banned, "Orange Oil")
+	r.Banned = append(r.Banned, "Overnight Masks")
 }
 
 // GenerateWeeklySkincare 產生本週 7 天保養排程
-func GenerateWeeklySkincare(cycleStartDate string, cycleLength int, today time.Time) []model.SkincareRoutine {
+func GenerateWeeklySkincare(cycleStartDate string, cycleLength int, today time.Time, rules []model.SkincareScheduleRule) []model.SkincareRoutine {
 	routines := make([]model.SkincareRoutine, 7)
 	for i := 0; i < 7; i++ {
 		targetDate := today.AddDate(0, 0, i)
 		cycleDay := CalculateCycleDay(cycleStartDate, cycleLength, targetDate)
-		routines[i] = GenerateDailySkincare(cycleDay, targetDate)
+		routines[i] = GenerateDailySkincare(cycleDay, targetDate, rules)
 	}
 	return routines
 }

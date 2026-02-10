@@ -136,3 +136,20 @@ export interface UpdateCycleRequest {
   cycle_start_date: string;
   cycle_length?: number;
 }
+
+export interface SkincareScheduleRule {
+  id: string;
+  product_key: string;
+  phase: string;
+  weekdays: string; // "Tuesday,Friday"
+  max_per_week: number;
+  label: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UpdateScheduleRuleRequest {
+  product_key: string;
+  phase: string;
+  weekdays: string;
+}

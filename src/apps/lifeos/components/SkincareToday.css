@@ -59,6 +59,25 @@
     color: var(--text-muted);
 }
 
+/* Back to Today */
+.back-today-btn {
+    align-self: center;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-lg);
+    padding: 0.5rem 1.25rem;
+    color: var(--accent);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.back-today-btn:hover {
+    background: var(--accent);
+    color: white;
+}
+
 /* Routine Cards */
 .skincare-routine-card {
     background: var(--bg-elevated);
@@ -102,6 +121,7 @@
     background: var(--bg-surface);
     border-radius: var(--radius-md);
     transition: background 0.15s ease;
+    flex-wrap: wrap;
 }
 
 .skincare-step:hover {
@@ -128,6 +148,7 @@
     font-weight: 600;
     color: var(--text-primary);
     flex: 1;
+    min-width: 0;
 }
 
 .skincare-step.optional .step-product {
@@ -143,6 +164,9 @@
     color: var(--accent);
     font-weight: 600;
     white-space: nowrap;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .step-optional-tag {
@@ -152,6 +176,12 @@
     background: var(--bg-hover);
     color: var(--text-muted);
     font-weight: 500;
+}
+
+.step-empty {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    padding: 0.5rem;
 }
 
 /* Banned Section */
@@ -197,7 +227,7 @@
 }
 
 .banned-item::before {
-    content: "—";
+    content: "\2014";
     position: absolute;
     left: 0;
     color: #DC2626;
@@ -258,6 +288,19 @@
     background: var(--accent-soft);
 }
 
+.week-day-card.selected {
+    border-color: var(--accent);
+    background: var(--accent);
+    box-shadow: 0 4px 12px rgba(204, 122, 96, 0.3);
+}
+
+.week-day-card.selected .week-day-name,
+.week-day-card.selected .week-day-number,
+.week-day-card.selected .week-day-phase,
+.week-day-card.selected .week-day-cycle {
+    color: white;
+}
+
 .week-day-name {
     font-size: 0.65rem;
     font-weight: 600;
@@ -282,6 +325,92 @@
 .week-day-cycle {
     font-size: 0.55rem;
     color: var(--text-muted);
+}
+
+/* Bottom Actions */
+.skincare-actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 0.5rem 1.25rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+    color: var(--text-secondary);
+    border-color: var(--border-default);
+}
+
+.action-btn.accent {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.action-btn.accent:hover {
+    background: var(--accent-soft);
+}
+
+/* iOS Info Card */
+.ios-info-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.ios-info-card h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 0.75rem;
+}
+
+.ios-info-card p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0 0 0.75rem;
+    line-height: 1.5;
+}
+
+.ios-info-card ol {
+    padding-left: 1.25rem;
+    margin: 0 0 0.75rem;
+}
+
+.ios-info-card li {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.4rem;
+    line-height: 1.5;
+}
+
+.ios-info-card code {
+    background: var(--bg-surface);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    word-break: break-all;
+}
+
+.ios-info-note {
+    font-size: 0.8rem;
+    color: var(--accent);
+    font-weight: 500;
+    font-style: italic;
 }
 
 /* Cycle Setup Form */
@@ -366,12 +495,6 @@
     cursor: not-allowed;
 }
 
-/* Update Cycle Button */
-.skincare-update-cycle {
-    display: flex;
-    justify-content: center;
-}
-
 .update-cycle-btn {
     background: transparent;
     border: 1px solid var(--border-subtle);
@@ -395,6 +518,166 @@
     padding: 3rem;
     color: var(--text-muted);
     font-size: 0.9rem;
+}
+
+/* ========== Schedule Modal ========== */
+
+.schedule-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+.schedule-modal {
+    background: var(--bg-elevated, #fff);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    max-width: 480px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.schedule-modal-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 0.5rem;
+}
+
+.schedule-modal-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin: 0 0 1.5rem;
+    line-height: 1.5;
+}
+
+.schedule-phase-section {
+    margin-bottom: 1.5rem;
+}
+
+.schedule-phase-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.schedule-rule-row {
+    margin-bottom: 1rem;
+}
+
+.schedule-rule-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.rule-product {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.rule-limit {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.weekday-toggles {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.weekday-toggle {
+    flex: 1;
+    padding: 0.5rem 0;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    background: var(--bg-surface);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: center;
+}
+
+.weekday-toggle:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.weekday-toggle.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}
+
+.schedule-conflict {
+    font-size: 0.8rem;
+    color: #DC2626;
+    background: #FEF2F2;
+    border: 1px solid #FECACA;
+    border-radius: var(--radius-md);
+    padding: 0.5rem 0.75rem;
+    margin-top: 0.5rem;
+    font-weight: 500;
+}
+
+.schedule-modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.schedule-save-btn {
+    flex: 1;
+    padding: 0.75rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.schedule-save-btn:hover {
+    background: var(--accent-hover);
+}
+
+.schedule-save-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.schedule-cancel-btn {
+    padding: 0.75rem 1.5rem;
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.schedule-cancel-btn:hover {
+    border-color: var(--border-default);
+    color: var(--text-primary);
 }
 
 /* ========== Mobile Responsive ========== */
@@ -429,6 +712,7 @@
 
     .step-badge {
         font-size: 0.6rem;
+        max-width: 140px;
     }
 
     .skincare-week-grid {
@@ -450,5 +734,23 @@
 
     .week-day-phase {
         font-size: 0.5rem;
+    }
+
+    .skincare-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .action-btn {
+        text-align: center;
+    }
+
+    .schedule-modal {
+        padding: 1.5rem;
+    }
+
+    .weekday-toggle {
+        font-size: 0.7rem;
+        padding: 0.4rem 0;
     }
 }

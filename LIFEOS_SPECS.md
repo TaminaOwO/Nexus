@@ -2,7 +2,7 @@
 
 > **模組路由**：`/admin` (或 `/lifeos`)
 > **資料表前綴**：`lifeos_` (建議)
-> **狀態**：✅ MVP 完成 (2026-02-08)
+> **狀態**：✅ MVP 完成 (2026-02-08) ｜ 通知系統 ✅ (2026-02-10) ｜ Skincare 🚧
 
 ---
 
@@ -147,6 +147,129 @@ type Task struct {
 
 ---
 
+### D. 通知 / 提醒系統 ✅ (2026-02-10)
+
+**目標**：主動 Discord 通知，不用打開 app 也能收到提醒
+
+#### 架構
+
+- **共用 Discord Package**：`pkg/discord/discord.go`（Kite + LifeOS 共用）
+- **LifeOS 專用 Webhook**：`DISCORD_LIFEOS_WEBHOOK_URL` env var（fallback 到通用 URL）
+- **背景 Scanner**：`internal/modules/lifeos/service/reminder_scanner.go`（30 分鐘輪詢）
+- **去重機制**：per calendar day（`LifeOSNotificationLog.ref_date`）
+
+#### 通知類型
+
+| 類型 | 預設時間 | 觸發條件 | Discord Embed 顏色 |
+|------|----------|----------|---------------------|
+| `HABIT_DAILY` | 21:00 | 今日有未完成的習慣 | Coral (#CC7A60) |
+| `TASK_DUE_SOON` | 09:00 | 任務將於 N 天內到期（預設 1 天） | Orange |
+| `TASK_OVERDUE` | 09:00 | 有逾期未完成的任務 | Red |
+
+#### 資料模型
+
+```go
+type ReminderSetting struct {
+    ID           string    // 主鍵
+    Type         string    // HABIT_DAILY / TASK_DUE_SOON / TASK_OVERDUE
+    Enabled      bool      // 啟用 / 停用
+    ReminderTime string    // HH:MM (24hr)
+    LeadDays     int       // TASK_DUE_SOON: 提前幾天
+}
+
+type LifeOSNotificationLog struct {
+    ID      string    // 主鍵
+    Type    string    // 通知類型
+    RefID   string    // Habit/Task ID（空 = 彙總通知）
+    RefDate string    // YYYY-MM-DD（每日去重 key）
+    SentAt  time.Time
+}
+```
+
+#### 前端
+
+- 齒輪 icon（LifeDashboard header）→ 開啟 ReminderSettings Modal
+- 每張提醒卡片：toggle 開關 + 時間選擇 + 提前天數（TASK_DUE_SOON）
+- 測試通知按鈕
+
+---
+
+### E. Skincare Strategy（生理週期保養策略）🚧
+
+**目標**：根據生理週期自動產生每日 AM/PM 保養建議，內建嚴格的產品衝突守門員
+
+#### 系統約束（Global Rules）
+
+| 規則 | 限制 |
+|------|------|
+| **Retinol (A 類)** | Follicular 最多 2 晚/週，Luteal 最多 1 晚/週，Menstrual 禁用 |
+| **酸類 (Stridex)** | 僅限 Ovulation + Early Luteal，PM only，T-Zone only，需沖洗 |
+| **儀器 (Booster Pro)** | 不可與 Retinol 同晚使用，禁用 Full Face Induction |
+| **眼霜** | `TO Multi-Peptide` 每日可用；`BoJ Retinal Eye` 最多 2 晚/週，不可與 Face Retinol 同晚 |
+
+#### 週期階段邏輯
+
+**1. Menstrual Phase (Day 1-7)** — *Rest & Repair*
+
+| 時段 | 步驟 |
+|------|------|
+| AM | [Optional: Medicube Pad], TO Eye Serum, IRITA Essence, IRITA B5/Lotion |
+| PM | IRITA Mask (每 3 天), TO Eye Serum, IRITA Essence, IRITA B5 |
+| BANNED | 所有活性成分（Retinol, Salicylic）、所有儀器 |
+
+**2. Follicular Phase (Day 8-14)** — *Glow but Controlled*
+
+| 時段 | 步驟 |
+|------|------|
+| AM | Menomeno B3, TO Eye Serum, IRITA Lotion (薄) |
+| PM (Tue/Fri) | IRITA Essence, Innisfree Retinol (Badge: "Pea Size"), IRITA B5 (Badge: "🚫 No Device") |
+| PM (其他天) | IRITA Essence, IRITA B5, [Optional: Booster Pro with Essence] |
+
+**3. Ovulation Phase (Day 15-16)** — *Balance*
+
+| 時段 | 步驟 |
+|------|------|
+| AM | Medicube Pad (Badge: "T-Zone Only"), Menomeno B3, IRITA Lotion |
+| PM (一次) | Stridex (Badge: "⚠️ T-Zone Only, 1 分鐘後沖洗"), IRITA Essence, IRITA B5 |
+| BANNED | Torriden Mask（不可與 Stridex 混用） |
+
+**4. Luteal Phase (Day 17-28)** — *Calm > Treat*
+
+| 時段 | 步驟 |
+|------|------|
+| AM | Menomeno B3, TO Eye Serum, IRITA B5 (Badge: "❌ No Stridex") |
+| PM (Wed) | Innisfree Retinol (1x/週), IRITA B5 |
+| PM (其他天) | IRITA Essence, IRITA B5 |
+| Device | Medicube (Badge: "Derma Shot / MC Mode Only — No Induction") |
+| BANNED | Orange Oil, Overnight Masks |
+
+#### 預計 API
+
+```
+GET  /api/lifeos/skincare/today   # 今日 AM/PM 保養建議
+GET  /api/lifeos/skincare/week    # 本週保養排程
+PUT  /api/lifeos/skincare/cycle   # 設定週期起始日（Day 1）
+```
+
+#### 預計檔案結構
+
+```
+internal/modules/lifeos/
+├── service/
+│   └── skincare_strategy.go      # 週期判斷 + 產品推薦引擎
+├── handler/
+│   └── skincare_handler.go       # API handlers
+└── model/
+    └── skincare.go               # CycleSetting, SkincareRoutine models
+
+src/apps/lifeos/
+├── components/
+│   ├── SkincareToday.tsx         # 今日 AM/PM 保養清單
+│   └── SkincareToday.css
+```
+
+---
+
 ## 3. API 端點規劃
 
 ### Habit Tracker
@@ -166,6 +289,20 @@ POST   /api/lifeos/tasks               # 新增任務
 PUT    /api/lifeos/tasks/:id           # 更新任務
 DELETE /api/lifeos/tasks/:id           # 刪除任務
 PATCH  /api/lifeos/tasks/:id/move      # 移動欄位
+```
+
+### Reminder（提醒設定）✅
+```
+GET    /api/lifeos/reminders            # 提醒設定列表
+PUT    /api/lifeos/reminders/:type      # 更新提醒設定
+POST   /api/lifeos/reminders/test       # 發送測試通知
+```
+
+### Skincare（保養策略）🚧
+```
+GET    /api/lifeos/skincare/today       # 今日保養建議
+GET    /api/lifeos/skincare/week        # 本週保養排程
+PUT    /api/lifeos/skincare/cycle       # 設定週期起始日
 ```
 
 ### War Room
@@ -228,13 +365,16 @@ PATCH  /api/lifeos/tasks/:id/move      # 移動欄位
 - [x] Overview Stats 統計卡片
 - [x] Habit Heatmap 熱力圖
 
-### Phase 4：優化（進行中）
+### Phase 4：優化 ✅
 - [x] 熱力圖視覺化（GitHub 風格 16 週 Heatmap）
 - [x] F.L.O.W. 分類系統（Focus / Leverage / Optimize / Waste）
 - [x] 每週執行力統計（FlowStats + 4 週趨勢圖）
 - [x] 手機版響應式修復（6 檔案、640px + 380px 斷點、overflow 防護）
+- [x] Discord 通知/提醒系統（共用 pkg/discord、LifeOS 專用 webhook、前端設定 modal）
+
+### Phase 5：進階功能（進行中）
+- [ ] **Skincare Strategy**（生理週期保養策略 — 見 Section 2.E）
 - [ ] 完成動畫（Confetti / Checkmark）
-- [ ] 通知 / 提醒系統
 - [ ] 統計報表
 - [ ] Freeze 卡（暫停不中斷 streak）
 
@@ -261,4 +401,4 @@ PATCH  /api/lifeos/tasks/:id/move      # 移動欄位
 
 ---
 
-*最後更新：2026-02-09*
+*最後更新：2026-02-10*

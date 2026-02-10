@@ -1,7 +1,7 @@
 # Nexus Project TODO List
 
-> **Last Updated**: 2026-02-09
-> **當前焦點**: LifeOS MVP 完成 ✅ → ChoiceFit 初始化
+> **Last Updated**: 2026-02-10
+> **當前焦點**: LifeOS 進階功能（Skincare Strategy）
 
 ---
 
@@ -72,6 +72,19 @@
 - [x] WarRoom Quick Action 小螢幕字體縮放
 - [x] 全元件 box-sizing + overflow 防溢出
 
+### LifeOS 模組 - Discord 通知/提醒系統 (2026-02-10)
+- [x] 共用 Discord Webhook Package 抽離（`pkg/discord/`）
+- [x] Kite `discord_service.go` 重構使用共用 package
+- [x] LifeOS 專用 Webhook（`DISCORD_LIFEOS_WEBHOOK_URL`，fallback 通用 URL）
+- [x] 背景 Reminder Scanner（30 分鐘輪詢）
+- [x] 習慣每日打卡提醒（預設 21:00，彙整未完成清單）
+- [x] 任務即將到期提醒（預設 09:00，提前 1 天，逐筆通知）
+- [x] 逾期任務彙總提醒（預設 09:00，每日一則）
+- [x] 每日去重機制（per calendar day `ref_date`）
+- [x] Reminder Settings API（GET/PUT `/api/lifeos/reminders`）
+- [x] 前端 ReminderSettings Modal（齒輪 icon → 設定面板）
+- [x] Dockerfile 加入 `tzdata`（Asia/Taipei 時區支援）
+
 ### 基礎建設
 - [x] Go + Gin 後端架構
 - [x] React + TypeScript 前端
@@ -133,12 +146,30 @@
   - [x] 跨模組監控面板（Kite P&L + 門燈 + LifeOS 指標）
   - [x] 快速行動按鈕（跨模組導航）
   - [x] 盤中自動刷新 + 離線 graceful degradation
-- [ ] **LifeOS 進階功能**（未來）：
+- [ ] **LifeOS 進階功能**：
   - [x] F.L.O.W. 分類標籤 ✅ (2026-02-08)
   - [x] 每週執行力統計 ✅ (2026-02-08)
   - [x] 手機版跑版修復（6 檔案全面響應式修復）✅ (2026-02-09)
+  - [x] Discord 通知/提醒系統 ✅ (2026-02-10)
+  - [ ] **Skincare Strategy（生理週期保養策略）**
   - [ ] 完成動畫（Confetti / Checkmark）
   - [ ] Freeze 卡（暫停不中斷 streak）
+
+### LifeOS Skincare Strategy（生理週期保養策略）
+- [ ] **後端 — 週期引擎**：
+  - [ ] `GenerateDailySkincare(cycleDay int)` 核心函數
+  - [ ] 4 階段邏輯（Menstrual / Follicular / Ovulation / Luteal）
+  - [ ] 全域規則守門員（Retinol 頻率、酸類限制、儀器衝突檢查）
+  - [ ] AM / PM 分離的產品推薦 + Badge 警語
+- [ ] **後端 — API**：
+  - [ ] `GET /api/lifeos/skincare/today` — 今日保養建議
+  - [ ] `GET /api/lifeos/skincare/week` — 本週保養排程
+  - [ ] `PUT /api/lifeos/skincare/cycle` — 設定週期起始日
+- [ ] **前端 — Skincare 頁面**：
+  - [ ] LifeDashboard 新增 Skincare tab
+  - [ ] 今日 AM/PM 保養清單（含 Badge 警語）
+  - [ ] 週期相位指示器（Day X / Phase Name）
+  - [ ] 週排程概覽
 
 ---
 

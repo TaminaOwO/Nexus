@@ -10,6 +10,10 @@ import type {
   FlowType,
   ReminderSetting,
   UpdateReminderRequest,
+  CycleStatusResponse,
+  SkincareRoutine,
+  SkincareCycleSetting,
+  UpdateCycleRequest,
 } from "./types";
 
 const API_BASE = "/api/lifeos";
@@ -139,4 +143,34 @@ export async function updateReminderSetting(
 export async function testReminderWebhook(): Promise<void> {
   const res = await fetch(`${API_BASE}/reminders/test`, { method: "POST" });
   if (!res.ok) throw new Error("Failed to send test notification");
+}
+
+// ========== Skincare API ==========
+
+export async function fetchSkincareCycle(): Promise<CycleStatusResponse> {
+  const res = await fetch(`${API_BASE}/skincare/cycle`);
+  if (!res.ok) throw new Error("Failed to fetch cycle setting");
+  return res.json();
+}
+
+export async function updateSkincareCycle(data: UpdateCycleRequest): Promise<SkincareCycleSetting> {
+  const res = await fetch(`${API_BASE}/skincare/cycle`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Failed to update cycle setting");
+  return res.json();
+}
+
+export async function fetchSkincareToday(): Promise<SkincareRoutine> {
+  const res = await fetch(`${API_BASE}/skincare/today`);
+  if (!res.ok) throw new Error("Failed to fetch today's skincare");
+  return res.json();
+}
+
+export async function fetchSkincareWeek(): Promise<SkincareRoutine[]> {
+  const res = await fetch(`${API_BASE}/skincare/week`);
+  if (!res.ok) throw new Error("Failed to fetch weekly skincare");
+  return res.json();
 }

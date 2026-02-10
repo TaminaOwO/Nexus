@@ -1,0 +1,454 @@
+/* ========== Skincare Today ========== */
+
+.skincare-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Phase Indicator */
+.skincare-phase-indicator {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.phase-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.phase-day {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.phase-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.phase-mode {
+    font-size: 0.9rem;
+    color: var(--accent);
+    font-weight: 600;
+    font-style: italic;
+}
+
+.phase-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.phase-emoji {
+    font-size: 2.5rem;
+}
+
+.phase-date {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Routine Cards */
+.skincare-routine-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.routine-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.routine-icon {
+    font-size: 1.25rem;
+}
+
+.routine-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.routine-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.skincare-step {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--bg-surface);
+    border-radius: var(--radius-md);
+    transition: background 0.15s ease;
+}
+
+.skincare-step:hover {
+    background: var(--bg-hover);
+}
+
+.step-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+}
+
+.skincare-step.optional .step-dot {
+    background: var(--text-muted);
+    border: 1.5px dashed var(--text-secondary);
+    width: 6px;
+    height: 6px;
+}
+
+.step-product {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    flex: 1;
+}
+
+.skincare-step.optional .step-product {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.step-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+    background: rgba(204, 122, 96, 0.12);
+    color: var(--accent);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.step-optional-tag {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.4rem;
+    border-radius: 999px;
+    background: var(--bg-hover);
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* Banned Section */
+.skincare-banned {
+    background: #FEF2F2;
+    border: 1px solid #FECACA;
+    border-radius: var(--radius-xl);
+    padding: 1.25rem 1.5rem;
+}
+
+.banned-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.banned-icon {
+    font-size: 1.1rem;
+}
+
+.banned-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #DC2626;
+    margin: 0;
+}
+
+.banned-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.banned-item {
+    font-size: 0.85rem;
+    color: #991B1B;
+    padding-left: 1rem;
+    position: relative;
+}
+
+.banned-item::before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: #DC2626;
+}
+
+/* Week View */
+.skincare-week-toggle {
+    display: flex;
+    justify-content: center;
+}
+
+.week-toggle-btn {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 0.6rem 1.5rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.week-toggle-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.week-toggle-btn.active {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent-soft);
+}
+
+.skincare-week-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+}
+
+.week-day-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.week-day-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 2px 8px var(--accent-soft);
+}
+
+.week-day-card.today {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+}
+
+.week-day-name {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+
+.week-day-number {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.week-day-phase {
+    font-size: 0.6rem;
+    color: var(--accent);
+    font-weight: 500;
+}
+
+.week-day-cycle {
+    font-size: 0.55rem;
+    color: var(--text-muted);
+}
+
+/* Cycle Setup Form */
+.skincare-setup {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.setup-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.setup-desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+.setup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 320px;
+    margin: 0 auto;
+}
+
+.setup-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    text-align: left;
+}
+
+.setup-field label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.setup-field input {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    background: var(--bg-surface);
+    outline: none;
+    transition: border-color 0.2s ease;
+    font-family: 'Inter', sans-serif;
+}
+
+.setup-field input:focus {
+    border-color: var(--accent);
+}
+
+.setup-submit {
+    padding: 0.75rem 1.5rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    font-family: 'Inter', sans-serif;
+}
+
+.setup-submit:hover {
+    background: var(--accent-hover);
+}
+
+.setup-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Update Cycle Button */
+.skincare-update-cycle {
+    display: flex;
+    justify-content: center;
+}
+
+.update-cycle-btn {
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 0.5rem 1.25rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.update-cycle-btn:hover {
+    color: var(--text-secondary);
+    border-color: var(--border-default);
+}
+
+/* Loading */
+.skincare-loading {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* ========== Mobile Responsive ========== */
+
+@media (max-width: 640px) {
+    .skincare-phase-indicator {
+        padding: 1rem 1.25rem;
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .phase-name {
+        font-size: 1.25rem;
+    }
+
+    .phase-emoji {
+        font-size: 2rem;
+    }
+
+    .skincare-routine-card {
+        padding: 1.25rem;
+    }
+
+    .skincare-step {
+        padding: 0.6rem 0.75rem;
+    }
+
+    .step-product {
+        font-size: 0.85rem;
+    }
+
+    .step-badge {
+        font-size: 0.6rem;
+    }
+
+    .skincare-week-grid {
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0.25rem;
+    }
+
+    .week-day-card {
+        padding: 0.5rem 0.25rem;
+    }
+
+    .week-day-name {
+        font-size: 0.55rem;
+    }
+
+    .week-day-number {
+        font-size: 0.9rem;
+    }
+
+    .week-day-phase {
+        font-size: 0.5rem;
+    }
+}

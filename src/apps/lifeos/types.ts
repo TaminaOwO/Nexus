@@ -99,3 +99,40 @@ export interface UpdateReminderRequest {
   reminder_time?: string;
   lead_days?: number;
 }
+
+// Skincare Types
+export interface SkincareCycleSetting {
+  id: string;
+  cycle_start_date: string; // YYYY-MM-DD
+  cycle_length: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SkincareStep {
+  product: string;
+  badge?: string;
+  optional?: boolean;
+}
+
+export interface SkincareRoutine {
+  cycle_day: number;
+  phase: "menstrual" | "follicular" | "ovulation" | "luteal";
+  phase_label: string;
+  mode: string;
+  day_of_week: string;
+  date: string;
+  am: SkincareStep[];
+  pm: SkincareStep[];
+  banned: string[];
+}
+
+export interface CycleStatusResponse {
+  configured: boolean;
+  cycle?: SkincareCycleSetting;
+}
+
+export interface UpdateCycleRequest {
+  cycle_start_date: string;
+  cycle_length?: number;
+}

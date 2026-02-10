@@ -40,6 +40,7 @@ func main() {
 		&lifeosModel.Task{},
 		&lifeosModel.ReminderSetting{},
 		&lifeosModel.LifeOSNotificationLog{},
+		&lifeosModel.SkincareCycleSetting{},
 	)
 
 	// Backfill: 確保舊資料有 flow_type 預設值
@@ -91,6 +92,12 @@ func main() {
 		lifeos.GET("/reminders", lifeosHandler.GetReminderSettings)
 		lifeos.PUT("/reminders/:type", lifeosHandler.UpdateReminderSetting)
 		lifeos.POST("/reminders/test", lifeosHandler.TestReminderWebhook)
+
+		// Skincare Routes
+		lifeos.GET("/skincare/cycle", lifeosHandler.GetSkincareCycle)
+		lifeos.PUT("/skincare/cycle", lifeosHandler.UpdateSkincareCycle)
+		lifeos.GET("/skincare/today", lifeosHandler.GetSkincareToday)
+		lifeos.GET("/skincare/week", lifeosHandler.GetSkincareWeek)
 	}
 
 	// Kite Stock Module Routes

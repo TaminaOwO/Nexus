@@ -6,12 +6,13 @@ import { OverviewStats } from "./components/OverviewStats";
 import { FlowStats } from "./components/FlowStats";
 import { WarRoom } from "./components/WarRoom";
 import { ReminderSettings } from "./components/ReminderSettings";
+import { SkincareToday } from "./components/SkincareToday";
 import { fetchTasks } from "./api";
 import type { Task } from "./types";
 import "./LifeDashboard.css";
 
 export default function LifeDashboard() {
-    const [activeTab, setActiveTab] = useState<'overview' | 'habits' | 'todos' | 'warroom'>('overview');
+    const [activeTab, setActiveTab] = useState<'overview' | 'habits' | 'todos' | 'warroom' | 'skincare'>('overview');
     const [allTasks, setAllTasks] = useState<Task[]>([]);
     const [showSettings, setShowSettings] = useState(false);
 
@@ -53,6 +54,12 @@ export default function LifeDashboard() {
                     Tasks
                 </button>
                 <button
+                    className={`tab-btn ${activeTab === 'skincare' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('skincare')}
+                >
+                    Skincare
+                </button>
+                <button
                     className={`tab-btn ${activeTab === 'warroom' ? 'active' : ''}`}
                     onClick={() => setActiveTab('warroom')}
                 >
@@ -79,6 +86,7 @@ export default function LifeDashboard() {
                 )}
                 {activeTab === 'habits' && <HabitTracker />}
                 {activeTab === 'todos' && <TodoBoard />}
+                {activeTab === 'skincare' && <SkincareToday />}
                 {activeTab === 'warroom' && <WarRoom onNavigateTab={setActiveTab} />}
             </main>
 

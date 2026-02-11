@@ -2,7 +2,7 @@
 
 > **模組路由**：`/admin` (或 `/lifeos`)
 > **資料表前綴**：`lifeos_` (建議)
-> **狀態**：✅ MVP 完成 (2026-02-08) ｜ 通知系統 ✅ (2026-02-10) ｜ Skincare 🚧
+> **狀態**：✅ MVP 完成 (2026-02-08) ｜ 通知系統 ✅ (2026-02-10) ｜ Skincare ✅ (2026-02-11)
 
 ---
 
@@ -165,6 +165,8 @@ type Task struct {
 | `HABIT_DAILY` | 21:00 | 今日有未完成的習慣 | Coral (#CC7A60) |
 | `TASK_DUE_SOON` | 09:00 | 任務將於 N 天內到期（預設 1 天） | Orange |
 | `TASK_OVERDUE` | 09:00 | 有逾期未完成的任務 | Red |
+| `SKINCARE_AM` | 08:00 | 每日早晨推送 AM 保養步驟（口語化中文） | Coral |
+| `SKINCARE_PM` | 18:00 | 每日晚間推送 PM 保養步驟（口語化中文） | Coral |
 
 #### 資料模型
 
@@ -194,7 +196,7 @@ type LifeOSNotificationLog struct {
 
 ---
 
-### E. Skincare Strategy（生理週期保養策略）🚧
+### E. Skincare Strategy（生理週期保養策略）✅ (2026-02-11)
 
 **目標**：根據生理週期自動產生每日 AM/PM 保養建議，內建嚴格的產品衝突守門員
 
@@ -243,28 +245,46 @@ type LifeOSNotificationLog struct {
 | Device | Medicube (Badge: "Derma Shot / MC Mode Only — No Induction") |
 | BANNED | Orange Oil, Overnight Masks |
 
-#### 預計 API
+#### 排程規則系統
+
+使用者可自定義每個產品在每個 phase 的使用日（weekday），存於 `SkincareScheduleRule` DB table。前端排程設定 Modal 提供 weekday toggle，並即時檢測 Retinol ↔ BoJ Eye 同日衝突。
+
+```go
+type SkincareScheduleRule struct {
+    ProductKey string // retinol / boj_eye
+    Phase      string // follicular / luteal
+    Weekdays   string // "Tuesday,Friday"
+    MaxPerWeek int    // 上限次數
+}
+```
+
+#### API
 
 ```
-GET  /api/lifeos/skincare/today   # 今日 AM/PM 保養建議
-GET  /api/lifeos/skincare/week    # 本週保養排程
-PUT  /api/lifeos/skincare/cycle   # 設定週期起始日（Day 1）
+GET   /api/lifeos/skincare/today        # 今日 AM/PM 保養建議
+GET   /api/lifeos/skincare/week         # 本週保養排程
+GET   /api/lifeos/skincare/cycle        # 取得週期設定
+PUT   /api/lifeos/skincare/cycle        # 設定/更新週期起始日（也供 iOS Shortcut 使用）
+GET   /api/lifeos/skincare/schedule     # 取得排程規則
+PUT   /api/lifeos/skincare/schedule     # 批次更新排程規則
+POST  /api/lifeos/skincare/test-notify  # 發送測試通知（跳過 dedup）
 ```
 
-#### 預計檔案結構
+#### 檔案結構
 
 ```
 internal/modules/lifeos/
 ├── service/
-│   └── skincare_strategy.go      # 週期判斷 + 產品推薦引擎
+│   ├── skincare_strategy.go      # 週期判斷 + 產品推薦引擎
+│   └── reminder_scanner.go       # 含 scanSkincareAM/PM + test functions
 ├── handler/
 │   └── skincare_handler.go       # API handlers
 └── model/
-    └── skincare.go               # CycleSetting, SkincareRoutine models
+    └── skincare.go               # CycleSetting, ScheduleRule, Routine models
 
 src/apps/lifeos/
 ├── components/
-│   ├── SkincareToday.tsx         # 今日 AM/PM 保養清單
+│   ├── SkincareToday.tsx         # 今日/週保養 + 排程設定 + iOS Shortcut 說明
 │   └── SkincareToday.css
 ```
 
@@ -298,11 +318,15 @@ PUT    /api/lifeos/reminders/:type      # 更新提醒設定
 POST   /api/lifeos/reminders/test       # 發送測試通知
 ```
 
-### Skincare（保養策略）🚧
+### Skincare（保養策略）✅
 ```
-GET    /api/lifeos/skincare/today       # 今日保養建議
-GET    /api/lifeos/skincare/week        # 本週保養排程
-PUT    /api/lifeos/skincare/cycle       # 設定週期起始日
+GET    /api/lifeos/skincare/today        # 今日保養建議
+GET    /api/lifeos/skincare/week         # 本週保養排程
+GET    /api/lifeos/skincare/cycle        # 取得週期設定
+PUT    /api/lifeos/skincare/cycle        # 設定/更新週期起始日
+GET    /api/lifeos/skincare/schedule     # 取得排程規則
+PUT    /api/lifeos/skincare/schedule     # 批次更新排程規則
+POST   /api/lifeos/skincare/test-notify  # 發送測試通知
 ```
 
 ### War Room
@@ -372,8 +396,12 @@ PUT    /api/lifeos/skincare/cycle       # 設定週期起始日
 - [x] 手機版響應式修復（6 檔案、640px + 380px 斷點、overflow 防護）
 - [x] Discord 通知/提醒系統（共用 pkg/discord、LifeOS 專用 webhook、前端設定 modal）
 
-### Phase 5：進階功能（進行中）
-- [ ] **Skincare Strategy**（生理週期保養策略 — 見 Section 2.E）
+### Phase 5：進階功能 ✅
+- [x] **Skincare Strategy** ✅ (2026-02-11)
+  - [x] 週期引擎（4 階段 × AM/PM + 全域守門員規則）
+  - [x] 排程規則系統（自定義產品使用日 + 衝突檢測）
+  - [x] 前端元件（週排程 + 日詳情 + 排程設定 Modal + iOS Shortcut）
+  - [x] Discord AM/PM 保養通知（口語化中文 + 測試端點）
 - [ ] 完成動畫（Confetti / Checkmark）
 - [ ] 統計報表
 - [ ] Freeze 卡（暫停不中斷 streak）
@@ -401,4 +429,4 @@ PUT    /api/lifeos/skincare/cycle       # 設定週期起始日
 
 ---
 
-*最後更新：2026-02-10*
+*最後更新：2026-02-11*

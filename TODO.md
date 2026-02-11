@@ -1,7 +1,7 @@
 # Nexus Project TODO List
 
-> **Last Updated**: 2026-02-10
-> **當前焦點**: LifeOS 進階功能（Skincare Strategy）
+> **Last Updated**: 2026-02-11
+> **當前焦點**: API 權限控管（Auth / RBAC）
 
 ---
 
@@ -85,6 +85,16 @@
 - [x] 前端 ReminderSettings Modal（齒輪 icon → 設定面板）
 - [x] Dockerfile 加入 `tzdata`（Asia/Taipei 時區支援）
 
+### LifeOS 模組 - Skincare Strategy 完成 (2026-02-11)
+- [x] 週期引擎（4 階段 × AM/PM，全域守門員規則）
+- [x] 排程規則系統（`SkincareScheduleRule` DB Model，自定義產品使用日）
+- [x] 衝突檢測（Retinol ↔ BoJ Eye 同日互斥）
+- [x] API：today / week / cycle / schedule / test-notify
+- [x] 前端 SkincareToday 元件（週排程、日詳情、排程設定 Modal、iOS Shortcut 說明）
+- [x] Badge 手機版排版修復（flex wrap 方案）
+- [x] Discord AM/PM 保養通知（口語化中文格式，預設 08:00/18:00）
+- [x] 測試通知端點（跳過 dedup + 時間窗口）
+
 ### 基礎建設
 - [x] Go + Gin 後端架構
 - [x] React + TypeScript 前端
@@ -151,25 +161,9 @@
   - [x] 每週執行力統計 ✅ (2026-02-08)
   - [x] 手機版跑版修復（6 檔案全面響應式修復）✅ (2026-02-09)
   - [x] Discord 通知/提醒系統 ✅ (2026-02-10)
-  - [ ] **Skincare Strategy（生理週期保養策略）**
+  - [x] Skincare Strategy（生理週期保養策略）✅ (2026-02-11)
   - [ ] 完成動畫（Confetti / Checkmark）
   - [ ] Freeze 卡（暫停不中斷 streak）
-
-### LifeOS Skincare Strategy（生理週期保養策略）
-- [ ] **後端 — 週期引擎**：
-  - [ ] `GenerateDailySkincare(cycleDay int)` 核心函數
-  - [ ] 4 階段邏輯（Menstrual / Follicular / Ovulation / Luteal）
-  - [ ] 全域規則守門員（Retinol 頻率、酸類限制、儀器衝突檢查）
-  - [ ] AM / PM 分離的產品推薦 + Badge 警語
-- [ ] **後端 — API**：
-  - [ ] `GET /api/lifeos/skincare/today` — 今日保養建議
-  - [ ] `GET /api/lifeos/skincare/week` — 本週保養排程
-  - [ ] `PUT /api/lifeos/skincare/cycle` — 設定週期起始日
-- [ ] **前端 — Skincare 頁面**：
-  - [ ] LifeDashboard 新增 Skincare tab
-  - [ ] 今日 AM/PM 保養清單（含 Badge 警語）
-  - [ ] 週期相位指示器（Day X / Phase Name）
-  - [ ] 週排程概覽
 
 ---
 
@@ -185,11 +179,11 @@
   - [ ] 進度記錄
   - [ ] 遊戲化升級系統
 
-### RBAC 權限控管
-- [ ] **階段 2 實作**：
-  - [ ] `Users` 表格建立
-  - [ ] Auth Middleware（守門員）
-  - [ ] 路由保護（/api/kite/* → ADMIN only）
+### API 權限控管 🔥 NOW
+- [ ] **認證機制**：API Key / JWT / Session
+- [ ] **Auth Middleware**（守門員）
+- [ ] **路由保護**（所有 /api/* 端點需驗證）
+- [ ] **前端 Login 頁面**
 
 
 ---

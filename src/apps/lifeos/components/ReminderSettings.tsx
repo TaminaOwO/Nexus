@@ -22,6 +22,18 @@ const REMINDER_CONFIG: Record<ReminderType, { icon: string; label: string; descr
         description: "每日彙報已過期但未完成的任務",
         showLeadDays: false,
     },
+    SKINCARE_AM: {
+        icon: "🌅",
+        label: "早晨保養提醒",
+        description: "每日早晨推送 AM 保養步驟清單",
+        showLeadDays: false,
+    },
+    SKINCARE_PM: {
+        icon: "🌙",
+        label: "晚間保養提醒",
+        description: "每日晚間推送 PM 保養步驟清單",
+        showLeadDays: false,
+    },
 };
 
 interface Props {
@@ -106,9 +118,11 @@ export function ReminderSettings({ onClose }: Props) {
         HABIT_DAILY: { enabled: true, reminder_time: "21:00", lead_days: 0 },
         TASK_DUE_SOON: { enabled: true, reminder_time: "09:00", lead_days: 1 },
         TASK_OVERDUE: { enabled: true, reminder_time: "09:00", lead_days: 0 },
+        SKINCARE_AM: { enabled: true, reminder_time: "07:30", lead_days: 0 },
+        SKINCARE_PM: { enabled: true, reminder_time: "20:30", lead_days: 0 },
     };
 
-    const types: ReminderType[] = ["HABIT_DAILY", "TASK_DUE_SOON", "TASK_OVERDUE"];
+    const types: ReminderType[] = ["HABIT_DAILY", "TASK_DUE_SOON", "TASK_OVERDUE", "SKINCARE_AM", "SKINCARE_PM"];
 
     return (
         <div className="reminder-overlay" onClick={onClose}>

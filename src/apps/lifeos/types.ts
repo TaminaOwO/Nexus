@@ -82,7 +82,7 @@ export interface MoveTaskRequest {
 }
 
 // Reminder Types
-export type ReminderType = "HABIT_DAILY" | "TASK_DUE_SOON" | "TASK_OVERDUE";
+export type ReminderType = "HABIT_DAILY" | "TASK_DUE_SOON" | "TASK_OVERDUE" | "SKINCARE_AM" | "SKINCARE_PM";
 
 export interface ReminderSetting {
   id: string;

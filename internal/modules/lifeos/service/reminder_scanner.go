@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"nexus/internal/database"
@@ -42,6 +43,8 @@ func runReminderScan() {
 	scanHabitReminder(now)
 	scanTaskDueSoon(now)
 	scanTaskOverdue(now)
+	scanSkincareAM(now)
+	scanSkincarePM(now)
 }
 
 func loadTimezone() *time.Location {
@@ -248,6 +251,154 @@ func scanTaskOverdue(now time.Time) {
 
 	logNotification("TASK_OVERDUE", "", today)
 	log.Printf("[LifeOS Reminder] Sent overdue reminder for %d tasks", len(tasks))
+}
+
+// --- 保養 AM 提醒 ---
+
+func scanSkincareAM(now time.Time) {
+	setting := getSettingOrDefault("SKINCARE_AM", "07:30", 0)
+	if !setting.Enabled {
+		return
+	}
+
+	if !isWithinTimeWindow(now, setting.ReminderTime, 30) {
+		return
+	}
+
+	today := now.Format("2006-01-02")
+	if hasSentNotification("SKINCARE_AM", "", today) {
+		return
+	}
+
+	routine := getSkincareRoutineForNow(now)
+	if routine == nil {
+		return
+	}
+
+	if len(routine.AM) == 0 {
+		return
+	}
+
+	stepList := formatStepList(routine.AM)
+	bannedText := ""
+	if len(routine.Banned) > 0 {
+		bannedText = strings.Join(routine.Banned, "\n")
+	}
+
+	fields := []discord.EmbedField{
+		{Name: "AM 保養步驟", Value: stepList},
+	}
+	if bannedText != "" {
+		fields = append(fields, discord.EmbedField{Name: "今日禁用", Value: bannedText})
+	}
+
+	embed := discord.Embed{
+		Title:       fmt.Sprintf("🌅 Skincare AM — Day %d %s", routine.CycleDay, routine.PhaseLabel),
+		Description: fmt.Sprintf("**%s** · %s", routine.Mode, routine.DayOfWeek),
+		Color:       discord.ColorCoral,
+		Fields:      fields,
+		Timestamp:   now.Format(time.RFC3339),
+		Footer:      &discord.EmbedFooter{Text: "LifeOS Skincare"},
+	}
+
+	if err := sendLifeOSEmbed(embed); err != nil {
+		log.Printf("[LifeOS Reminder] ERROR sending skincare AM: %v", err)
+		return
+	}
+
+	logNotification("SKINCARE_AM", "", today)
+	log.Printf("[LifeOS Reminder] Sent skincare AM reminder (Day %d, %s)", routine.CycleDay, routine.PhaseLabel)
+}
+
+// --- 保養 PM 提醒 ---
+
+func scanSkincarePM(now time.Time) {
+	setting := getSettingOrDefault("SKINCARE_PM", "20:30", 0)
+	if !setting.Enabled {
+		return
+	}
+
+	if !isWithinTimeWindow(now, setting.ReminderTime, 30) {
+		return
+	}
+
+	today := now.Format("2006-01-02")
+	if hasSentNotification("SKINCARE_PM", "", today) {
+		return
+	}
+
+	routine := getSkincareRoutineForNow(now)
+	if routine == nil {
+		return
+	}
+
+	if len(routine.PM) == 0 {
+		return
+	}
+
+	stepList := formatStepList(routine.PM)
+	bannedText := ""
+	if len(routine.Banned) > 0 {
+		bannedText = strings.Join(routine.Banned, "\n")
+	}
+
+	fields := []discord.EmbedField{
+		{Name: "PM 保養步驟", Value: stepList},
+	}
+	if bannedText != "" {
+		fields = append(fields, discord.EmbedField{Name: "今日禁用", Value: bannedText})
+	}
+
+	embed := discord.Embed{
+		Title:       fmt.Sprintf("🌙 Skincare PM — Day %d %s", routine.CycleDay, routine.PhaseLabel),
+		Description: fmt.Sprintf("**%s** · %s", routine.Mode, routine.DayOfWeek),
+		Color:       discord.ColorCoral,
+		Fields:      fields,
+		Timestamp:   now.Format(time.RFC3339),
+		Footer:      &discord.EmbedFooter{Text: "LifeOS Skincare"},
+	}
+
+	if err := sendLifeOSEmbed(embed); err != nil {
+		log.Printf("[LifeOS Reminder] ERROR sending skincare PM: %v", err)
+		return
+	}
+
+	logNotification("SKINCARE_PM", "", today)
+	log.Printf("[LifeOS Reminder] Sent skincare PM reminder (Day %d, %s)", routine.CycleDay, routine.PhaseLabel)
+}
+
+// --- Skincare helpers ---
+
+func getSkincareRoutineForNow(now time.Time) *model.SkincareRoutine {
+	var cycleSetting model.SkincareCycleSetting
+	if err := database.DB.First(&cycleSetting).Error; err != nil {
+		return nil
+	}
+
+	var rules []model.SkincareScheduleRule
+	database.DB.Find(&rules)
+	if len(rules) == 0 {
+		rules = GetDefaultScheduleRules()
+	}
+
+	cycleDay := CalculateCycleDay(cycleSetting.CycleStartDate, cycleSetting.CycleLength, now)
+	routine := GenerateDailySkincare(cycleDay, now, rules)
+	return &routine
+}
+
+func formatStepList(steps []model.SkincareStep) string {
+	var lines []string
+	for _, s := range steps {
+		line := s.Product
+		if s.Badge != "" {
+			line += "  `" + s.Badge + "`"
+		}
+		if s.Optional {
+			line = "_(optional)_ " + line
+		}
+		lines = append(lines, "• "+line)
+	}
+	return strings.Join(lines, "\n")
 }
 
 // --- Helper functions ---

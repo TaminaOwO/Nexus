@@ -31,6 +31,7 @@ func UpdateReminderSetting(c *gin.Context) {
 
 	validTypes := map[string]bool{
 		"HABIT_DAILY": true, "TASK_DUE_SOON": true, "TASK_OVERDUE": true,
+		"SKINCARE_AM": true, "SKINCARE_PM": true,
 	}
 	if !validTypes[settingType] {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid reminder type"})
@@ -106,6 +107,8 @@ func defaultSettings() []model.ReminderSetting {
 		{Type: "HABIT_DAILY", Enabled: true, ReminderTime: "21:00", LeadDays: 0},
 		{Type: "TASK_DUE_SOON", Enabled: true, ReminderTime: "09:00", LeadDays: 1},
 		{Type: "TASK_OVERDUE", Enabled: true, ReminderTime: "09:00", LeadDays: 0},
+		{Type: "SKINCARE_AM", Enabled: true, ReminderTime: "07:30", LeadDays: 0},
+		{Type: "SKINCARE_PM", Enabled: true, ReminderTime: "20:30", LeadDays: 0},
 	}
 }
 

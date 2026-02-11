@@ -365,6 +365,60 @@ func scanSkincarePM(now time.Time) {
 
 // --- Skincare helpers ---
 
+// GetSkincareRoutineForTest 給測試端點使用（exported）
+func GetSkincareRoutineForTest(now time.Time) *model.SkincareRoutine {
+	return getSkincareRoutineForNow(now)
+}
+
+// SendSkincareTestNotification 發送測試用 AM+PM 通知（跳過 dedup 和時間窗口）
+func SendSkincareTestNotification(now time.Time, routine *model.SkincareRoutine) error {
+	// AM
+	amMsg := fmt.Sprintf("Hi~ 主人早安！☀️\n\n"+
+		"今天是週期第 **%d** 天（%s），模式：**%s**\n\n"+
+		"起床後先喝杯溫水，接著開始早晨保養：\n\n%s",
+		routine.CycleDay, routine.PhaseLabel, routine.Mode,
+		formatStepsChinese(routine.AM))
+
+	if len(routine.Banned) > 0 {
+		amMsg += "\n\n⚠️ 今天記得避開：\n" + formatBannedChinese(routine.Banned)
+	}
+	amMsg += "\n\n祝你有個美好的一天！💪"
+
+	amEmbed := discord.Embed{
+		Title:       fmt.Sprintf("☀️ 早安保養 — Day %d %s（測試）", routine.CycleDay, routine.PhaseLabel),
+		Description: amMsg,
+		Color:       discord.ColorCoral,
+		Timestamp:   now.Format(time.RFC3339),
+		Footer:      &discord.EmbedFooter{Text: "LifeOS Skincare · Test"},
+	}
+
+	if err := sendLifeOSEmbed(amEmbed); err != nil {
+		return err
+	}
+
+	// PM
+	pmMsg := fmt.Sprintf("主人辛苦了～🌙\n\n"+
+		"今天是週期第 **%d** 天（%s），晚間保養時間到囉！\n\n"+
+		"今晚的保養步驟：\n\n%s",
+		routine.CycleDay, routine.PhaseLabel,
+		formatStepsChinese(routine.PM))
+
+	if len(routine.Banned) > 0 {
+		pmMsg += "\n\n⚠️ 今晚請避開：\n" + formatBannedChinese(routine.Banned)
+	}
+	pmMsg += "\n\n好好休息，晚安 💤"
+
+	pmEmbed := discord.Embed{
+		Title:       fmt.Sprintf("🌙 晚安保養 — Day %d %s（測試）", routine.CycleDay, routine.PhaseLabel),
+		Description: pmMsg,
+		Color:       discord.ColorCoral,
+		Timestamp:   now.Format(time.RFC3339),
+		Footer:      &discord.EmbedFooter{Text: "LifeOS Skincare · Test"},
+	}
+
+	return sendLifeOSEmbed(pmEmbed)
+}
+
 func getSkincareRoutineForNow(now time.Time) *model.SkincareRoutine {
 	var cycleSetting model.SkincareCycleSetting
 	if err := database.DB.First(&cycleSetting).Error; err != nil {

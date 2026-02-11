@@ -108,6 +108,26 @@ func GetSkincareWeek(c *gin.Context) {
 	c.JSON(http.StatusOK, routines)
 }
 
+// TestSkincareNotify - POST /api/lifeos/skincare/test-notify
+func TestSkincareNotify(c *gin.Context) {
+	loc, _ := time.LoadLocation("Asia/Taipei")
+	now := time.Now().In(loc)
+
+	routine := service.GetSkincareRoutineForTest(now)
+	if routine == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Cycle not configured"})
+		return
+	}
+
+	err := service.SendSkincareTestNotification(now, routine)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Test notifications sent"})
+}
+
 // GetSkincareSchedule - GET /api/lifeos/skincare/schedule
 func GetSkincareSchedule(c *gin.Context) {
 	rules := loadScheduleRules()

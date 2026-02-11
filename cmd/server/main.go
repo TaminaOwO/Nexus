@@ -101,6 +101,7 @@ func main() {
 		lifeos.GET("/skincare/week", lifeosHandler.GetSkincareWeek)
 		lifeos.GET("/skincare/schedule", lifeosHandler.GetSkincareSchedule)
 		lifeos.PUT("/skincare/schedule", lifeosHandler.UpdateSkincareSchedule)
+		lifeos.POST("/skincare/test-notify", lifeosHandler.TestSkincareNotify)
 	}
 
 	// Kite Stock Module Routes

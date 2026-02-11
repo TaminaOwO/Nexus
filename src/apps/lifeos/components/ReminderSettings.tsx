@@ -118,8 +118,8 @@ export function ReminderSettings({ onClose }: Props) {
         HABIT_DAILY: { enabled: true, reminder_time: "21:00", lead_days: 0 },
         TASK_DUE_SOON: { enabled: true, reminder_time: "09:00", lead_days: 1 },
         TASK_OVERDUE: { enabled: true, reminder_time: "09:00", lead_days: 0 },
-        SKINCARE_AM: { enabled: true, reminder_time: "07:30", lead_days: 0 },
-        SKINCARE_PM: { enabled: true, reminder_time: "20:30", lead_days: 0 },
+        SKINCARE_AM: { enabled: true, reminder_time: "08:00", lead_days: 0 },
+        SKINCARE_PM: { enabled: true, reminder_time: "18:00", lead_days: 0 },
     };
 
     const types: ReminderType[] = ["HABIT_DAILY", "TASK_DUE_SOON", "TASK_OVERDUE", "SKINCARE_AM", "SKINCARE_PM"];

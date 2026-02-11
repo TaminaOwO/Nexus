@@ -256,7 +256,7 @@ func scanTaskOverdue(now time.Time) {
 // --- 保養 AM 提醒 ---
 
 func scanSkincareAM(now time.Time) {
-	setting := getSettingOrDefault("SKINCARE_AM", "07:30", 0)
+	setting := getSettingOrDefault("SKINCARE_AM", "08:00", 0)
 	if !setting.Enabled {
 		return
 	}
@@ -279,24 +279,22 @@ func scanSkincareAM(now time.Time) {
 		return
 	}
 
-	stepList := formatStepList(routine.AM)
-	bannedText := ""
+	msg := fmt.Sprintf("Hi~ 主人早安！☀️\n\n"+
+		"今天是週期第 **%d** 天（%s），模式：**%s**\n\n"+
+		"起床後先喝杯溫水，接著開始早晨保養：\n\n%s",
+		routine.CycleDay, routine.PhaseLabel, routine.Mode,
+		formatStepsChinese(routine.AM))
+
 	if len(routine.Banned) > 0 {
-		bannedText = strings.Join(routine.Banned, "\n")
+		msg += "\n\n⚠️ 今天記得避開：\n" + formatBannedChinese(routine.Banned)
 	}
 
-	fields := []discord.EmbedField{
-		{Name: "AM 保養步驟", Value: stepList},
-	}
-	if bannedText != "" {
-		fields = append(fields, discord.EmbedField{Name: "今日禁用", Value: bannedText})
-	}
+	msg += "\n\n祝你有個美好的一天！💪"
 
 	embed := discord.Embed{
-		Title:       fmt.Sprintf("🌅 Skincare AM — Day %d %s", routine.CycleDay, routine.PhaseLabel),
-		Description: fmt.Sprintf("**%s** · %s", routine.Mode, routine.DayOfWeek),
+		Title:       fmt.Sprintf("☀️ 早安保養 — Day %d %s", routine.CycleDay, routine.PhaseLabel),
+		Description: msg,
 		Color:       discord.ColorCoral,
-		Fields:      fields,
 		Timestamp:   now.Format(time.RFC3339),
 		Footer:      &discord.EmbedFooter{Text: "LifeOS Skincare"},
 	}
@@ -313,7 +311,7 @@ func scanSkincareAM(now time.Time) {
 // --- 保養 PM 提醒 ---
 
 func scanSkincarePM(now time.Time) {
-	setting := getSettingOrDefault("SKINCARE_PM", "20:30", 0)
+	setting := getSettingOrDefault("SKINCARE_PM", "18:00", 0)
 	if !setting.Enabled {
 		return
 	}
@@ -336,24 +334,22 @@ func scanSkincarePM(now time.Time) {
 		return
 	}
 
-	stepList := formatStepList(routine.PM)
-	bannedText := ""
+	msg := fmt.Sprintf("主人辛苦了～🌙\n\n"+
+		"今天是週期第 **%d** 天（%s），晚間保養時間到囉！\n\n"+
+		"今晚的保養步驟：\n\n%s",
+		routine.CycleDay, routine.PhaseLabel,
+		formatStepsChinese(routine.PM))
+
 	if len(routine.Banned) > 0 {
-		bannedText = strings.Join(routine.Banned, "\n")
+		msg += "\n\n⚠️ 今晚請避開：\n" + formatBannedChinese(routine.Banned)
 	}
 
-	fields := []discord.EmbedField{
-		{Name: "PM 保養步驟", Value: stepList},
-	}
-	if bannedText != "" {
-		fields = append(fields, discord.EmbedField{Name: "今日禁用", Value: bannedText})
-	}
+	msg += "\n\n好好休息，晚安 💤"
 
 	embed := discord.Embed{
-		Title:       fmt.Sprintf("🌙 Skincare PM — Day %d %s", routine.CycleDay, routine.PhaseLabel),
-		Description: fmt.Sprintf("**%s** · %s", routine.Mode, routine.DayOfWeek),
+		Title:       fmt.Sprintf("🌙 晚安保養 — Day %d %s", routine.CycleDay, routine.PhaseLabel),
+		Description: msg,
 		Color:       discord.ColorCoral,
-		Fields:      fields,
 		Timestamp:   now.Format(time.RFC3339),
 		Footer:      &discord.EmbedFooter{Text: "LifeOS Skincare"},
 	}
@@ -386,17 +382,25 @@ func getSkincareRoutineForNow(now time.Time) *model.SkincareRoutine {
 	return &routine
 }
 
-func formatStepList(steps []model.SkincareStep) string {
+func formatStepsChinese(steps []model.SkincareStep) string {
 	var lines []string
-	for _, s := range steps {
-		line := s.Product
+	for i, s := range steps {
+		line := fmt.Sprintf("**%d.** %s", i+1, s.Product)
 		if s.Badge != "" {
-			line += "  `" + s.Badge + "`"
+			line += "（" + s.Badge + "）"
 		}
 		if s.Optional {
-			line = "_(optional)_ " + line
+			line += " _← 可省略_"
 		}
-		lines = append(lines, "• "+line)
+		lines = append(lines, line)
+	}
+	return strings.Join(lines, "\n")
+}
+
+func formatBannedChinese(banned []string) string {
+	var lines []string
+	for _, b := range banned {
+		lines = append(lines, "🚫 "+b)
 	}
 	return strings.Join(lines, "\n")
 }

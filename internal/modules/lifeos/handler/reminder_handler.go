@@ -107,8 +107,8 @@ func defaultSettings() []model.ReminderSetting {
 		{Type: "HABIT_DAILY", Enabled: true, ReminderTime: "21:00", LeadDays: 0},
 		{Type: "TASK_DUE_SOON", Enabled: true, ReminderTime: "09:00", LeadDays: 1},
 		{Type: "TASK_OVERDUE", Enabled: true, ReminderTime: "09:00", LeadDays: 0},
-		{Type: "SKINCARE_AM", Enabled: true, ReminderTime: "07:30", LeadDays: 0},
-		{Type: "SKINCARE_PM", Enabled: true, ReminderTime: "20:30", LeadDays: 0},
+		{Type: "SKINCARE_AM", Enabled: true, ReminderTime: "08:00", LeadDays: 0},
+		{Type: "SKINCARE_PM", Enabled: true, ReminderTime: "18:00", LeadDays: 0},
 	}
 }
 

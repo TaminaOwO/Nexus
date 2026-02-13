@@ -1,6 +1,8 @@
 import { Suspense, lazy } from 'react'
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import { IconLifeOS, IconKite, IconChoiceFit, IconDashboard } from './components/HandDrawnIcons'
+import { useAuth } from './shared/auth/AuthContext'
+import LoginPage from './shared/auth/LoginPage'
 
 // Lazy load module apps
 const LifeOS = lazy(() => import('./apps/lifeos'))
@@ -9,6 +11,15 @@ const ChoiceFit = lazy(() => import('./apps/choicefit'))
 
 function App() {
     const location = useLocation();
+    const { isAuthenticated, isLoading } = useAuth();
+
+    if (isLoading) {
+        return <div className="loading">Loading...</div>
+    }
+
+    if (!isAuthenticated) {
+        return <LoginPage />
+    }
 
     return (
         <div className="app">
@@ -51,6 +62,8 @@ function App() {
 }
 
 function Home() {
+    const { logout, email } = useAuth();
+
     return (
         <div className="home">
             <h1>Nexus</h1>
@@ -77,6 +90,10 @@ function Home() {
                         <p>Fitness & Coaching Platform</p>
                     </div>
                 </Link>
+            </div>
+            <div className="home-footer">
+                <span className="home-email">{email}</span>
+                <button className="home-logout" onClick={logout}>登出</button>
             </div>
         </div>
     )

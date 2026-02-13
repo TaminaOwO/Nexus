@@ -1,0 +1,79 @@
+.login-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    min-height: 100dvh;
+    background: var(--bg-base);
+    padding: 24px;
+    gap: 32px;
+}
+
+.login-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.login-brand h1 {
+    font-family: 'Caveat', cursive;
+    font-size: 48px;
+    color: var(--text-primary);
+    letter-spacing: 2px;
+}
+
+.login-brand p {
+    font-size: 14px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+}
+
+.login-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 32px;
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+.login-card p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 24px;
+    background: #FFFFFF;
+    color: #1f1f1f;
+    border: 1px solid var(--border-default);
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.google-btn:hover {
+    background: #F8F8F8;
+    border-color: var(--border-strong);
+}
+
+.google-btn svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}

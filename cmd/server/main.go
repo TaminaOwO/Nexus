@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"nexus/internal/auth"
 	"nexus/internal/database"
 	kiteHandler "nexus/internal/modules/kite/handler"
 	"nexus/internal/modules/kite/model"
@@ -47,6 +48,9 @@ func main() {
 	// Backfill: 確保舊資料有 flow_type 預設值
 	database.DB.Exec("UPDATE tasks SET flow_type = 'NONE' WHERE flow_type = '' OR flow_type IS NULL")
 
+	// Initialize Auth
+	auth.Init()
+
 	// Start background alert scanner (Portfolio + Watchlist → Discord)
 	kiteService.StartAlertScanner(3 * time.Minute)
 
@@ -59,7 +63,7 @@ func main() {
 	r.Use(func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE, PATCH")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-API-Key")
 		if c.Request.Method == "OPTIONS" {
 			c.AbortWithStatus(http.StatusNoContent)
 			return
@@ -67,8 +71,21 @@ func main() {
 		c.Next()
 	})
 
+	// Public routes (no auth required)
+	r.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"status": "ok"})
+	})
+	r.GET("/api/auth/login", auth.LoginHandler)
+	r.GET("/api/auth/callback", auth.CallbackHandler)
+	r.GET("/api/auth/me", auth.MeHandler)
+	r.POST("/api/auth/logout", auth.LogoutHandler)
+
+	// Protected API routes
+	api := r.Group("/api")
+	api.Use(auth.AuthMiddleware())
+
 	// LifeOS Module Routes
-	lifeos := r.Group("/api/lifeos")
+	lifeos := api.Group("/lifeos")
 	{
 		lifeos.GET("/ping", func(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{"message": "LifeOS Module Online"})
@@ -105,7 +122,7 @@ func main() {
 	}
 
 	// Kite Stock Module Routes
-	kite := r.Group("/api/kite")
+	kite := api.Group("/kite")
 	{
 		kite.GET("/ping", func(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{"message": "Kite Stock Module Online"})
@@ -147,7 +164,7 @@ func main() {
 	}
 
 	// Choice-Fit Module Routes
-	choicefit := r.Group("/api/choicefit")
+	choicefit := api.Group("/choicefit")
 	{
 		choicefit.GET("/ping", func(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{"message": "Choice-Fit Module Online"})

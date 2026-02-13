@@ -745,6 +745,39 @@ textarea {
   color: var(--text-secondary);
 }
 
+/* Home Footer (Logout) */
+.home-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-top: var(--space-xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.home-email {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.home-logout {
+  font-size: 13px;
+  color: var(--text-secondary);
+  background: none;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  padding: 4px 12px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.home-logout:hover {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
 /* ============================================
    Module Page Base
    ============================================ */

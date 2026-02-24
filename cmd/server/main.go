@@ -98,6 +98,7 @@ func main() {
 		lifeos.DELETE("/habits/:id", lifeosHandler.DeleteHabit)
 		lifeos.GET("/habits/:id/logs", lifeosHandler.GetHabitLogs)
 		lifeos.POST("/habits/:id/check", lifeosHandler.CheckHabit)
+		lifeos.POST("/habits/:id/freeze", lifeosHandler.FreezeHabit)
 
 		// Task Routes
 		lifeos.GET("/tasks", lifeosHandler.GetTasks)

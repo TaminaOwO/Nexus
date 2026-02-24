@@ -86,7 +86,7 @@ func GetSkincareToday(c *gin.Context) {
 	today := time.Now().In(loc)
 	rules := loadScheduleRules()
 	cycleDay := service.CalculateCycleDay(setting.CycleStartDate, setting.CycleLength, today)
-	routine := service.GenerateDailySkincare(cycleDay, today, rules)
+	routine := service.GenerateDailySkincare(cycleDay, setting.CycleLength, today, rules)
 
 	c.JSON(http.StatusOK, routine)
 }

@@ -1,7 +1,14 @@
 import { useMemo } from "react";
 import { QuoteData, StructureType, SubStrategyType, WindType, SUB_STRATEGY_LABELS } from "../types";
 import { getStrategyChecklist, getChecklistStatus, ConditionItem } from "../utils/strategyChecklist";
-import { CheckCircleIcon, XCircleIcon } from "../../../components/Icons";
+import {
+    CheckCircleIcon,
+    XCircleIcon,
+    ZapIcon,
+    ActivityIcon,
+    RotateCcwIcon,
+    TagIcon
+} from "../../../components/Icons";
 import "./StrategyChecklist.css";
 
 interface StrategyChecklistProps {
@@ -32,7 +39,11 @@ export function StrategyChecklist({
         <div className="strategy-checklist">
             <div className="checklist-header">
                 <h3>
-                    {subStrategyInfo.badge} {subStrategyInfo.zh} Checklist
+                    {subStrategy === "STRONG_WEEKLY" && <ZapIcon size={18} style={{ marginRight: '6px' }} />}
+                    {subStrategy === "WEEKLY_TREND" && <ActivityIcon size={18} style={{ marginRight: '6px' }} />}
+                    {subStrategy === "WEEKLY_PULLBACK" && <RotateCcwIcon size={18} style={{ marginRight: '6px' }} />}
+                    {subStrategy === "CHEAP_ACQUISITION" && <TagIcon size={18} style={{ marginRight: '6px' }} />}
+                    {subStrategyInfo.zh} Checklist
                 </h3>
                 <div className={`progress-badge ${status.allPassed ? "all-pass" : ""}`}>
                     {status.passed}/{status.total}

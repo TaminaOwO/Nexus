@@ -71,6 +71,19 @@ export async function checkHabit(habitId: string, data: CheckHabitRequest): Prom
   return res.json();
 }
 
+export async function freezeHabit(habitId: string, date: string): Promise<{ log: HabitLog; freeze_cards: number }> {
+  const res = await fetch(`${API_BASE}/habits/${habitId}/freeze`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ date }),
+  });
+  if (!res.ok) {
+    const data = await res.json();
+    throw new Error(data.error || "Failed to freeze habit");
+  }
+  return res.json();
+}
+
 // ========== Task API ==========
 
 export async function fetchTasks(column?: string, flowType?: FlowType): Promise<Task[]> {

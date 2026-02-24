@@ -18,6 +18,7 @@ const PHASE_EMOJI: Record<string, string> = {
   follicular: "\uD83C\uDF38",
   ovulation: "\u2728",
   luteal: "\uD83C\uDF43",
+  waiting: "⏳",
 };
 
 const PHASE_LABEL: Record<string, string> = {
@@ -77,6 +78,22 @@ export function SkincareToday() {
       }
     } catch {
       setConfigured(false);
+    }
+  }
+
+  async function handleConfirmPeriodStart() {
+    const today = new Date().toLocaleDateString("sv"); // YYYY-MM-DD
+    setSaving(true);
+    try {
+      await updateSkincareCycle({
+        cycle_start_date: today,
+        cycle_length: cycleLength,
+      });
+      await loadData();
+    } catch {
+      // silently fail
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -221,6 +238,20 @@ export function SkincareToday() {
 
   return (
     <div className="skincare-container">
+      {/* Period Confirmation for Late Periods */}
+      {isViewingToday && displayRoutine.phase === "waiting" && (
+        <div className="skincare-period-confirm">
+          <p>經期預測已過。如果經期今天剛開始：</p>
+          <button
+            className="confirm-btn"
+            onClick={handleConfirmPeriodStart}
+            disabled={saving}
+          >
+            {saving ? "儲存中..." : "🩸 經期今天開始了"}
+          </button>
+        </div>
+      )}
+
       {/* Phase Indicator */}
       <div className="skincare-phase-indicator">
         <div className="phase-info">

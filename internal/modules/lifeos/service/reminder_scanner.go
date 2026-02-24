@@ -432,7 +432,7 @@ func getSkincareRoutineForNow(now time.Time) *model.SkincareRoutine {
 	}
 
 	cycleDay := CalculateCycleDay(cycleSetting.CycleStartDate, cycleSetting.CycleLength, now)
-	routine := GenerateDailySkincare(cycleDay, now, rules)
+	routine := GenerateDailySkincare(cycleDay, cycleSetting.CycleLength, now, rules)
 	return &routine
 }
 

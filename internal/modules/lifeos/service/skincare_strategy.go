@@ -43,7 +43,10 @@ func containsWeekday(weekdays string, weekday time.Weekday) bool {
 }
 
 // DeterminePhase 根據 cycleDay 判斷週期階段
-func DeterminePhase(cycleDay int) (phase, phaseLabel, mode string) {
+func DeterminePhase(cycleDay int, cycleLength int) (phase, phaseLabel, mode string) {
+	if cycleDay > cycleLength {
+		return "waiting", "等候期 (延遲中)", "Calm & Balance"
+	}
 	switch {
 	case cycleDay >= 1 && cycleDay <= 7:
 		return "menstrual", "經期", "Rest & Repair"
@@ -51,12 +54,12 @@ func DeterminePhase(cycleDay int) (phase, phaseLabel, mode string) {
 		return "follicular", "濾泡期", "Glow but Controlled"
 	case cycleDay >= 15 && cycleDay <= 16:
 		return "ovulation", "排卵期", "Balance"
-	default: // 17-28
+	default: // 17-28 (or up to cycleLength)
 		return "luteal", "黃體期", "Calm > Treat"
 	}
 }
 
-// CalculateCycleDay 計算今天是週期第幾天
+// CalculateCycleDay 計算今天是週期第幾天 (不自動循環，由確定階段處裡延遲)
 func CalculateCycleDay(cycleStartDate string, cycleLength int, targetDate time.Time) int {
 	start, err := time.Parse("2006-01-02", cycleStartDate)
 	if err != nil {
@@ -65,20 +68,15 @@ func CalculateCycleDay(cycleStartDate string, cycleLength int, targetDate time.T
 
 	days := int(targetDate.Sub(start).Hours()/24) + 1 // Day 1 = start date
 	if days <= 0 {
-		days = cycleLength - ((-days) % cycleLength)
-		if days == 0 {
-			days = cycleLength
-		}
-		return days
+		return 1
 	}
 
-	day := ((days - 1) % cycleLength) + 1
-	return day
+	return days
 }
 
 // GenerateDailySkincare 產生單日保養建議
-func GenerateDailySkincare(cycleDay int, targetDate time.Time, rules []model.SkincareScheduleRule) model.SkincareRoutine {
-	phase, phaseLabel, mode := DeterminePhase(cycleDay)
+func GenerateDailySkincare(cycleDay int, cycleLength int, targetDate time.Time, rules []model.SkincareScheduleRule) model.SkincareRoutine {
+	phase, phaseLabel, mode := DeterminePhase(cycleDay, cycleLength)
 	weekday := targetDate.Weekday()
 
 	routine := model.SkincareRoutine{
@@ -100,7 +98,7 @@ func GenerateDailySkincare(cycleDay int, targetDate time.Time, rules []model.Ski
 		buildFollicular(&routine, weekday, rules)
 	case "ovulation":
 		buildOvulation(&routine, weekday)
-	case "luteal":
+	case "luteal", "waiting":
 		buildLuteal(&routine, weekday, rules)
 	}
 
@@ -227,7 +225,7 @@ func GenerateWeeklySkincare(cycleStartDate string, cycleLength int, today time.T
 	for i := 0; i < 7; i++ {
 		targetDate := today.AddDate(0, 0, i)
 		cycleDay := CalculateCycleDay(cycleStartDate, cycleLength, targetDate)
-		routines[i] = GenerateDailySkincare(cycleDay, targetDate, rules)
+		routines[i] = GenerateDailySkincare(cycleDay, cycleLength, targetDate, rules)
 	}
 	return routines
 }

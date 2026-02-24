@@ -487,6 +487,7 @@ export const YellowLightIcon = ({ size = 24, className = "" }: Omit<IconProps, '
     </svg>
 );
 
+// Red Light Icon - 生理期/危險
 export const RedLightIcon = ({ size = 24, className = "" }: Omit<IconProps, 'color'>) => (
     <svg
         width={size}
@@ -495,5 +496,76 @@ export const RedLightIcon = ({ size = 24, className = "" }: Omit<IconProps, 'col
         className={className}
     >
         <circle cx="12" cy="12" r="10" fill="#ef4444" stroke="#dc2626" strokeWidth="1.5" />
+    </svg>
+);
+
+// --- New Icons for Kite UI Refinement ---
+
+// Trash Icon - 刪除
+export const TrashIcon = ({ size = 20, className = "", color = "currentColor", style }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={style}>
+        <path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+    </svg>
+);
+
+// Lock Icon - 鎖定
+export const LockIcon = ({ size = 20, className = "", color = "currentColor", style }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={style}>
+        <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+);
+
+// Rocket Icon - 噴發/進場
+export const RocketIcon = ({ size = 20, className = "", color = "currentColor", style }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={style}>
+        <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
+        <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
+        <path d="M9 12H4s.55-3.03 2-5c1.62-2.2 5-4 5-4" />
+        <path d="M12 15v5s3.03-.55 5-2c2.2-1.62 4-5 4-5" />
+    </svg>
+);
+
+// Briefcase Icon - 上班族型 (Office)
+export const BriefcaseIcon = ({ size = 20, className = "", color = "currentColor", style }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={style}>
+        <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />
+        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+    </svg>
+);
+
+// Shield Icon - 老闆型 (BOSS)
+export const ShieldIcon = ({ size = 20, className = "", color = "currentColor", style }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={style}>
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+    </svg>
+);
+
+// Zap Icon - 強勢週 (Strong Weekly)
+export const ZapIcon = ({ size = 20, className = "", color = "currentColor", style }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={style}>
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+    </svg>
+);
+
+// Activity Icon - 週趨勢 (Weekly Trend)
+export const ActivityIcon = ({ size = 20, className = "", color = "currentColor", style }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={style}>
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+    </svg>
+);
+
+// Rotate Ccw Icon - 週拉回 (Weekly Pullback)
+export const RotateCcwIcon = ({ size = 20, className = "", color = "currentColor", style }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={style}>
+        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+        <path d="M3 3v5h5" />
+    </svg>
+);
+
+// X Icon - 關閉
+export const XIcon = ({ size = 20, className = "", color = "currentColor", style }: IconProps) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={style}>
+        <path d="M18 6 6 18" /><path d="m6 6 12 12" />
     </svg>
 );

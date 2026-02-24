@@ -184,6 +184,56 @@
     color: #ef4444;
 }
 
+.habit-action-btn.freeze {
+    color: #3B82F6;
+    opacity: 1;
+    /* Always visible if available */
+}
+
+.habit-action-btn.freeze:hover {
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.freeze-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-left: 0.75rem;
+    background: #EFF6FF;
+    color: #3B82F6;
+    padding: 0.125rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border: 1px solid #DBEAFE;
+}
+
+/* Checkmark Animation */
+.check-icon {
+    width: 1rem;
+    height: 1rem;
+    color: var(--success, #16A34A);
+    margin-bottom: 2px;
+}
+
+.habit-row.completed .check-icon {
+    animation: checkPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes checkPop {
+    0% {
+        transform: scale(0);
+    }
+
+    50% {
+        transform: scale(1.4);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
 /* ========== Habit Modal ========== */
 
 .habit-modal-overlay {
@@ -212,8 +262,15 @@
 }
 
 @keyframes habitModalSlideIn {
-    from { transform: translateY(16px) scale(0.97); opacity: 0; }
-    to { transform: translateY(0) scale(1); opacity: 1; }
+    from {
+        transform: translateY(16px) scale(0.97);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
 }
 
 .habit-modal .modal-header {

@@ -1,8 +1,22 @@
 import { useState, useEffect, useCallback } from "react";
 import { StructureType, SubStrategyType, WindType, QuoteData, STRATEGY_LABELS, SUB_STRATEGY_LABELS } from "../types";
 import { getStrategyChecklist, getChecklistStatus } from "../utils/strategyChecklist";
-import { IconCompany, IconBOSS } from "../../../components/HandDrawnIcons";
-import { TargetIcon, CheckCircleIcon, SearchIcon, PawPrintIcon } from "../../../components/Icons";
+import {
+    TargetIcon,
+    CheckCircleIcon,
+    SearchIcon,
+    PawPrintIcon,
+    TrashIcon,
+    LockIcon,
+    RocketIcon,
+    BriefcaseIcon,
+    ShieldIcon,
+    ZapIcon,
+    ActivityIcon,
+    RotateCcwIcon,
+    TagIcon,
+    XCircleIcon
+} from "../../../components/Icons";
 import "./Watchlist.css";
 
 const API_BASE = "/api/kite";
@@ -244,7 +258,7 @@ export function Watchlist({ structure, currentWind, onStockSelect, onConvertToTr
                                 className={`strategy-btn ${newEntry.strategy === "OFFICE" ? "active" : ""}`}
                                 onClick={() => setNewEntry({ ...newEntry, strategy: "OFFICE", sub_strategy: "STRONG_WEEKLY" })}
                             >
-                                <IconCompany style={{ width: 20, height: 20 }} />
+                                <BriefcaseIcon size={20} />
                                 <span>{STRATEGY_LABELS.OFFICE.zh}</span>
                             </button>
                             <button
@@ -252,7 +266,7 @@ export function Watchlist({ structure, currentWind, onStockSelect, onConvertToTr
                                 className={`strategy-btn ${newEntry.strategy === "BOSS" ? "active" : ""}`}
                                 onClick={() => setNewEntry({ ...newEntry, strategy: "BOSS", sub_strategy: "WEEKLY_PULLBACK" })}
                             >
-                                <IconBOSS style={{ width: 20, height: 20 }} />
+                                <ShieldIcon size={20} />
                                 <span>{STRATEGY_LABELS.BOSS.zh}</span>
                             </button>
                         </div>
@@ -319,7 +333,10 @@ export function Watchlist({ structure, currentWind, onStockSelect, onConvertToTr
                                     </div>
                                     <div className="strategy-info">
                                         <span className="strategy-badge">
-                                            {SUB_STRATEGY_LABELS[entry.sub_strategy]?.badge}
+                                            {entry.sub_strategy === "STRONG_WEEKLY" && <ZapIcon size={12} style={{ marginRight: '4px' }} />}
+                                            {entry.sub_strategy === "WEEKLY_TREND" && <ActivityIcon size={12} style={{ marginRight: '4px' }} />}
+                                            {entry.sub_strategy === "WEEKLY_PULLBACK" && <RotateCcwIcon size={12} style={{ marginRight: '4px' }} />}
+                                            {entry.sub_strategy === "CHEAP_ACQUISITION" && <TagIcon size={12} style={{ marginRight: '4px' }} />}
                                             {SUB_STRATEGY_LABELS[entry.sub_strategy]?.zh}
                                         </span>
                                     </div>
@@ -336,7 +353,9 @@ export function Watchlist({ structure, currentWind, onStockSelect, onConvertToTr
                                     <div className="mini-conditions">
                                         {conditions.map((c) => (
                                             <div key={c.id} className={`mini-condition ${c.met ? "met" : "unmet"}`}>
-                                                <span className="mini-icon">{c.met ? "✓" : "✕"}</span>
+                                                <span className="mini-icon">
+                                                    {c.met ? <CheckCircleIcon size={12} /> : <XCircleIcon size={12} />}
+                                                </span>
                                                 <span className="mini-label">{c.label}</span>
                                             </div>
                                         ))}
@@ -355,14 +374,18 @@ export function Watchlist({ structure, currentWind, onStockSelect, onConvertToTr
                                             disabled={!canEnter}
                                             title={canEnter ? "條件達成，可進場" : "條件未達成"}
                                         >
-                                            {canEnter ? "🚀 進場" : "🔒 條件未滿足"}
+                                            {canEnter ? (
+                                                <><RocketIcon size={16} style={{ marginRight: '4px' }} /> 進場</>
+                                            ) : (
+                                                <><LockIcon size={16} style={{ marginRight: '4px' }} /> 未達成</>
+                                            )}
                                         </button>
                                     )}
                                     <button
                                         className="action-btn delete"
                                         onClick={(e) => { e.stopPropagation(); deleteEntry(entry.id); }}
                                     >
-                                        🗑️
+                                        <TrashIcon size={16} />
                                     </button>
                                 </div>
                             </div>

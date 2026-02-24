@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { IconBOSS, IconCompany } from "../../../components/HandDrawnIcons";
-import { AlertTriangleIcon } from "../../../components/Icons";
+import { AlertTriangleIcon, XIcon, ChartLineIcon, TargetIcon, DollarSignIcon, BookOpenIcon, ChartCandlestickIcon, TrendingUpIcon } from "../../../components/Icons";
 import "./TradeHistory.css";
 
 interface ClosedTrade {
@@ -282,12 +282,14 @@ export function TradeHistory() {
                                     fontSize: '1.25rem',
                                     cursor: 'pointer',
                                 }}
-                            >×</button>
+                            >
+                                <XIcon size={20} />
+                            </button>
                         </div>
                         <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             <div className="form-row">
                                 <div className="form-group">
-                                    <label>📊 股票代碼 Symbol</label>
+                                    <label><ChartLineIcon size={14} /> 股票代碼 Symbol</label>
                                     <input
                                         type="text"
                                         placeholder="e.g. 2330"
@@ -322,7 +324,7 @@ export function TradeHistory() {
                             </div>
 
                             <div className="form-group">
-                                <label>🎯 策略 Strategy</label>
+                                <label><TargetIcon size={14} /> 策略 Strategy</label>
                                 <select
                                     value={importForm.strategy}
                                     onChange={(e) => setImportForm({ ...importForm, strategy: e.target.value })}
@@ -343,7 +345,7 @@ export function TradeHistory() {
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label>💰 進場價 Entry Price</label>
+                                    <label><DollarSignIcon size={14} /> 進場價 Entry Price</label>
                                     <input
                                         type="number"
                                         step="0.01"
@@ -409,7 +411,7 @@ export function TradeHistory() {
                                         />
                                     </div>
                                     <div className="form-group">
-                                        <label>💰 出場價 Exit Price</label>
+                                        <label><DollarSignIcon size={14} /> 出場價 Exit Price</label>
                                         <input
                                             type="number"
                                             step="0.01"
@@ -431,7 +433,7 @@ export function TradeHistory() {
                             </div>
 
                             <div className="form-group">
-                                <label>📝 備註 Notes</label>
+                                <label><BookOpenIcon size={14} /> 備註 Notes</label>
                                 <input
                                     type="text"
                                     placeholder="選填..."
@@ -456,10 +458,10 @@ export function TradeHistory() {
             }
 
             <div className="history-header">
-                <h2>📈 Trade History</h2>
+                <h2><TrendingUpIcon size={24} /> Trade History</h2>
                 <div className="header-actions">
                     <button className="analytics-btn" onClick={() => setShowAnalytics(!showAnalytics)}>
-                        📊 {showAnalytics ? "Hide" : "Show"} Analytics
+                        <ChartLineIcon size={16} /> {showAnalytics ? "Hide" : "Show"} Analytics
                     </button>
                     <button className="import-action-btn" onClick={() => setShowImport(true)}>
                         ➕ Import Past Data
@@ -473,12 +475,12 @@ export function TradeHistory() {
                     <>
                         <div className="history-stats">
                             <div className="stat-card">
-                                <span className="stat-label">🎯 Win Rate</span>
+                                <span className="stat-label"><TargetIcon size={14} /> Win Rate</span>
                                 <span className="stat-value">{history.win_rate.toFixed(1)}%</span>
                                 <span className="stat-sub">{history.wins} / {history.total_trades}</span>
                             </div>
                             <div className={`stat-card pl ${history.total_pl >= 0 ? "up" : "down"}`}>
-                                <span className="stat-label">💰 Total P/L</span>
+                                <span className="stat-label"><ChartCandlestickIcon size={14} /> Total P/L</span>
                                 <span className="stat-value">{formatMoney(history.total_pl)}</span>
                             </div>
                             <div className="stat-card best">
@@ -503,7 +505,7 @@ export function TradeHistory() {
                         {/* Advanced Analytics */}
                         {showAnalytics && history.trades.length > 0 && (
                             <div className="analytics-section">
-                                <h3>📊 Strategy Performance</h3>
+                                <h3><ChartLineIcon size={20} /> Strategy Performance</h3>
                                 <div className="strategy-breakdown">
                                     {getStrategyStats(history.trades).map((stat, idx) => (
                                         <div key={idx} className="strategy-stat-card">
@@ -529,7 +531,7 @@ export function TradeHistory() {
                                     ))}
                                 </div>
 
-                                <h3>📈 Monthly Performance</h3>
+                                <h3><ChartLineIcon size={20} /> Monthly Performance</h3>
                                 <div className="monthly-chart">
                                     {getMonthlyStats(history.trades).map((month, idx) => (
                                         <div key={idx} className="month-bar">

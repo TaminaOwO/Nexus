@@ -143,6 +143,25 @@ export const TrendingUpIcon = ({ size = 20, className = "", color = "currentColo
     </svg>
 );
 
+// Trending Down Icon - 易跌
+export const TrendingDownIcon = ({ size = 20, className = "", color = "currentColor", style }: IconProps) => (
+    <svg
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={className}
+        style={style}
+    >
+        <polyline points="23 18 13.5 8.5 8.5 13.5 1 6" />
+        <polyline points="17 18 23 18 23 12" />
+    </svg>
+);
+
 // Tag Icon - 子策略標籤
 export const TagIcon = ({ size = 20, className = "", color = "currentColor", style }: IconProps) => (
     <svg
@@ -567,5 +586,26 @@ export const RotateCcwIcon = ({ size = 20, className = "", color = "currentColor
 export const XIcon = ({ size = 20, className = "", color = "currentColor", style }: IconProps) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={style}>
         <path d="M18 6 6 18" /><path d="m6 6 12 12" />
+    </svg>
+);
+
+// Cycle Icon - 結構交界 / 循環
+export const CycleIcon = ({ size = 20, className = "", color = "currentColor", style }: IconProps) => (
+    <svg
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={className}
+        style={style}
+    >
+        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+        <path d="M21 3v5h-5" />
+        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+        <path d="M3 21v-5h5" />
     </svg>
 );

@@ -12,17 +12,17 @@ export type StructureType = "EASY_RISE" | "EASY_FALL" | "BOUNDARY";
 export type GateLight = "GREEN" | "YELLOW" | "RED";
 
 // Display labels for UI
-export const WIND_LABELS: Record<WindType, { emoji: string; zh: string; en: string }> = {
-    STRONG: { emoji: "🦅", zh: "強風", en: "Strong" },
-    TURBULENT: { emoji: "🌪️", zh: "亂流", en: "Turbulent" },
-    GUSTY: { emoji: "🍃", zh: "陣風", en: "Gusty" },
-    CALM: { emoji: "🐢", zh: "無風", en: "Calm" },
+export const WIND_LABELS: Record<WindType, { zh: string; en: string }> = {
+    STRONG: { zh: "強風", en: "Strong" },
+    TURBULENT: { zh: "亂流", en: "Turbulent" },
+    GUSTY: { zh: "陣風", en: "Gusty" },
+    CALM: { zh: "無風", en: "Calm" },
 };
 
-export const STRUCTURE_LABELS: Record<StructureType, { emoji: string; zh: string; en: string }> = {
-    EASY_RISE: { emoji: "📈", zh: "易漲", en: "Easy Rise" },
-    EASY_FALL: { emoji: "📉", zh: "易跌", en: "Easy Fall" },
-    BOUNDARY: { emoji: "🌀", zh: "交界", en: "Boundary" },
+export const STRUCTURE_LABELS: Record<StructureType, { zh: string; en: string }> = {
+    EASY_RISE: { zh: "易漲", en: "Easy Rise" },
+    EASY_FALL: { zh: "易跌", en: "Easy Fall" },
+    BOUNDARY: { zh: "交界", en: "Boundary" },
 };
 
 // Stock Quote types for Stock Inspector
@@ -52,16 +52,16 @@ export type OfficeSubStrategy = "STRONG_WEEKLY" | "WEEKLY_TREND";
 export type BossSubStrategy = "WEEKLY_PULLBACK" | "CHEAP_ACQUISITION";
 export type SubStrategyType = OfficeSubStrategy | BossSubStrategy;
 
-export const STRATEGY_LABELS: Record<StrategyType, { badge: string; name: string; zh: string }> = {
-    OFFICE: { badge: "🏢", name: "Office Worker", zh: "上班族型" },
-    BOSS: { badge: "🛡️", name: "Boss Strategy", zh: "老闆型" },
+export const STRATEGY_LABELS: Record<StrategyType, { name: string; zh: string }> = {
+    OFFICE: { name: "Office Worker", zh: "上班族型" },
+    BOSS: { name: "Boss Strategy", zh: "老闆型" },
 };
 
-export const SUB_STRATEGY_LABELS: Record<SubStrategyType, { badge: string; name: string; zh: string }> = {
-    STRONG_WEEKLY: { badge: "⚡", name: "Strong Weekly", zh: "強勢週/追漲" },
-    WEEKLY_TREND: { badge: "📉", name: "Weekly Trend", zh: "週趨勢/買拉回" },
-    WEEKLY_PULLBACK: { badge: "🔄", name: "Weekly Pullback", zh: "週拉回" },
-    CHEAP_ACQUISITION: { badge: "🏷️", name: "Cheap Acquisition", zh: "廉價收購" },
+export const SUB_STRATEGY_LABELS: Record<SubStrategyType, { name: string; zh: string }> = {
+    STRONG_WEEKLY: { name: "Strong Weekly", zh: "強勢週/追漲" },
+    WEEKLY_TREND: { name: "Weekly Trend", zh: "週趨勢/買拉回" },
+    WEEKLY_PULLBACK: { name: "Weekly Pullback", zh: "週拉回" },
+    CHEAP_ACQUISITION: { name: "Cheap Acquisition", zh: "廉價收購" },
 };
 
 // Verdict status from strategy diagnosis

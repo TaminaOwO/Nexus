@@ -9,14 +9,13 @@ import {
     TrashIcon,
     LockIcon,
     RocketIcon,
-    BriefcaseIcon,
-    ShieldIcon,
-    ZapIcon,
-    ActivityIcon,
-    RotateCcwIcon,
+    StrongWeekIcon,
+    WeeklyTrendIcon,
+    WeeklyPullbackIcon,
     TagIcon,
     XCircleIcon
 } from "../../../components/Icons";
+import { IconBOSS, IconCompany } from "../../../components/HandDrawnIcons";
 import "./Watchlist.css";
 
 const API_BASE = "/api/kite";
@@ -258,7 +257,7 @@ export function Watchlist({ structure, currentWind, onStockSelect, onConvertToTr
                                 className={`strategy-btn ${newEntry.strategy === "OFFICE" ? "active" : ""}`}
                                 onClick={() => setNewEntry({ ...newEntry, strategy: "OFFICE", sub_strategy: "STRONG_WEEKLY" })}
                             >
-                                <BriefcaseIcon size={20} />
+                                <IconCompany className="w-8 h-8" />
                                 <span>{STRATEGY_LABELS.OFFICE.zh}</span>
                             </button>
                             <button
@@ -266,28 +265,47 @@ export function Watchlist({ structure, currentWind, onStockSelect, onConvertToTr
                                 className={`strategy-btn ${newEntry.strategy === "BOSS" ? "active" : ""}`}
                                 onClick={() => setNewEntry({ ...newEntry, strategy: "BOSS", sub_strategy: "WEEKLY_PULLBACK" })}
                             >
-                                <ShieldIcon size={20} />
+                                <IconBOSS className="w-8 h-8" />
                                 <span>{STRATEGY_LABELS.BOSS.zh}</span>
                             </button>
                         </div>
                     </div>
-                    <div className="form-row">
-                        <select
-                            value={newEntry.sub_strategy}
-                            onChange={(e) => setNewEntry({ ...newEntry, sub_strategy: e.target.value as SubStrategyType })}
-                        >
-                            {newEntry.strategy === "OFFICE" ? (
-                                <>
-                                    <option value="STRONG_WEEKLY">{SUB_STRATEGY_LABELS.STRONG_WEEKLY.badge} {SUB_STRATEGY_LABELS.STRONG_WEEKLY.zh}</option>
-                                    <option value="WEEKLY_TREND">{SUB_STRATEGY_LABELS.WEEKLY_TREND.badge} {SUB_STRATEGY_LABELS.WEEKLY_TREND.zh}</option>
-                                </>
-                            ) : (
-                                <>
-                                    <option value="WEEKLY_PULLBACK">{SUB_STRATEGY_LABELS.WEEKLY_PULLBACK.badge} {SUB_STRATEGY_LABELS.WEEKLY_PULLBACK.zh}</option>
-                                    <option value="CHEAP_ACQUISITION">{SUB_STRATEGY_LABELS.CHEAP_ACQUISITION.badge} {SUB_STRATEGY_LABELS.CHEAP_ACQUISITION.zh}</option>
-                                </>
-                            )}
-                        </select>
+                    <div className="sub-strategy-selection">
+                        {newEntry.strategy === "OFFICE" ? (
+                            <>
+                                <button
+                                    type="button"
+                                    className={`sub-pill ${newEntry.sub_strategy === "STRONG_WEEKLY" ? "active" : ""}`}
+                                    onClick={() => setNewEntry({ ...newEntry, sub_strategy: "STRONG_WEEKLY" })}
+                                >
+                                    <StrongWeekIcon size={14} /> {SUB_STRATEGY_LABELS.STRONG_WEEKLY.zh}
+                                </button>
+                                <button
+                                    type="button"
+                                    className={`sub-pill ${newEntry.sub_strategy === "WEEKLY_TREND" ? "active" : ""}`}
+                                    onClick={() => setNewEntry({ ...newEntry, sub_strategy: "WEEKLY_TREND" })}
+                                >
+                                    <WeeklyTrendIcon size={14} /> {SUB_STRATEGY_LABELS.WEEKLY_TREND.zh}
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <button
+                                    type="button"
+                                    className={`sub-pill ${newEntry.sub_strategy === "WEEKLY_PULLBACK" ? "active" : ""}`}
+                                    onClick={() => setNewEntry({ ...newEntry, sub_strategy: "WEEKLY_PULLBACK" })}
+                                >
+                                    <WeeklyPullbackIcon size={14} /> {SUB_STRATEGY_LABELS.WEEKLY_PULLBACK.zh}
+                                </button>
+                                <button
+                                    type="button"
+                                    className={`sub-pill ${newEntry.sub_strategy === "CHEAP_ACQUISITION" ? "active" : ""}`}
+                                    onClick={() => setNewEntry({ ...newEntry, sub_strategy: "CHEAP_ACQUISITION" })}
+                                >
+                                    <TagIcon size={14} /> {SUB_STRATEGY_LABELS.CHEAP_ACQUISITION.zh}
+                                </button>
+                            </>
+                        )}
                     </div>
                     <textarea
                         placeholder="備註"
@@ -333,9 +351,9 @@ export function Watchlist({ structure, currentWind, onStockSelect, onConvertToTr
                                     </div>
                                     <div className="strategy-info">
                                         <span className="strategy-badge">
-                                            {entry.sub_strategy === "STRONG_WEEKLY" && <ZapIcon size={12} style={{ marginRight: '4px' }} />}
-                                            {entry.sub_strategy === "WEEKLY_TREND" && <ActivityIcon size={12} style={{ marginRight: '4px' }} />}
-                                            {entry.sub_strategy === "WEEKLY_PULLBACK" && <RotateCcwIcon size={12} style={{ marginRight: '4px' }} />}
+                                            {entry.sub_strategy === "STRONG_WEEKLY" && <StrongWeekIcon size={12} style={{ marginRight: '4px' }} />}
+                                            {entry.sub_strategy === "WEEKLY_TREND" && <WeeklyTrendIcon size={12} style={{ marginRight: '4px' }} />}
+                                            {entry.sub_strategy === "WEEKLY_PULLBACK" && <WeeklyPullbackIcon size={12} style={{ marginRight: '4px' }} />}
                                             {entry.sub_strategy === "CHEAP_ACQUISITION" && <TagIcon size={12} style={{ marginRight: '4px' }} />}
                                             {SUB_STRATEGY_LABELS[entry.sub_strategy]?.zh}
                                         </span>

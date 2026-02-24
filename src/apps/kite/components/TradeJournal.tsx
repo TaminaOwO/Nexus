@@ -8,12 +8,12 @@ import {
     ChartLineIcon,
     ChartCandlestickIcon,
     MailboxIcon,
-    BriefcaseIcon,
-    ShieldIcon,
     TrashIcon,
     DollarSignIcon,
-    BookOpenIcon
+    BookOpenIcon,
+    XIcon,
 } from "../../../components/Icons";
+import { IconBOSS, IconCompany } from "../../../components/HandDrawnIcons";
 import "./TradeJournal.css";
 
 interface StrategySnapshot {
@@ -245,7 +245,9 @@ export function TradeJournal() {
                     <div className="alert-modal" onClick={(e) => e.stopPropagation()}>
                         <div className="alert-modal-header">
                             <h3><AlertTriangleIcon size={20} /> Action Required!</h3>
-                            <button className="modal-close" onClick={() => setShowAlertModal(false)}>×</button>
+                            <button className="modal-close" onClick={() => setShowAlertModal(false)}>
+                                <XIcon size={20} />
+                            </button>
                         </div>
                         <div className="alert-modal-body">
                             {portfolio.alerts.map((alert, idx) => (
@@ -278,7 +280,9 @@ export function TradeJournal() {
                     <div className="settle-modal" onClick={(e) => e.stopPropagation()}>
                         <div className="modal-header">
                             <h3><CheckCircleIcon size={20} /> 平倉結算 Settle Trade</h3>
-                            <button className="modal-close" onClick={() => setShowSettleModal(false)}>×</button>
+                            <button className="modal-close" onClick={() => setShowSettleModal(false)}>
+                                <XIcon size={20} />
+                            </button>
                         </div>
                         <div className="modal-body">
                             <div className="settle-stock-info">
@@ -286,7 +290,7 @@ export function TradeJournal() {
                                 <div className="settle-details">
                                     <span className="symbol">{settleTarget.symbol}</span>
                                     <span className={`strategy-tag ${settleTarget.strategy.toLowerCase()}`}>
-                                        {settleTarget.strategy === "BOSS" ? <ShieldIcon size={16} style={{ marginRight: '4px' }} /> : <BriefcaseIcon size={16} style={{ marginRight: '4px' }} />} {settleTarget.strategy}
+                                        {settleTarget.strategy === "BOSS" ? <IconBOSS className="w-5 h-5 inline mr-1" /> : <IconCompany className="w-5 h-5 inline mr-1" />} {settleTarget.strategy}
                                     </span>
                                 </div>
                             </div>
@@ -410,7 +414,7 @@ export function TradeJournal() {
                             <div className="holding-details">
                                 <div className="detail-row">
                                     <span className="strategy-badge">
-                                        {holding.strategy === "BOSS" ? <ShieldIcon size={14} style={{ marginRight: '4px' }} /> : <BriefcaseIcon size={14} style={{ marginRight: '4px' }} />}
+                                        {holding.strategy === "BOSS" ? <IconBOSS className="w-4 h-4 inline mr-1" /> : <IconCompany className="w-4 h-4 inline mr-1" />}
                                         {holding.strategy} - {holding.sub_strategy.replace(/_/g, " ")}
                                     </span>
                                     <span className="days-held">{holding.days_held}天</span>

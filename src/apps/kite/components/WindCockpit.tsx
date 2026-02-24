@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { getLastNTradingDays } from "../hooks/useWindHistory";
 import { WindType, WindRecord, StructureType, GateLight, WIND_LABELS, STRUCTURE_LABELS } from "../types";
 import { IconStrongWind, IconTurbulence, IconGust, IconNoWind, IconWind, IconSettings } from "../../../components/HandDrawnIcons";
-import { GreenLightIcon, YellowLightIcon, RedLightIcon } from "../../../components/Icons";
+import { GreenLightIcon, YellowLightIcon, RedLightIcon, XIcon, TrendingUpIcon, TrendingDownIcon, CycleIcon, TrashIcon } from "../../../components/Icons";
 import "./WindCockpit.css";
 
 const API_BASE = "/api/kite";
@@ -129,7 +129,10 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                     <span className="last-week-label">📥 上週循環:</span>
                     {lastWeekCycle ? (
                         <span className="last-week-value">
-                            {STRUCTURE_LABELS[lastWeekCycle].emoji} {STRUCTURE_LABELS[lastWeekCycle].zh}循環
+                            <span style={{ marginRight: '8px', verticalAlign: 'middle', display: 'inline-block' }}>
+                                {lastWeekCycle === 'EASY_RISE' ? <TrendingUpIcon size={18} /> : lastWeekCycle === 'EASY_FALL' ? <TrendingDownIcon size={18} /> : <CycleIcon size={18} />}
+                            </span>
+                            {STRUCTURE_LABELS[lastWeekCycle].zh}循環
                         </span>
                     ) : (
                         <span className="last-week-value empty">未設定</span>
@@ -172,7 +175,9 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                 {/* Cycle Display with Gate Light */}
                 <div className="cycle-row">
                     <div className="cycle-display">
-                        <span className="emoji">{structureInfo.emoji}</span>
+                        <span className="emoji" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            {structureInfo.zh === '易漲' ? <TrendingUpIcon size={24} /> : structureInfo.zh === '易跌' ? <TrendingDownIcon size={24} /> : <CycleIcon size={24} />}
+                        </span>
                         <span className="label">
                             {structureInfo.en}
                             <span>({structureInfo.zh})</span>
@@ -301,7 +306,9 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                                             transition: 'all 0.2s ease',
                                         }}
                                     >
-                                        <span style={{ fontSize: '2rem' }}>{info.emoji}</span>
+                                        <div style={{ fontSize: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            {cycleType === 'EASY_RISE' ? <TrendingUpIcon size={32} /> : cycleType === 'EASY_FALL' ? <TrendingDownIcon size={32} /> : <CycleIcon size={32} />}
+                                        </div>
                                         <div style={{ textAlign: "center" }}>
                                             <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#0F172A' }}>{info.zh}</div>
                                             <div style={{ fontSize: '0.7rem', color: '#64748B' }}>{info.en}</div>
@@ -325,7 +332,7 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                                     cursor: 'pointer',
                                 }}
                             >
-                                🗑️ 清除設定
+                                <TrashIcon size={16} /> 清除設定
                             </button>
                         )}
                     </div>
@@ -400,7 +407,7 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                                         boxShadow: !day.wind ? '0 0 0 2px #ef4444' : 'none',
                                     }}
                                 >
-                                    ✕
+                                    <XIcon size={20} />
                                 </button>
                             </div>
                         </div>
@@ -420,7 +427,7 @@ export function WindCockpitUI({ windState, structure, gateLight }: WindCockpitUI
                             transition: 'all 0.2s ease',
                         }}
                     >
-                        🗑️ Clear All History
+                        <TrashIcon size={16} /> Clear All History
                     </button>
                 </div>
             )}

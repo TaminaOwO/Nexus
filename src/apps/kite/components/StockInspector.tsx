@@ -12,7 +12,7 @@ import {
 } from "../types";
 import { getStrategyVerdict } from "../utils/strategyDiagnosis";
 import { IconCompany, IconBOSS } from "../../../components/HandDrawnIcons";
-import { StockInspectorIcon, CheckboxIcon, SearchIcon, BookOpenIcon, TrendingUpIcon, LoaderIcon, DollarSignIcon, TagIcon, StrongWeekIcon, WeeklyPullbackIcon, WeeklyTrendIcon, TargetIcon, StopCircleIcon, CheckCircleIcon, AlertTriangleIcon, XCircleIcon, SpellCheckIcon, SaveIcon, BellRingIcon } from "../../../components/Icons";
+import { StockInspectorIcon, CheckboxIcon, SearchIcon, BookOpenIcon, TrendingUpIcon, LoaderIcon, DollarSignIcon, TagIcon, StrongWeekIcon, WeeklyPullbackIcon, WeeklyTrendIcon, TargetIcon, StopCircleIcon, CheckCircleIcon, AlertTriangleIcon, XCircleIcon, SpellCheckIcon, SaveIcon, BellRingIcon, XIcon, TrendingDownIcon, CycleIcon } from "../../../components/Icons";
 import { StrategyChecklist } from "./StrategyChecklist";
 import { StockChart } from "./StockChart";
 import "./StockInspector.css";
@@ -270,7 +270,9 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                             <h3>
                                 <BookOpenIcon size={20} /> 記錄交易 Log Trade
                             </h3>
-                            <button className="si-modal-close" onClick={() => setShowTradeModal(false)}>×</button>
+                            <button className="si-modal-close" onClick={() => setShowTradeModal(false)}>
+                                <XIcon size={20} />
+                            </button>
                         </div>
 
                         {/* Body */}
@@ -418,8 +420,8 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
             {/* Header */}
             <div className="inspector-header">
                 <h2><StockInspectorIcon size={20} style={{ display: 'inline-block', verticalAlign: 'text-top', marginRight: '2px' }} /> Stock Inspector</h2>
-                <span className="cycle-badge">
-                    {structureInfo.emoji} {structureInfo.zh}
+                <span className="cycle-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                    {structure === 'EASY_RISE' ? <TrendingUpIcon size={14} /> : structure === 'EASY_FALL' ? <TrendingDownIcon size={14} /> : <CycleIcon size={14} />} {structureInfo.zh}
                 </span>
             </div>
 

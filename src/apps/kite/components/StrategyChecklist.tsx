@@ -4,9 +4,9 @@ import { getStrategyChecklist, getChecklistStatus, ConditionItem } from "../util
 import {
     CheckCircleIcon,
     XCircleIcon,
-    ZapIcon,
-    ActivityIcon,
-    RotateCcwIcon,
+    StrongWeekIcon,
+    WeeklyTrendIcon,
+    WeeklyPullbackIcon,
     TagIcon
 } from "../../../components/Icons";
 import "./StrategyChecklist.css";
@@ -39,9 +39,9 @@ export function StrategyChecklist({
         <div className="strategy-checklist">
             <div className="checklist-header">
                 <h3>
-                    {subStrategy === "STRONG_WEEKLY" && <ZapIcon size={18} style={{ marginRight: '6px' }} />}
-                    {subStrategy === "WEEKLY_TREND" && <ActivityIcon size={18} style={{ marginRight: '6px' }} />}
-                    {subStrategy === "WEEKLY_PULLBACK" && <RotateCcwIcon size={18} style={{ marginRight: '6px' }} />}
+                    {subStrategy === "STRONG_WEEKLY" && <StrongWeekIcon size={18} style={{ marginRight: '6px' }} />}
+                    {subStrategy === "WEEKLY_TREND" && <WeeklyTrendIcon size={18} style={{ marginRight: '6px' }} />}
+                    {subStrategy === "WEEKLY_PULLBACK" && <WeeklyPullbackIcon size={18} style={{ marginRight: '6px' }} />}
                     {subStrategy === "CHEAP_ACQUISITION" && <TagIcon size={18} style={{ marginRight: '6px' }} />}
                     {subStrategyInfo.zh} Checklist
                 </h3>

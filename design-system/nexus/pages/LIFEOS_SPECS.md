@@ -3,7 +3,8 @@
 > **專案代號**：Nexus / LifeOS  
 > **模組名稱**：Task Engine (F.L.O.W. Edition)  
 > **負責人**：Tamina (Commander)  
-> **狀態**：準備開發 (Ready for Dev)
+> **狀態**：開發中 (In Development)
+> **最後更新**：2026-02-24
 
 ---
 
@@ -64,6 +65,7 @@ type Habit struct {
     Name         string    `json:"name"`
     Frequency    string    `json:"frequency"`      // Daily / Weekly
     TargetStreak int       `json:"target_streak"`
+    FreezeCards  int       `json:"freeze_cards"`   // 凍結卡數量，保護連勝
     Icon         string    `json:"icon"`
     Color        string    `json:"color"`
     CreatedAt    time.Time `json:"created_at"`
@@ -74,10 +76,15 @@ type HabitLog struct {
     ID        string    `gorm:"primaryKey" json:"id"`
     HabitID   string    `json:"habit_id"`
     Date      string    `json:"date"`     // YYYY-MM-DD
-    Status    string    `json:"status"`   // Done / Skipped / Missed
+    Status    string    `json:"status"`   // Done / Skipped / Missed / Frozen
     CreatedAt time.Time `json:"created_at"`
 }
 ```
+
+> **凍結卡機制 (2026-02-24)**：
+> - `FreezeCards` 欄位記錄各習慣可用凍結卡數量
+> - 使用凍結卡時，卡數 -1，該日記錄為 `Frozen` 狀態
+> - `Frozen` 狀態計入連勝 (Streak) 計算，不會中斷連勝天數
 
 #### Task Model (`internal/modules/lifeos/model/task.go`)
 
@@ -148,11 +155,12 @@ type Task struct {
 | Method | Endpoint | Description | Payload |
 |--------|----------|-------------|---------|
 | `GET` | `/habits` | 獲取習慣列表 | N/A |
-| `POST` | `/habits` | 新增習慣 | `{ name, frequency, target_streak, icon, color }` |
-| `PUT` | `/habits/:id` | 更新習慣 | `{ name, target_streak, icon, color }` |
+| `POST` | `/habits` | 新增習慣 | `{ name, frequency, target_streak, freeze_cards, icon, color }` |
+| `PUT` | `/habits/:id` | 更新習慣 | `{ name, target_streak, freeze_cards, icon, color }` |
 | `DELETE` | `/habits/:id` | 刪除習慣 | N/A |
 | `GET` | `/habits/:id/logs` | 獲取習慣記錄 | N/A |
 | `POST` | `/habits/:id/check` | 打卡 | `{ date, status }` |
+| `POST` | `/habits/:id/freeze` | 使用凍結卡 | `{ date }` |
 
 #### Task Endpoints
 | Method | Endpoint | Description | Payload |
@@ -182,6 +190,10 @@ database.DB.AutoMigrate(
     &lifeosModel.Habit{},
     &lifeosModel.HabitLog{},
     &lifeosModel.Task{},
+    &lifeosModel.ReminderSetting{},
+    &lifeosModel.LifeOSNotificationLog{},
+    &lifeosModel.SkincareCycleSetting{},
+    &lifeosModel.SkincareScheduleRule{},
 )
 ```
 
@@ -226,12 +238,18 @@ database.DB.AutoMigrate(
 ## 6. 目前實作狀態 vs 原規劃差異
 
 ### ✅ 已完成
-- [x] Habit Model 建立（`Habit` + `HabitLog`）
+- [x] Habit Model 建立（`Habit` + `HabitLog` + `FreezeCards`）
 - [x] Task Model 建立（簡化版 Kanban）
-- [x] Habit CRUD API（6 個端點）
+- [x] Habit CRUD API（7 個端點，含凍結卡）
 - [x] Task CRUD API（5 個端點）
 - [x] Database Migration（已註冊到 main.go）
 - [x] API 路由註冊（`/api/lifeos`）
+- [x] Streak 計算邏輯（支援 Done + Frozen 狀態）
+- [x] 凍結卡功能 (Freeze Cards)：後端耗用 + 前端 UI
+- [x] 打卡完成動畫（CSS Pop 動畫）
+- [x] Skincare 模組（傳完整週期機制 + 「等候期」延遲處理）
+- [x] Reminder 提醒系統（Discord Webhook）
+- [x] 前端 Habit Tracker UI（含 Heatmap）
 
 ### ⚠️ 與原規劃差異
 | 原規劃 | 當前實作 | 狀態 |
@@ -244,11 +262,9 @@ database.DB.AutoMigrate(
 
 ### 🚧 進行中
 - [ ] Task Model 重構為 F.L.O.W. 版本
-- [ ] 前端 Habit Tracker UI
-- [ ] 前端 Todo Board UI
+- [ ] 前端 Todo Board UI 優化
 - [ ] War Room Dashboard（跨模組整合）
 - [ ] F.L.O.W. 統計視覺化
-- [ ] 習慣 Streak 計算邏輯
 
 ### 📝 待規劃
 - [ ] 時間追蹤功能
@@ -258,4 +274,26 @@ database.DB.AutoMigrate(
 
 ---
 
-*最後更新：2026-02-06*
+## 7. Skincare 模組 (2026-02-24)
+
+### 功能概述
+依據生理週期提供個人化護膚建議。
+
+### 核心邏輯
+- 支援 5 個週期階段：`menstrual` / `follicular` / `ovulation` / `luteal` / `waiting`
+- `waiting` 階段：當週期天數超過預設週期長度時觸發，表示經期延遲
+- 前端提供「確認經期開始」按鈕，允許手動重設週期起始日
+
+### API 端點
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/skincare/cycle` | 獲取週期設定 |
+| `PUT` | `/skincare/cycle` | 更新週期設定 |
+| `GET` | `/skincare/today` | 今日護膚建議 |
+| `GET` | `/skincare/week` | 本週護膚建議 |
+| `GET` | `/skincare/schedule` | 獲取排程規則 |
+| `PUT` | `/skincare/schedule` | 更新排程規則 |
+
+---
+
+*最後更新：2026-02-24*

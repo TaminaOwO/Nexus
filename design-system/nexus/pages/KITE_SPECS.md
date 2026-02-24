@@ -3,6 +3,7 @@
 > **模組路由**：`/kite`
 > **資料表前綴**：`kite_` (建議)
 > **狀態**：✅ 完成
+> **最後更新**：2026-02-24
 
 ---
 
@@ -51,30 +52,32 @@ type StructureType = "EASY_RISE" | "EASY_FALL" | "BOUNDARY";
 
 ## 2. 策略系統 (Strategy)
 
-### OFFICE 🏢 上班族型 - 動能追價
+### OFFICE 上班族型 - 動能追價
 
+**視覺識別**：`BriefcaseIcon` (SVG) + 紫色系
 **適用條件**：Gate = GREEN / Structure = EASY_RISE
 **核心邏輯**：追漲動能股，快進快出
 
-| 子策略 | 代碼 | 觸發條件 | 操作方式 |
-|--------|------|----------|----------|
-| 週線強勢 | `STRONG_WEEKLY` | 週線 MACD 金叉 + 量增 | 追漲買入 |
-| 週趨勢 | `WEEKLY_TREND` | 多頭排列 + 拉回不破支撐 | 買拉回 |
+| 子策略 | 代碼 | 圖示 | 觸發條件 | 操作方式 |
+|--------|------|------|----------|----------|
+| 週線強勢 | `STRONG_WEEKLY` | `ZapIcon` | 週線 MACD 金叉 + 量增 | 追漲買入 |
+| 週趨勢 | `WEEKLY_TREND` | `ActivityIcon` | 多頭排列 + 拉回不破支撐 | 買拉回 |
 
 **CSS 識別**：
 ```css
 --office-primary: #6366f1; /* 紫色系 */
 ```
 
-### BOSS 🛡️ 老闆型 - 價值佈局
+### BOSS 老闆型 - 價值佈局
 
+**視覺識別**：`ShieldIcon` (SVG) + 金色系
 **適用條件**：Gate = YELLOW/RED / Structure ≠ EASY_RISE
 **核心邏輯**：逢低佈局價值股，分批建倉
 
-| 子策略 | 代碼 | 觸發條件 | 操作方式 |
-|--------|------|----------|----------|
-| 週拉回 | `WEEKLY_PULLBACK` | 週線回測支撐 + RSI < 30 | 分批承接 |
-| 廉價收購 | `CHEAP_ACQUISITION` | 低本益比 / 高殖利率 | 長期持有 |
+| 子策略 | 代碼 | 圖示 | 觸發條件 | 操作方式 |
+|--------|------|------|----------|----------|
+| 週拉回 | `WEEKLY_PULLBACK` | `RotateCcwIcon` | 週線回測支撐 + RSI < 30 | 分批承接 |
+| 廉價收購 | `CHEAP_ACQUISITION` | `TagIcon` | 低本益比 / 高殖利率 | 長期持有 |
 
 **CSS 識別**：
 ```css
@@ -143,9 +146,10 @@ interface MACDResult {
 |------|------|------|
 | `WindCockpit` | `WindCockpit.tsx` | 風型記錄 + 結構顯示 + 門燈 |
 | `StockInspector` | `StockInspector.tsx` | 個股分析 + K線圖 + 策略診斷 |
-| `StockChart` | `StockChart.tsx` | K線圖表 (日/週/月) |
-| `Watchlist` | `Watchlist.tsx` | 觀察清單管理 |
-| `TradeJournal` | `TradeJournal.tsx` | 進行中交易 |
+| `StockChart` | `StockChart.tsx` | K線圖表 (日/週/月) + 關閉按鈕(`XIcon`) |
+| `StrategyChecklist` | `StrategyChecklist.tsx` | 策略條件清單 + SVG 子策略圖示 |
+| `Watchlist` | `Watchlist.tsx` | 觀察清單管理 + SVG 策略/動作圖示 |
+| `TradeJournal` | `TradeJournal.tsx` | 進行中交易 + SVG 策略圖示 |
 | `TradeHistory` | `TradeHistory.tsx` | 歷史績效 |
 
 ---
@@ -226,6 +230,7 @@ POST /api/kite/test-webhook
 ### 立即處理
 - [x] **Wind 持久化**：確保風型記錄存入 `WindRecord` 表格 ✅
 - [x] **Discord 通知系統**：停損/停利/策略規則警報 ✅
+- [x] **SVG Icon 專業化**：全面替換 Emoji 為 SVG 圖示元件 ✅
 - [ ] **MACD 精度**：修正 `calculateMACDDays` 誤差
 - [ ] **週趨勢邏輯**：DIF 斜率判斷
 
@@ -242,6 +247,26 @@ POST /api/kite/test-webhook
 ### K 線圖
 - 手機版需優化觸控縮放
 - 橫屏模式支援
+
+### Icon 系統 (2026-02-24 已完成)
+
+所有策略和動作圖示已從 Emoji 遷移至專業 SVG 元件（定義於 `src/components/Icons.tsx`）：
+
+| 用途 | 舊圖示 | 新圖示 (SVG) |
+|------|--------|---------------|
+| OFFICE 策略 | 🏢 / `IconCompany` | `BriefcaseIcon` |
+| BOSS 策略 | 🛡️ / `IconBOSS` | `ShieldIcon` |
+| 週線強勢 | Emoji | `ZapIcon` |
+| 週趨勢 | Emoji | `ActivityIcon` |
+| 週拉回 | Emoji | `RotateCcwIcon` |
+| 廉價收購 | Emoji | `TagIcon` |
+| 進場按鈕 | Emoji | `RocketIcon` / `LockIcon` |
+| 刪除按鈕 | `×` | `TrashIcon` |
+| 關閉按鈕 | `×` | `XIcon` |
+| 備註欄位 | 📝 | `BookOpenIcon` |
+| 價格欄位 | 💰 | `DollarSignIcon` |
+| 條件通過 | ✅ | `CheckCircleIcon` |
+| 條件未通過 | ❌ | `XCircleIcon` |
 
 ### 策略標籤
 ```css
@@ -264,4 +289,4 @@ POST /api/kite/test-webhook
 
 ---
 
-*最後更新：2026-02-06*
+*最後更新：2026-02-24*

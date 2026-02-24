@@ -6,6 +6,7 @@ export interface Habit {
   target_streak: number;
   icon: string;
   color: string;
+  freeze_cards: number;
   created_at: string;
 }
 
@@ -13,7 +14,7 @@ export interface HabitLog {
   id: string;
   habit_id: string;
   date: string; // YYYY-MM-DD
-  status: "Done" | "Skipped" | "Missed";
+  status: "Done" | "Skipped" | "Missed" | "Frozen";
   created_at: string;
 }
 
@@ -117,7 +118,7 @@ export interface SkincareStep {
 
 export interface SkincareRoutine {
   cycle_day: number;
-  phase: "menstrual" | "follicular" | "ovulation" | "luteal";
+  phase: "menstrual" | "follicular" | "ovulation" | "luteal" | "waiting";
   phase_label: string;
   mode: string;
   day_of_week: string;

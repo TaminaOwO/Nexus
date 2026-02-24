@@ -30,6 +30,7 @@ func CreateHabit(c *gin.Context) {
 		Name:         req.Name,
 		Frequency:    req.Frequency,
 		TargetStreak: req.TargetStreak,
+		FreezeCards:  req.FreezeCards,
 		Icon:         req.Icon,
 		Color:        req.Color,
 		CreatedAt:    time.Now(),
@@ -66,6 +67,9 @@ func UpdateHabit(c *gin.Context) {
 	}
 	if req.TargetStreak > 0 {
 		habit.TargetStreak = req.TargetStreak
+	}
+	if req.FreezeCards >= 0 {
+		habit.FreezeCards = req.FreezeCards
 	}
 	if req.Icon != "" {
 		habit.Icon = req.Icon
@@ -138,4 +142,48 @@ func CheckHabit(c *gin.Context) {
 
 	database.DB.Create(&log)
 	c.JSON(http.StatusCreated, log)
+}
+
+// FreezeHabit - POST /api/lifeos/habits/:id/freeze (使用凍結卡)
+func FreezeHabit(c *gin.Context) {
+	habitID := c.Param("id")
+
+	var req struct {
+		Date string `json:"date" binding:"required"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var habit model.Habit
+	if err := database.DB.First(&habit, "id = ?", habitID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Habit not found"})
+		return
+	}
+
+	if habit.FreezeCards <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No freeze cards available"})
+		return
+	}
+
+	// 扣除凍結卡
+	habit.FreezeCards--
+	database.DB.Save(&habit)
+
+	// 新增凍結打卡記錄
+	log := model.HabitLog{
+		ID:        uuid.New().String(),
+		HabitID:   habitID,
+		Date:      req.Date,
+		Status:    "Frozen",
+		CreatedAt: time.Now(),
+	}
+
+	database.DB.Create(&log)
+	c.JSON(http.StatusOK, gin.H{
+		"message":      "Habit frozen",
+		"log":          log,
+		"freeze_cards": habit.FreezeCards,
+	})
 }

@@ -8,8 +8,9 @@ import (
 type Habit struct {
 	ID           string    `gorm:"primaryKey" json:"id"`
 	Name         string    `json:"name"`
-	Frequency    string    `json:"frequency"`      // Daily / Weekly
+	Frequency    string    `json:"frequency"` // Daily / Weekly
 	TargetStreak int       `json:"target_streak"`
+	FreezeCards  int       `json:"freeze_cards"` // Number of protective cards
 	Icon         string    `json:"icon"`
 	Color        string    `json:"color"`
 	CreatedAt    time.Time `json:"created_at"`
@@ -19,8 +20,8 @@ type Habit struct {
 type HabitLog struct {
 	ID        string    `gorm:"primaryKey" json:"id"`
 	HabitID   string    `json:"habit_id"`
-	Date      string    `json:"date"`     // YYYY-MM-DD
-	Status    string    `json:"status"`   // Done / Skipped / Missed
+	Date      string    `json:"date"`   // YYYY-MM-DD
+	Status    string    `json:"status"` // Done / Skipped / Missed
 	CreatedAt time.Time `json:"created_at"`
 }
 
@@ -29,6 +30,7 @@ type CreateHabitRequest struct {
 	Name         string `json:"name" binding:"required"`
 	Frequency    string `json:"frequency" binding:"required"`
 	TargetStreak int    `json:"target_streak"`
+	FreezeCards  int    `json:"freeze_cards"`
 	Icon         string `json:"icon"`
 	Color        string `json:"color"`
 }
@@ -37,6 +39,7 @@ type CreateHabitRequest struct {
 type UpdateHabitRequest struct {
 	Name         string `json:"name"`
 	TargetStreak int    `json:"target_streak"`
+	FreezeCards  int    `json:"freeze_cards"`
 	Icon         string `json:"icon"`
 	Color        string `json:"color"`
 }

@@ -1,6 +1,19 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { IconBOSS, IconCompany } from "../../../components/HandDrawnIcons";
-import { AlertTriangleIcon, CheckCircleIcon, RefreshIcon, PortfolioManagerIcon, PiggyBankIcon, ChartLineIcon, ChartCandlestickIcon, MailboxIcon } from "../../../components/Icons";
+import {
+    AlertTriangleIcon,
+    CheckCircleIcon,
+    RefreshIcon,
+    PortfolioManagerIcon,
+    PiggyBankIcon,
+    ChartLineIcon,
+    ChartCandlestickIcon,
+    MailboxIcon,
+    BriefcaseIcon,
+    ShieldIcon,
+    TrashIcon,
+    DollarSignIcon,
+    BookOpenIcon
+} from "../../../components/Icons";
 import "./TradeJournal.css";
 
 interface StrategySnapshot {
@@ -273,7 +286,7 @@ export function TradeJournal() {
                                 <div className="settle-details">
                                     <span className="symbol">{settleTarget.symbol}</span>
                                     <span className={`strategy-tag ${settleTarget.strategy.toLowerCase()}`}>
-                                        {settleTarget.strategy === "BOSS" ? <IconBOSS className="w-4 h-4 inline mr-1" /> : <IconCompany className="w-4 h-4 inline mr-1" />} {settleTarget.strategy}
+                                        {settleTarget.strategy === "BOSS" ? <ShieldIcon size={16} style={{ marginRight: '4px' }} /> : <BriefcaseIcon size={16} style={{ marginRight: '4px' }} />} {settleTarget.strategy}
                                     </span>
                                 </div>
                             </div>
@@ -294,7 +307,7 @@ export function TradeJournal() {
                             </div>
 
                             <div className="form-group">
-                                <label>💰 出場價 Exit Price</label>
+                                <label><DollarSignIcon size={16} /> 出場價 Exit Price</label>
                                 <input
                                     type="number"
                                     step="0.01"
@@ -310,7 +323,7 @@ export function TradeJournal() {
                             </div>
 
                             <div className="form-group">
-                                <label>📝 備註 Notes</label>
+                                <label><BookOpenIcon size={16} /> 備註 Notes</label>
                                 <textarea
                                     rows={2}
                                     value={settleForm.exitNotes}
@@ -397,7 +410,7 @@ export function TradeJournal() {
                             <div className="holding-details">
                                 <div className="detail-row">
                                     <span className="strategy-badge">
-                                        {holding.strategy === "BOSS" ? <IconBOSS className="w-4 h-4 inline mr-1" /> : <IconCompany className="w-4 h-4 inline mr-1" />}
+                                        {holding.strategy === "BOSS" ? <ShieldIcon size={14} style={{ marginRight: '4px' }} /> : <BriefcaseIcon size={14} style={{ marginRight: '4px' }} />}
                                         {holding.strategy} - {holding.sub_strategy.replace(/_/g, " ")}
                                     </span>
                                     <span className="days-held">{holding.days_held}天</span>
@@ -432,7 +445,7 @@ export function TradeJournal() {
                                     onClick={() => deleteTrade(holding)}
                                     title="刪除 Delete"
                                 >
-                                    ×
+                                    <TrashIcon size={16} />
                                 </button>
                             </div>
                         </div>

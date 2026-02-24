@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { createChart, IChartApi, ColorType } from "lightweight-charts";
 import { QuoteData, StructureType, SubStrategyType, WindType } from "../types";
 import { StrategyChecklist } from "./StrategyChecklist";
+import { XIcon } from "../../../components/Icons";
 import "./StockChart.css";
 
 const API_BASE = "/api/kite";
@@ -363,7 +364,9 @@ export function StockChart({
                             </button>
                         </div>
                     </div>
-                    <button className="close-btn" onClick={onClose}>×</button>
+                    <button className="close-btn" onClick={onClose}>
+                        <XIcon size={24} />
+                    </button>
                 </div>
 
                 <div className="chart-content-row">

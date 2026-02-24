@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchHabits, fetchHabitLogs, checkHabit, createHabit, updateHabit, deleteHabit } from "../api";
+import { fetchHabits, fetchHabitLogs, checkHabit, createHabit, updateHabit, deleteHabit, freezeHabit } from "../api";
 import type { Habit, HabitLog } from "../types";
 import { HabitHeatmap } from "./HabitHeatmap";
 import "./HabitTracker.css";
@@ -25,6 +25,7 @@ export function HabitTracker({ compact = false }: { compact?: boolean }) {
         name: "",
         frequency: "Daily",
         target_streak: 21,
+        freeze_cards: 0,
         icon: "",
         color: "#CC7A60",
     });
@@ -58,7 +59,7 @@ export function HabitTracker({ compact = false }: { compact?: boolean }) {
     function calculateStreak(habitId: string): number {
         const habitLogs = logs[habitId] || [];
         const sortedLogs = habitLogs
-            .filter((log) => log.status === "Done")
+            .filter((log) => log.status === "Done" || log.status === "Frozen")
             .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
         if (sortedLogs.length === 0) return 0;
@@ -107,11 +108,24 @@ export function HabitTracker({ compact = false }: { compact?: boolean }) {
         }
     }
 
+    async function handleUseFreezeCard(habitId: string) {
+        const today = new Date().toISOString().split("T")[0];
+        try {
+            setSaving(true);
+            await freezeHabit(habitId, today);
+            await loadHabits();
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Failed to use freeze card");
+        } finally {
+            setSaving(false);
+        }
+    }
+
     // ========== CRUD Handlers ==========
 
     function openCreateHabit() {
         setEditingHabit(null);
-        setHabitForm({ name: "", frequency: "Daily", target_streak: 21, icon: "", color: "#CC7A60" });
+        setHabitForm({ name: "", frequency: "Daily", target_streak: 21, freeze_cards: 0, icon: "", color: "#CC7A60" });
         setShowHabitModal(true);
     }
 
@@ -121,6 +135,7 @@ export function HabitTracker({ compact = false }: { compact?: boolean }) {
             name: habit.name,
             frequency: habit.frequency,
             target_streak: habit.target_streak,
+            freeze_cards: habit.freeze_cards,
             icon: habit.icon,
             color: habit.color,
         });
@@ -191,10 +206,25 @@ export function HabitTracker({ compact = false }: { compact?: boolean }) {
                                 </span>
                                 <span className="habit-streak">
                                     {streak > 0 && "🔥 "}{streak} day streak
+                                    {habit.freeze_cards > 0 && (
+                                        <span className="freeze-badge" title={`${habit.freeze_cards} freeze cards left`}>
+                                            ❄️ {habit.freeze_cards}
+                                        </span>
+                                    )}
                                 </span>
                             </div>
                             {!compact && (
                                 <div className="habit-actions">
+                                    {!completed && habit.freeze_cards > 0 && (
+                                        <button
+                                            className="habit-action-btn freeze"
+                                            onClick={(e) => { e.stopPropagation(); handleUseFreezeCard(habit.id); }}
+                                            title="使用凍結卡 Use Freeze Card"
+                                            disabled={saving}
+                                        >
+                                            ❄️
+                                        </button>
+                                    )}
                                     <button
                                         className="habit-action-btn edit"
                                         onClick={(e) => { e.stopPropagation(); openEditHabit(habit); }}
@@ -270,6 +300,16 @@ export function HabitTracker({ compact = false }: { compact?: boolean }) {
                                         value={habitForm.target_streak}
                                         onChange={(e) => setHabitForm({ ...habitForm, target_streak: parseInt(e.target.value) || 0 })}
                                         min={1}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>凍結卡數量 Freeze Cards</label>
+                                    <input
+                                        type="number"
+                                        className="modern-input"
+                                        value={habitForm.freeze_cards}
+                                        onChange={(e) => setHabitForm({ ...habitForm, freeze_cards: parseInt(e.target.value) || 0 })}
+                                        min={0}
                                     />
                                 </div>
                             </div>

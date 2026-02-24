@@ -1,7 +1,7 @@
 # Nexus Project TODO List
 
-> **Last Updated**: 2026-01-23
-> **當前焦點**: Kite 模組優化完成 → LifeOS 核心 → ChoiceFit 初始化
+> **Last Updated**: 2026-02-24
+> **當前焦點**: Kite UI 專業化完成 → LifeOS 凍結卡完成 → ChoiceFit & RBAC 進階實作
 
 ---
 
@@ -32,12 +32,12 @@
   - [x] Modal 滾動優化
   - [x] 響應式間距調整
 
-### Kite 模組 - UI/UX 修復 (2026-01-23)
-- [x] History 匯入表單寬度溢出修復
-- [x] 統一策略 Icon 顯示
-- [x] Watchlist BOSS 策略 YOY>30% 預設勾選
-- [x] Active 平倉彈窗垂直居中修復
-- [x] Wind 歷史循環 API 持久化（已驗證）
+### Kite & LifeOS 核心增強 (2026-02-24)
+- [x] **Kite UI SVG 專業化**：全面替換 Emoji 為專業 SVG Icons (Watchlist, Journal, Chart)
+- [x] **Skincare 延期邏輯修復**：引入「等候期」狀態，支援經期延遲時的手動重設
+- [x] **LifeOS 凍結卡 (Freeze Cards)**：後端耗用邏輯 + 前端連勝保護 (Streak Protection)
+- [x] **Habit Tracker 後端持久化**：完成 Habit CRUD API 與連勝計算邏輯
+- [x] **打卡反饋動畫**：增強打卡完成時的視覺「Pop」反饋感
 
 ### 基礎建設
 - [x] Go + Gin 後端架構
@@ -47,16 +47,10 @@
 
 ---
 
-## 🔴 立即處理 (Immediate)
-
-### Kite UI 改進
-- [ ] **替換原生 Emoji 為 SVG Icon**：統一視覺風格，支持自訂顏色
+### 待處理功能
+- [ ] **Todo Board CRUD API**：建立 Task Model 與看板 API
 - [ ] **MACD 精度**：修正 `calculateMACDDays` 的 off-by-one 錯誤（如有）
-- [ ] **週趨勢邏輯**：改用 MACD DIF（藍線）斜率判斷，避免「週三假訊號」（如需）
-
-### LifeOS 後端整合
-- [ ] Habit Tracker 資料持久化
-- [ ] Todo Board CRUD API
+- [ ] **週趨勢邏輯**：改用 MACD DIF（藍線）斜率判斷，避免「週三假訊號」
 
 ---
 
@@ -78,10 +72,10 @@
   - [x] OFFICE 策略批次建議（3-5 批）- 已在轉換時自動設定
 
 ### LifeOS 模組 MVP
-- [ ] **Habit Tracker 後端**：
-  - [ ] `Habit` Model 建立
-  - [ ] CRUD API 實作
-  - [ ] Streak 計算邏輯
+- [x] **Habit Tracker 後端**：
+  - [x] `Habit` Model 建立 (含 FreezeCards)
+  - [x] CRUD API 實作
+  - [x] Streak 計算邏輯 (支援 Frozen 狀態)
 - [ ] **Todo Board 後端**：
   - [ ] `Task` Model 建立
   - [ ] Kanban 狀態管理 API

@@ -35,3 +35,5 @@ tsconfig.tsbuildinfo
 # SQLite Database
 *.db
 nexus.db
+.spectra/
+openspec/.vector-search.db

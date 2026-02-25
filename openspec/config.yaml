@@ -1,21 +1,60 @@
 schema: spec-driven
 locale: tw
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  # Nexus Project — Monorepo 個人生產力平台
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+  ## Tech Stack
+  - Backend: Go 1.21+ / Gin framework / GORM ORM / SQLite
+  - Frontend: React 18 + TypeScript / Vite / Vanilla CSS
+  - Deployment: Docker / Railway / SQLite Volume persistence
+  - Notifications: Discord Webhook (shared pkg/discord)
+  - External APIs: Fugle (K-line), TWSE (quotes)
+
+  ## Monorepo Architecture
+  - Go modules: `internal/modules/{kite,lifeos,choicefit}/` (model / handler / service)
+  - React apps: `src/apps/{kite,lifeos}/`
+  - Shared Go: `pkg/` (e.g. pkg/discord)
+  - Shared React: `src/components/`, `src/shared/`
+  - Design docs: `design-system/nexus/`
+  - Database: `/app/data/nexus.db` (production), `./nexus.db` (local)
+  - DB migration: `database.DB.AutoMigrate()` in `cmd/server/main.go`
+
+  ## Coding Conventions (Go)
+  - Module isolation: modules MUST NOT import each other; share via `/pkg` only
+  - New entities MUST be registered in AutoMigrate
+  - Service layer handles business logic; Handler layer handles HTTP parsing
+  - Use `gorm:"primaryKey"` with UUID strings
+
+  ## Coding Conventions (React / TypeScript)
+  - Module isolation: apps MUST NOT import from sibling apps; share via `/src/components` or `/src/shared`
+  - Icons: use SVG components from `src/components/Icons.tsx` (no raw Emoji in production)
+  - Mobile First: 44x44px touch targets, 16px min font-size (iOS zoom prevention)
+  - Responsive breakpoints: 640px, 380px
+  - CSS variables for theming (e.g. `--office-primary`, `--boss-primary`)
+
+  ## Design Philosophy
+  - Kite module: 溫暖、柔和、與 LifeOS 風格統一
+  - LifeOS module: 溫暖、手帳、個人、柔和 Soft UI
+  - Fonts: Caveat (titles/numbers), Quicksand (body/buttons)
+  - Discipline > Analysis: 優先守門員邏輯，不追花俏圖表
+
+  ## Active Modules
+  - **Kite** (`/kite`): 股票交易（Wind/Structure/Gate + OFFICE/BOSS 策略）
+  - **LifeOS** (`/admin`): 生活管理（Habit Tracker, Todo Board, War Room, Skincare）
+  - **ChoiceFit** (planned): 學員管理系統
+
+rules:
+  proposal:
+    - 提案需說明影響的模組（Kite / LifeOS / Shared）
+    - 涉及 DB schema 變更時，需列出 migration 步驟
+    - 跨模組功能必須透過 API 聚合，禁止直接 import
+  tasks:
+    - 每個 task 需標明影響的檔案路徑
+    - 後端變更需確認 `go build ./cmd/server` 通過
+    - 前端變更需確認 `npm run build` 無錯誤
+    - 新增 Entity 必須同步更新 AutoMigrate
+  spec:
+    - Spec 必須使用繁體中文撰寫
+    - 需包含資料模型 (Go struct) 和 API 端點定義
+    - UI 相關 spec 需標明 Mobile First 響應式需求

@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { createChart, IChartApi, ColorType } from "lightweight-charts";
 import { QuoteData, StructureType, SubStrategyType, WindType } from "../types";
 import { StrategyChecklist } from "./StrategyChecklist";
-import { XIcon } from "../../../components/Icons";
 import "./StockChart.css";
 
 const API_BASE = "/api/kite";
@@ -235,7 +234,7 @@ export function StockChart({
         });
 
         const histogramSeries = macdChart.addHistogramSeries({
-            color: "#26a69a",
+            color: "#ef4444",
         });
 
         // Set data
@@ -283,7 +282,7 @@ export function StockChart({
         const histogramData = data.candles.map((c, i) => ({
             time: c.date as string,
             value: data.macd.histogram[i] || 0,
-            color: (data.macd.histogram[i] || 0) >= 0 ? "#26a69a" : "#ef5350",
+            color: (data.macd.histogram[i] || 0) >= 0 ? "#ef4444" : "#22c55e",
         }));
 
         // Set all data
@@ -364,8 +363,8 @@ export function StockChart({
                             </button>
                         </div>
                     </div>
-                    <button className="close-btn" onClick={onClose}>
-                        <XIcon size={24} />
+                    <button className="close-btn" onClick={onClose} style={{ color: 'var(--text-primary, #d1d4dc)', fontSize: '1.5rem', lineHeight: 1 }}>
+                        ✕
                     </button>
                 </div>
 
@@ -387,7 +386,7 @@ export function StockChart({
                                 <div className="macd-legend">
                                     <div className="legend-item macd" style={{ color: '#3B82F6' }}>● MACD</div>
                                     <div className="legend-item signal" style={{ color: '#f59e0b' }}>● Signal</div>
-                                    <div className="legend-item histogram" style={{ color: '#26a69a' }}>■ Histogram</div>
+                                    <div className="legend-item histogram" style={{ color: '#ef4444' }}>■ Histogram</div>
                                 </div>
                                 <div className="macd-chart-area" ref={macdContainerRef} />
                             </>

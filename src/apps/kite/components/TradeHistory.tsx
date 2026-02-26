@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { IconBOSS, IconCompany } from "../../../components/HandDrawnIcons";
-import { AlertTriangleIcon, XIcon, ChartLineIcon, TargetIcon, DollarSignIcon, BookOpenIcon, ChartCandlestickIcon, TrendingUpIcon } from "../../../components/Icons";
+import { AlertTriangleIcon, ChartLineIcon, TargetIcon, DollarSignIcon, BookOpenIcon, ChartCandlestickIcon, TrendingUpIcon } from "../../../components/Icons";
 import "./TradeHistory.css";
 
 interface ClosedTrade {
@@ -272,18 +272,21 @@ export function TradeHistory() {
                                 style={{
                                     width: '2.5rem',
                                     height: '2.5rem',
+                                    minWidth: '2.5rem',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    background: '#F7F8FA',
-                                    border: 'none',
+                                    background: '#E8EAED',
+                                    border: '1px solid #DEE2E6',
                                     borderRadius: '50%',
-                                    color: '#64748B',
+                                    color: '#374151',
                                     fontSize: '1.25rem',
+                                    lineHeight: 1,
                                     cursor: 'pointer',
+                                    flexShrink: 0,
                                 }}
                             >
-                                <XIcon size={20} />
+                                ✕
                             </button>
                         </div>
                         <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>

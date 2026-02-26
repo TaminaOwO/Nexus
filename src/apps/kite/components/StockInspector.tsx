@@ -12,7 +12,7 @@ import {
 } from "../types";
 import { getStrategyVerdict } from "../utils/strategyDiagnosis";
 import { IconCompany, IconBOSS } from "../../../components/HandDrawnIcons";
-import { StockInspectorIcon, CheckboxIcon, SearchIcon, BookOpenIcon, TrendingUpIcon, LoaderIcon, DollarSignIcon, TagIcon, StrongWeekIcon, WeeklyPullbackIcon, WeeklyTrendIcon, TargetIcon, StopCircleIcon, CheckCircleIcon, AlertTriangleIcon, XCircleIcon, SpellCheckIcon, SaveIcon, BellRingIcon, XIcon, TrendingDownIcon, CycleIcon } from "../../../components/Icons";
+import { StockInspectorIcon, CheckboxIcon, SearchIcon, BookOpenIcon, TrendingUpIcon, LoaderIcon, DollarSignIcon, TagIcon, StrongWeekIcon, WeeklyPullbackIcon, WeeklyTrendIcon, TargetIcon, StopCircleIcon, CheckCircleIcon, AlertTriangleIcon, XCircleIcon, SpellCheckIcon, SaveIcon, BellRingIcon, TrendingDownIcon, CycleIcon } from "../../../components/Icons";
 import { StrategyChecklist } from "./StrategyChecklist";
 import { StockChart } from "./StockChart";
 import "./StockInspector.css";
@@ -270,8 +270,8 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                             <h3>
                                 <BookOpenIcon size={20} /> 記錄交易 Log Trade
                             </h3>
-                            <button className="si-modal-close" onClick={() => setShowTradeModal(false)}>
-                                <XIcon size={20} />
+                            <button className="si-modal-close" onClick={() => setShowTradeModal(false)} style={{ color: '#374151', fontSize: '1.25rem', lineHeight: 1 }}>
+                                ✕
                             </button>
                         </div>
 

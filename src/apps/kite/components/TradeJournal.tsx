@@ -11,7 +11,6 @@ import {
     TrashIcon,
     DollarSignIcon,
     BookOpenIcon,
-    XIcon,
 } from "../../../components/Icons";
 import { IconBOSS, IconCompany } from "../../../components/HandDrawnIcons";
 import "./TradeJournal.css";
@@ -245,8 +244,8 @@ export function TradeJournal() {
                     <div className="alert-modal" onClick={(e) => e.stopPropagation()}>
                         <div className="alert-modal-header">
                             <h3><AlertTriangleIcon size={20} /> Action Required!</h3>
-                            <button className="modal-close" onClick={() => setShowAlertModal(false)}>
-                                <XIcon size={20} />
+                            <button className="modal-close" onClick={() => setShowAlertModal(false)} style={{ color: '#374151', fontSize: '1.25rem', lineHeight: 1 }}>
+                                ✕
                             </button>
                         </div>
                         <div className="alert-modal-body">
@@ -280,8 +279,8 @@ export function TradeJournal() {
                     <div className="settle-modal" onClick={(e) => e.stopPropagation()}>
                         <div className="modal-header">
                             <h3><CheckCircleIcon size={20} /> 平倉結算 Settle Trade</h3>
-                            <button className="modal-close" onClick={() => setShowSettleModal(false)}>
-                                <XIcon size={20} />
+                            <button className="modal-close" onClick={() => setShowSettleModal(false)} style={{ color: '#374151', fontSize: '1.25rem', lineHeight: 1 }}>
+                                ✕
                             </button>
                         </div>
                         <div className="modal-body">

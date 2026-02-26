@@ -1323,8 +1323,11 @@
     border-radius: 1rem;
     width: 100%;
     max-width: 520px;
-    max-height: 90vh;
-    overflow-y: auto;
+    max-height: 85vh;
+    max-height: 85dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
 }
 
@@ -1334,6 +1337,7 @@
     align-items: center;
     padding: 1.25rem 1.5rem;
     border-bottom: 1px solid #DEE2E6;
+    flex-shrink: 0;
 }
 
 .si-modal-header h3 {
@@ -1344,21 +1348,25 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .si-modal-close {
     width: 2.5rem;
     height: 2.5rem;
+    min-width: 2.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #F7F8FA;
-    border: none;
+    background: #E8EAED;
+    border: 1px solid #DEE2E6;
     border-radius: 50%;
     color: #64748B;
     font-size: 1.25rem;
     cursor: pointer;
     transition: all 0.2s ease;
+    flex-shrink: 0;
 }
 
 .si-modal-close:hover {
@@ -1371,11 +1379,17 @@
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    flex: 1;
+    min-height: 0;
 }
 
 .si-modal-footer {
     padding: 1.25rem 1.5rem;
+    padding-bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
     border-top: 1px solid #DEE2E6;
+    flex-shrink: 0;
 }
 
 .si-modal-save-btn {

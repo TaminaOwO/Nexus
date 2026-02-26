@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createChart, IChartApi, ColorType } from "lightweight-charts";
 import { QuoteData, StructureType, SubStrategyType, WindType } from "../types";
+import { calculateMacdStatus, MACD_STATUS_COLORS, MacdTrendStatus } from "../utils/macdUtils";
 import { StrategyChecklist } from "./StrategyChecklist";
 import "./StockChart.css";
 
@@ -59,6 +60,12 @@ export function StockChart({
     const [error, setError] = useState<string | null>(null);
     const [data, setData] = useState<ChartData | null>(null);
     const [timeframe, setTimeframe] = useState<Timeframe>("D");
+
+    const latestMacdStatus = useMemo((): MacdTrendStatus | null => {
+        if (!data || data.macd.histogram.length === 0) return null;
+        const statuses = calculateMacdStatus(data.macd.histogram);
+        return statuses[statuses.length - 1] ?? null;
+    }, [data]);
 
     // Fetch chart data
     useEffect(() => {
@@ -279,11 +286,15 @@ export function StockChart({
             value: data.macd.signal[i] || 0,
         }));
 
-        const histogramData = data.candles.map((c, i) => ({
-            time: c.date as string,
-            value: data.macd.histogram[i] || 0,
-            color: (data.macd.histogram[i] || 0) >= 0 ? "#ef4444" : "#22c55e",
-        }));
+        const macdStatuses = calculateMacdStatus(data.macd.histogram);
+        const histogramData = data.candles.map((c, i) => {
+            const h = data.macd.histogram[i] || 0;
+            const status = macdStatuses[i];
+            const color = status
+                ? MACD_STATUS_COLORS[status]
+                : h >= 0 ? '#ef4444' : '#22c55e';
+            return { time: c.date as string, value: h, color };
+        });
 
         // Set all data
         candleSeries.setData(candleData);
@@ -402,6 +413,7 @@ export function StockChart({
                                 subStrategy={currentSubStrategy}
                                 currentWind={currentWind || null}
                                 revenueYoyChecked={revenueYoyChecked}
+                                macdTrendStatus={latestMacdStatus}
                             />
                         </div>
                     )}

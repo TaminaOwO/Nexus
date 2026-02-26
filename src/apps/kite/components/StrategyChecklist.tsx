@@ -7,8 +7,10 @@ import {
     StrongWeekIcon,
     WeeklyTrendIcon,
     WeeklyPullbackIcon,
-    TagIcon
+    TagIcon,
+    AlertTriangleIcon,
 } from "../../../components/Icons";
+import { MacdTrendStatus } from "../utils/macdUtils";
 import "./StrategyChecklist.css";
 
 interface StrategyChecklistProps {
@@ -17,6 +19,7 @@ interface StrategyChecklistProps {
     subStrategy: SubStrategyType;
     currentWind: WindType | null;
     revenueYoyChecked: boolean;
+    macdTrendStatus?: MacdTrendStatus | null;
 }
 
 export function StrategyChecklist({
@@ -25,6 +28,7 @@ export function StrategyChecklist({
     subStrategy,
     currentWind,
     revenueYoyChecked,
+    macdTrendStatus,
 }: StrategyChecklistProps) {
     const conditions = useMemo(() =>
         getStrategyChecklist(quote, structure, subStrategy, currentWind, revenueYoyChecked),
@@ -56,6 +60,14 @@ export function StrategyChecklist({
                     style={{ width: `${status.percentage}%` }}
                 />
             </div>
+
+            {(subStrategy === 'STRONG_WEEKLY' || subStrategy === 'WEEKLY_TREND') &&
+                macdTrendStatus === 'WEAKENING_BULL' && (
+                <div className="macd-warning">
+                    <AlertTriangleIcon size={16} color="#f97316" />
+                    <span>動能衰退，不宜追價</span>
+                </div>
+            )}
 
             <div className="conditions-list">
                 {conditions.map((condition) => (

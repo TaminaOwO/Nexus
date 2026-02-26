@@ -110,6 +110,21 @@
     font-style: italic;
 }
 
+/* MACD 動能衰退警告 */
+.macd-warning {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(249, 115, 22, 0.1);
+    border: 1px solid rgba(249, 115, 22, 0.3);
+    border-radius: 0.5rem;
+    color: #f97316;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
 /* All Pass Message */
 .all-pass-message {
     margin-top: 1rem;

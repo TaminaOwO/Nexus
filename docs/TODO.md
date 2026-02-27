@@ -8,9 +8,9 @@
 
 
 ### 待處理功能
-- [ ] **Todo Board CRUD API**：建立 Task Model 與看板 API
-- [ ] **MACD 精度**：修正 `calculateMACDDays` 的 off-by-one 錯誤（如有）
-- [ ] **週趨勢邏輯**：改用 MACD DIF（藍線）斜率判斷，避免「週三假訊號」
+- [x] **Todo Board CRUD API**：建立 Task Model 與看板 API
+- [x] **MACD 精度**：修正 `calculateMACDDays` 的 off-by-one 錯誤（後端修正完成）
+- [x] **週趨勢邏輯**：改用 MACD DIF（藍線）斜率判斷，避免「週三假訊號」
 
 ---
 
@@ -19,14 +19,14 @@
 ### Kite 功能增強
 - [x] **Portfolio View 強化**：
   - [x] 即時盈虧更新（30秒自動刷新）
-  - [ ] 策略條件監控（停損/停利警示）
-- [ ] **即時通知系統**：
-  - [ ] 停損/停利觸發通知
-  - [ ] 觀察清單目標價到達通知
-  - [ ] LINE Notify / Telegram Bot 串接
-- [ ] **資料品質**：
-  - [ ] Smart Suffix Retry（.TW vs .TWO 自動偵測上市/櫃）
-  - [ ] 中文公司名稱自動抓取穩定化
+  - [x] 策略條件監控（停損/停利警示）
+- [x] **即時通知系統**：
+  - [x] 停損/停利觸發通知
+  - [x] 觀察清單目標價到達通知
+  - [x] Discord Webhook 串接
+- [x] **資料品質**：
+  - [x] Smart Suffix Retry（.TW vs .TWO 自動偵測上市/櫃）
+  - [x] 中文公司名稱自動抓取穩定化
 - [x] **策略護欄**：
   - [x] BOSS 策略批次建議（10-15 批）- 已在轉換時自動設定
   - [x] OFFICE 策略批次建議（3-5 批）- 已在轉換時自動設定
@@ -36,11 +36,11 @@
   - [x] `Habit` Model 建立 (含 FreezeCards)
   - [x] CRUD API 實作
   - [x] Streak 計算邏輯 (支援 Frozen 狀態)
-- [ ] **Todo Board 後端**：
-  - [ ] `Task` Model 建立
-  - [ ] Kanban 狀態管理 API
-- [ ] **War Room Dashboard**：
-  - [ ] 跨模組監控面板（Kite + LifeOS 指標）
+- [x] **Todo Board 後端**：
+  - [x] `Task` Model 建立
+  - [x] Kanban 狀態管理 API
+- [x] **War Room Dashboard**：
+  - [x] 跨模組監控面板（Kite + LifeOS 指標）
 
 ---
 

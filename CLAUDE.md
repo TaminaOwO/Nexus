@@ -191,6 +191,9 @@ GitHub Push → Railway 自動建置 → Docker Image → 部署
    - `docs/PRODUCT.md`（產品與架構文件）
    - `docs/TODO.md`（開發路線圖）
    - `openspec/specs/` 內的相關規格
+7. **文件同步與 TODO 閉環**：每次功能實作 (`/openspec-apply`) 完成後，必須：
+   - 立即更新 `docs/TODO.md`：將對應的開發項目從 `[ ]` 改為 `[x]`。
+   - 同步更新 `docs/PRODUCT.md` 與 `openspec/specs/` 相關規格。
 
 ---
 

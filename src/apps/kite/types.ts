@@ -41,6 +41,7 @@ export interface QuoteData {
     // MACD Data
     macd_histogram: number;
     macd_histogram_days: number; // Positive = red/bullish days, Negative = green/bearish days
+    macd_trend_status: string;   // STRONG_BULL, WEAKENING_BULL, STRONG_BEAR, WEAKENING_BEAR
     macd_weekly_trend: "UP" | "DOWN" | "FLAT";
 }
 

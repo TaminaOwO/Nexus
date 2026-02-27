@@ -27,6 +27,7 @@ type QuoteResponse struct {
 	// MACD Data
 	MacdHistogram     float64 `json:"macd_histogram"`
 	MacdHistogramDays int     `json:"macd_histogram_days"` // Positive = red days, Negative = green days
+	MacdTrendStatus   string  `json:"macd_trend_status"`   // STRONG_BULL, WEAKENING_BULL, STRONG_BEAR, WEAKENING_BEAR
 	MACDWeeklyTrend   string  `json:"macd_weekly_trend"`   // "UP", "DOWN", "FLAT"
 }
 
@@ -128,11 +129,11 @@ func calculateEMA(prices []float64, period int) []float64 {
 	return ema
 }
 
-// calculateMACD calculates MACD (12,26,9) and returns histogram + consecutive days
-// Returns: histogram value, days count (positive = red/bullish days, negative = green/bearish days)
-func calculateMACD(prices []float64) (histogram float64, days int) {
+// calculateMACD calculates MACD (12,26,9) and returns histogram + consecutive days + trend status
+// Returns: histogram value, days count (positive = red/bullish days, negative = green/bearish days), trend status
+func calculateMACD(prices []float64) (histogram float64, days int, trendStatus string) {
 	if len(prices) < 35 { // Need at least 26 + 9 days
-		return 0, 0
+		return 0, 0, ""
 	}
 
 	// Calculate EMAs
@@ -140,7 +141,7 @@ func calculateMACD(prices []float64) (histogram float64, days int) {
 	ema26 := calculateEMA(prices, 26)
 
 	if len(ema12) == 0 || len(ema26) == 0 {
-		return 0, 0
+		return 0, 0, ""
 	}
 
 	// Calculate MACD Line (EMA12 - EMA26)
@@ -154,7 +155,7 @@ func calculateMACD(prices []float64) (histogram float64, days int) {
 	signalEMA := calculateEMA(macdValues, 9)
 
 	if len(signalEMA) < 9 {
-		return 0, 0
+		return 0, 0, ""
 	}
 
 	// Calculate Histogram series
@@ -163,15 +164,32 @@ func calculateMACD(prices []float64) (histogram float64, days int) {
 		histogramSeries[i] = macdValues[i] - signalEMA[i]
 	}
 
-	// Need at least 2 entries to skip today's incomplete candle
-	if len(histogramSeries) < 10 {
-		return 0, 0
+	// Need at least 3 entries: today (skip) + yesterday + day before
+	if len(histogramSeries) < 11 {
+		return 0, 0, ""
 	}
 
 	// Get the SECOND TO LAST histogram value (skip today's incomplete candle)
 	// The last entry in the array is today's partial/intraday data
 	// We want to use yesterday's completed data for the signal
-	histogram = histogramSeries[len(histogramSeries)-2]
+	current := histogramSeries[len(histogramSeries)-2]
+	previous := histogramSeries[len(histogramSeries)-3]
+	histogram = current
+
+	// Determine trend status by comparing current vs previous histogram
+	if current >= 0 {
+		if current >= previous {
+			trendStatus = "STRONG_BULL"
+		} else {
+			trendStatus = "WEAKENING_BULL"
+		}
+	} else {
+		if current <= previous {
+			trendStatus = "STRONG_BEAR"
+		} else {
+			trendStatus = "WEAKENING_BEAR"
+		}
+	}
 
 	// Count consecutive days with same sign
 	// For positive histogram: count only strictly > 0, break on <= 0
@@ -205,7 +223,7 @@ func calculateMACD(prices []float64) (histogram float64, days int) {
 		days = -days
 	}
 
-	return histogram, days
+	return histogram, days, trendStatus
 }
 
 // calculateWeeklyTrend compares current week MACD Line (DIF) vs previous week
@@ -413,7 +431,7 @@ func GetQuote(symbol string) (*QuoteResponse, error) {
 	}
 
 	// 10. Calculate MACD (Daily)
-	macdHistogram, macdDays := calculateMACD(dailyPrices)
+	macdHistogram, macdDays, macdTrendStatus := calculateMACD(dailyPrices)
 
 	// 11. Calculate Weekly Trend
 	weeklyTrend := calculateWeeklyTrend(weeklyPrices)
@@ -437,6 +455,7 @@ func GetQuote(symbol string) (*QuoteResponse, error) {
 		CompanyName:       companyName,
 		MacdHistogram:     macdHistogram,
 		MacdHistogramDays: macdDays,
+		MacdTrendStatus:   macdTrendStatus,
 		MACDWeeklyTrend:   weeklyTrend,
 	}, nil
 }

@@ -78,6 +78,16 @@ func checkStrategyExitRules(trade model.TradeEntry, quote *QuoteResponse, daysHe
 						trade.CompanyName),
 				})
 			}
+			// Rule 4: MACD Momentum Weakening
+			if quote.MacdTrendStatus == "WEAKENING_BULL" {
+				alerts = append(alerts, Alert{
+					Type:    "STRATEGY_RULE",
+					Symbol:  trade.Symbol,
+					TradeID: trade.ID,
+					Message: fmt.Sprintf("📉 日 MACD 轉弱，停利出場: %s 紅柱縮短中",
+						trade.CompanyName),
+				})
+			}
 		}
 
 		// B. Weekly Trend (週趨勢)
@@ -99,6 +109,16 @@ func checkStrategyExitRules(trade model.TradeEntry, quote *QuoteResponse, daysHe
 					Symbol:  trade.Symbol,
 					TradeID: trade.ID,
 					Message: fmt.Sprintf("💰 週線動能轉弱: %s (Weekly MACD Fading)",
+						trade.CompanyName),
+				})
+			}
+			// Rule 3: MACD Momentum Weakening (Daily)
+			if quote.MacdTrendStatus == "WEAKENING_BULL" {
+				alerts = append(alerts, Alert{
+					Type:    "STRATEGY_RULE",
+					Symbol:  trade.Symbol,
+					TradeID: trade.ID,
+					Message: fmt.Sprintf("📉 日 MACD 轉弱，停利出場: %s 紅柱縮短中",
 						trade.CompanyName),
 				})
 			}

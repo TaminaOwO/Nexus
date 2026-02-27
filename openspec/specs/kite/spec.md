@@ -65,7 +65,6 @@ type WindRecord struct {
 - AND 系統 SHALL 提供風型歷史記錄供回顧
 
 ---
-
 ### Requirement: OFFICE 策略 - 動能追價
 
 系統 MUST 支援 OFFICE 上班族型策略，適用於 Gate = GREEN / Structure = EASY_RISE 條件下的動能追價操作。
@@ -162,7 +161,6 @@ type CycleSetting struct {
 - AND 介面 SHOULD 顯示警示訊息
 
 ---
-
 ### Requirement: BOSS 策略 - 價值佈局
 
 系統 MUST 支援 BOSS 老闆型策略，適用於 Gate = YELLOW/RED 或 Structure ≠ EASY_RISE 條件下的價值佈局操作。
@@ -183,24 +181,43 @@ type CycleSetting struct {
 - AND 系統 SHALL 設定 -10% 停損門檻
 
 ---
-
 ### Requirement: MACD 技術指標引擎
 
-系統 MUST 提供 MACD 指標計算功能，支援日/週/月三個時間框架。
+系統 MUST 提供 MACD 指標計算功能，支援日/週/月三個時間框架，並能判斷 4 種動能趨勢。
 
-```typescript
-interface MACDResult {
-  dif: number;      // 快線 - 慢線
-  macd: number;     // DIF - DEA
-  dea: number;      // DIF 的 9 日 EMA
-  histogram: number; // 柱狀圖 (MACD)
+**後端資料模型**（Go `QuoteResponse`）：
+
+```go
+type QuoteResponse struct {
+    // ... 其他欄位
+    MacdHistogram     float64 `json:"macd_histogram"`
+    MacdHistogramDays int     `json:"macd_histogram_days"`
+    MacdTrendStatus   string  `json:"macd_trend_status"`   // STRONG_BULL, WEAKENING_BULL, STRONG_BEAR, WEAKENING_BEAR
+    MACDWeeklyTrend   string  `json:"macd_weekly_trend"`
 }
 ```
 
-**實作位置**：`src/apps/kite/utils/calculateMACDDays.ts`
+**前端型別**（TypeScript）：
+
+```typescript
+type MacdTrendStatus = 'STRONG_BULL' | 'WEAKENING_BULL' | 'STRONG_BEAR' | 'WEAKENING_BEAR';
+```
+
+**色碼對應（台股紅漲綠跌慣例）**：
+| 狀態 | 說明 | 色碼 |
+|------|------|------|
+| `STRONG_BULL` | histogram > 0 且 >= 前日 | `#ef4444`（深紅） |
+| `WEAKENING_BULL` | histogram > 0 且 < 前日 | `#fca5a5`（淺紅） |
+| `STRONG_BEAR` | histogram < 0 且 <= 前日 | `#22c55e`（深綠） |
+| `WEAKENING_BEAR` | histogram < 0 且 > 前日 | `#86efac`（淺綠） |
+
+**實作位置**：
+- 後端計算 + 狀態判定：`internal/modules/kite/service/quote_service.go`（`calculateMACD()` 回傳 `trendStatus`）
+- 前端色碼常數 + K 線圖序列狀態：`src/apps/kite/utils/macdUtils.ts`
+- 前端 Quote 型別：`src/apps/kite/types.ts`（`QuoteData.macd_trend_status`）
 
 **已知問題**：
-- `calculateMACDDays` 有 off-by-one 精度問題待修正
+- `calculateMACDDays.ts` 有 off-by-one 精度問題待修正（本次不處理）
 - 週趨勢邏輯應改用 DIF（藍線）斜率判斷，避免「週三假訊號」
 
 #### Scenario: 日 K MACD 計算
@@ -215,8 +232,52 @@ interface MACDResult {
 - THEN 系統 MUST 分批取得足夠歷史資料（Fugle API 有日期範圍限制）
 - AND 系統 SHALL 正確聚合為週/月 K 資料後計算 MACD
 
----
+#### Scenario: MACD 柱狀圖視覺化
 
+- WHEN 系統在 `StockChart` 渲染 MACD 柱狀圖
+- THEN 系統 MUST 依照 `trendStatus` 顯示正確顏色
+- AND `STRONG_BULL` 顯示深紅 (#ef4444)
+- AND `WEAKENING_BULL` 顯示淺紅 (#fca5a5)
+- AND `STRONG_BEAR` 顯示深綠 (#22c55e)
+- AND `WEAKENING_BEAR` 顯示淺綠 (#86efac)
+
+#### Scenario: MACD 動能衰退警告 (OFFICE 策略防護)
+
+- WHEN 使用者查看個股診斷並評估 OFFICE 動能追價策略
+- AND 後端回傳之 `macd_trend_status` 為 `WEAKENING_BULL`
+- THEN 系統 MUST 在 `StrategyChecklist` 顯示 `AlertTriangleIcon`  與「動能衰退，不宜追價」
+- AND 系統 MUST 在 Verdict「Caution - 觀察中」卡片**內部**顯示「動能衰退中：日 MACD 紅柱連續縮短，不宜追漲。」
+- AND 系統 MUST 在 Daily MACD Days tech-card 下方顯示「▼ 動能衰退」（粉紅色）
+
+#### Scenario: MACD 動能趨勢圖示 (Dashboard tech-card)
+
+- WHEN 使用者在 StockInspector Dashboard 查看 Daily MACD Days 技術指標
+- THEN 數值顏色 MUST 依 `macd_trend_status` 對應色碼
+- AND 數值下方 SHALL 顯示趨勢圖示：
+  - `STRONG_BULL` → `▲ 動能強勁`（深紅）
+  - `WEAKENING_BULL` → `▼ 動能衰退`（粉紅）
+  - `STRONG_BEAR` → `▼ 跌勢擴張`（深綠）
+  - `WEAKENING_BEAR` → `▲ 跌勢收斂`（淺綠）
+
+#### Scenario: OFFICE 持股 MACD 轉弱通知
+
+- WHEN 系統掃描 OFFICE 策略持股（STRONG_WEEKLY 或 WEEKLY_TREND）
+- AND 該持股之 `macd_trend_status` 為 `WEAKENING_BULL`
+- THEN 系統 MUST 產生 STRATEGY_RULE Alert「📉 日 MACD 轉弱，停利出場: {公司名稱} 紅柱縮短中」
+- AND 系統 SHALL 透過 Discord 推送此通知
+
+
+<!-- @trace
+source: kite-macd-4state-momentum-engine
+updated: 2026-02-27
+code:
+  - src/apps/kite/types.ts
+  - nternal/modules/kite/service/portfolio_service.go
+  - src/apps/kite/components/StockInspector.tsx
+  - internal/modules/kite/service/quote_service.go
+-->
+
+---
 ### Requirement: 資料來源整合
 
 系統 MUST 整合外部資料來源以提供即時報價與歷史 K 線資料。
@@ -238,7 +299,6 @@ interface MACDResult {
 - THEN 系統 SHOULD 自動偵測並使用 `.TWO` 後綴（Smart Suffix Retry 待實作）
 
 ---
-
 ### Requirement: Discord 警報通知系統
 
 系統 MUST 提供 Discord Webhook 即時通知功能，支援 Portfolio 與 Watchlist 兩類警報。
@@ -276,7 +336,6 @@ type NotificationLog struct {
 - AND 通知內容 SHALL 包含股票代碼、目標價與當前價格
 
 ---
-
 ### Requirement: Kite API 端點
 
 系統 MUST 提供以下 RESTful API 端點：
@@ -315,7 +374,6 @@ POST   /api/kite/test-webhook          # 測試通知
 - THEN 系統 MUST 回傳 200 OK
 
 ---
-
 ### Requirement: Kite UI Icon 系統
 
 所有策略和動作圖示 MUST 使用 SVG 元件（定義於 `src/components/Icons.tsx`），禁止在 Production 中使用原生 Emoji。
@@ -344,7 +402,6 @@ POST   /api/kite/test-webhook          # 測試通知
 - AND BOSS 策略 SHALL 使用金色系 (`--boss-primary`)
 
 ---
-
 ### Requirement: 元件清單
 
 | 元件 | 檔案 | 功能 |

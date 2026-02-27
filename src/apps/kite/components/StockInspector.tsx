@@ -15,6 +15,7 @@ import { IconCompany, IconBOSS } from "../../../components/HandDrawnIcons";
 import { StockInspectorIcon, CheckboxIcon, SearchIcon, BookOpenIcon, TrendingUpIcon, LoaderIcon, DollarSignIcon, TagIcon, StrongWeekIcon, WeeklyPullbackIcon, WeeklyTrendIcon, TargetIcon, StopCircleIcon, CheckCircleIcon, AlertTriangleIcon, XCircleIcon, SpellCheckIcon, SaveIcon, BellRingIcon, TrendingDownIcon, CycleIcon } from "../../../components/Icons";
 import { StrategyChecklist } from "./StrategyChecklist";
 import { StockChart } from "./StockChart";
+import { MACD_STATUS_COLORS, MacdTrendStatus } from "../utils/macdUtils";
 import "./StockInspector.css";
 
 interface WatchlistConversionData {
@@ -605,6 +606,11 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                                         <div className="si-verdict-message">
                                             {verdict.message}
                                         </div>
+                                        {quote.macd_trend_status === 'WEAKENING_BULL' && (
+                                            <div style={{ fontSize: '0.88rem', color: '#9A3412', fontWeight: 600, marginTop: '4px' }}>
+                                                動能衰退中：日 MACD 紅柱連續縮短，不宜追漲。
+                                            </div>
+                                        )}
                                         {verdict.timeWarning && (
                                             <div className="si-verdict-time-warning">
                                                 <BellRingIcon size={14} /> {verdict.timeWarning}
@@ -637,9 +643,18 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                                 </div>
                                 <div className="tech-card">
                                     <div className="tech-label">Daily MACD Days</div>
-                                    <div className={`tech-value ${quote.macd_histogram_days > 0 ? 'macd-up' : 'macd-down'}`}>
+                                    <div className={`tech-value ${quote.macd_histogram_days > 0 ? 'macd-up' : 'macd-down'}`}
+                                        style={quote.macd_trend_status ? { color: MACD_STATUS_COLORS[quote.macd_trend_status as MacdTrendStatus] } : undefined}>
                                         {quote.macd_histogram_days > 0 ? `↑ +${quote.macd_histogram_days}` : `↓ ${quote.macd_histogram_days}`} Days
                                     </div>
+                                    {quote.macd_trend_status && (
+                                        <div style={{ fontSize: '0.78rem', marginTop: '2px', color: MACD_STATUS_COLORS[quote.macd_trend_status as MacdTrendStatus], fontWeight: 600 }}>
+                                            {quote.macd_trend_status === 'STRONG_BULL' && '▲ 動能強勁'}
+                                            {quote.macd_trend_status === 'WEAKENING_BULL' && '▼ 動能衰退'}
+                                            {quote.macd_trend_status === 'STRONG_BEAR' && '▼ 跌勢擴張'}
+                                            {quote.macd_trend_status === 'WEAKENING_BEAR' && '▲ 跌勢收斂'}
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="tech-card">
                                     <div className="tech-label">vs 5MA</div>
@@ -668,6 +683,7 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                                 subStrategy={currentSubStrategy}
                                 currentWind={currentWind ?? null}
                                 revenueYoyChecked={revenueYoyChecked}
+                                macdTrendStatus={quote.macd_trend_status as MacdTrendStatus || null}
                             />
                         </div>
                     )}

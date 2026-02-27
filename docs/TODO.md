@@ -5,47 +5,7 @@
 
 ---
 
-## ✅ 已完成 (Completed)
 
-### Kite 模組 - 核心功能
-- [x] Wind Cockpit（風型記錄 + 結構計算 + 門燈）
-- [x] Stock Inspector（個股分析 + 策略診斷）
-- [x] K 線圖表（日/週/月 K）
-- [x] MACD Engine（日/週趨勢計算）
-- [x] Watchlist（觀察清單 CRUD）
-- [x] Trade Journal（交易記錄）
-- [x] Trade History（歷史績效 + 統計）
-- [x] 匯入歷史交易功能
-- [x] Railway + Docker 部署
-- [x] SQLite 持久化（Volume）
-
-### Kite 模組 - 優先功能增強 (2026-01-23)
-- [x] **Watchlist → Trade 轉換**：一鍵從觀察清單進場，自動預填數據
-- [x] **即時價格更新**：Portfolio 30秒自動刷新 + 手動刷新控制
-- [x] **進階分析儀表板**：
-  - [x] 策略績效分組（勝率、損益、交易次數）
-  - [x] 月度績效圖表（橫條圖視覺化）
-  - [x] 平均持有天數統計
-- [x] **移動端 UI 優化**：
-  - [x] 44x44px 觸控目標標準
-  - [x] iOS zoom 防止（16px font-size）
-  - [x] Modal 滾動優化
-  - [x] 響應式間距調整
-
-### Kite & LifeOS 核心增強 (2026-02-24)
-- [x] **Kite UI SVG 專業化**：全面替換 Emoji 為專業 SVG Icons (Watchlist, Journal, Chart)
-- [x] **Skincare 延期邏輯修復**：引入「等候期」狀態，支援經期延遲時的手動重設
-- [x] **LifeOS 凍結卡 (Freeze Cards)**：後端耗用邏輯 + 前端連勝保護 (Streak Protection)
-- [x] **Habit Tracker 後端持久化**：完成 Habit CRUD API 與連勝計算邏輯
-- [x] **打卡反饋動畫**：增強打卡完成時的視覺「Pop」反饋感
-
-### 基礎建設
-- [x] Go + Gin 後端架構
-- [x] React + TypeScript 前端
-- [x] Vite 開發環境
-- [x] 模組化單體架構（Kite/LifeOS/ChoiceFit 資料夾）
-
----
 
 ### 待處理功能
 - [ ] **Todo Board CRUD API**：建立 Task Model 與看板 API

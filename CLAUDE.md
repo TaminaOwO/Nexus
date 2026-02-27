@@ -28,62 +28,9 @@
 
 ---
 
-## 2. 系統架構 (Modular Monolith)
+## 2. 系統架構與技術棧
 
-### 架構本體
-
-此為**單體架構**，但邏輯**嚴格隔離**。模組之間不得互相 import。
-
-```text
-Nexus/
-├── cmd/server/            # Go 主程式進入點
-├── internal/
-│   ├── database/          # SQLite + GORM 設定
-│   └── modules/
-│       ├── kite/          # 🪁 Kite 後端 (股票交易)
-│       ├── lifeos/        # 🧠 LifeOS 後端 (生活管理)
-│       └── choicefit/     # 💪 ChoiceFit 後端 (教練平台)
-├── src/
-│   ├── apps/
-│   │   ├── kite/          # 🪁 Kite 前端
-│   │   ├── lifeos/        # 🧠 LifeOS 前端
-│   │   └── choicefit/     # 💪 ChoiceFit 前端
-│   └── components/        # 共用元件
-├── Dockerfile             # 多階段建置
-├── railway.toml           # Railway 部署設定
-└── nexus.db               # SQLite 資料庫 (各模組 Table 前綴區隔)
-```
-
-### 模組概覽
-
-| 模組 | 用途 | 狀態 | 路由 | 規格書 |
-|------|------|------|------|--------|
-| **🪁 Kite** | 台股交易決策系統 | ✅ 完成 | `/kite` | `KITE_SPECS.md` |
-| **🧠 LifeOS** | 生活管理（習慣/任務） | 🚧 MVP | `/admin` | `LIFEOS_SPECS.md` |
-| **💪 ChoiceFit** | 健身教練平台 | 📝 規劃中 | `/choice-fit` | TBD |
-
-### 新增模組標準步驟
-1. 後端：新增 `internal/modules/{module}/` 資料夾
-2. 前端：新增 `src/apps/{module}/` 資料夾
-3. 路由：在 `cmd/server/main.go` 註冊 API
-4. 前端路由：在 `App.tsx` 加入 lazy loading
-
----
-
-## 3. 技術棧 (Tech Stack)
-
-### 後端
-| 技術 | 用途 |
-|------|------|
-| **Go** | 後端語言 |
-| **Gin** | HTTP 框架 |
-| **GORM** | ORM (SQLite) |
-| **UUID** | ID 生成 |
-
-### 前端
-| 技術 | 用途 |
-|------|------|
-| **React 18** | UI 框架 |
+請參見 [`docs/PRODUCT.md`](file:///d:/Code/project/Nexus/docs/PRODUCT.md) 以取得系統架構、目錄結構、模組列表與技術棧資訊。
 | **TypeScript** | 類型安全 |
 | **Vite** | 開發打包 |
 | **Vanilla CSS** | 樣式（可混用 Tailwind） |
@@ -106,7 +53,7 @@ Nexus/
 當進行介面設計時，請依序讀取以下資源：
 
 1. **核心知識庫**：`./.claude/skills/ui-ux-pro-max` (含規則與 Anti-patterns)
-2. **專案覆蓋檔**：`./design-system/nexus/MASTER.md` (定義 Nexus 的靈魂)
+2. **專案覆蓋檔**：`openspec/specs/` 下的規格定義
 
 ### Nexus 視覺關鍵字 (from MASTER.md)
 
@@ -221,13 +168,13 @@ GitHub Push → Railway 自動建置 → Docker Image → 部署
 
 | 模組 | 規格書位置 | 必讀標記 |
 |------|------------|----------|
-| 🪁 Kite | `KITE_SPECS.md` | 風控邏輯、策略系統、交易術語 |
-| 🧠 LifeOS | `LIFEOS_SPECS.md` | 習慣追蹤、看板邏輯、War Room |
+| 🪁 Kite | `openspec/specs/kite/spec.md` | 風控邏輯、策略系統、交易術語 |
+| 🧠 LifeOS | `openspec/specs/lifeos/spec.md` | 習慣追蹤、看板邏輯、War Room |
 
 ### 快速啟動 Prompt 範例
 ```
 「Tamina 呼叫。請讀取 CLAUDE.md。
-今天要優化 Kite 的 MACD 計算，請參考 KITE_SPECS.md。」
+今天要優化 Kite 的 MACD 計算，請參考 openspec/specs/kite/spec.md。」
 ```
 
 ---
@@ -241,10 +188,10 @@ GitHub Push → Railway 自動建置 → Docker Image → 部署
 5. **繁體中文 UI**：介面以中文為主
 6. **文件同步**：每次重大功能完成後，更新以下文件：
    - `CLAUDE.md`（全域指南）
-   - `design-system/nexus/pages/{MODULE}_SPECS.md`（模組規格）
-   - `design-system/nexus/MASTER.md`（設計系統）
-   - `TODO.md`（開發路線圖）
+   - `docs/PRODUCT.md`（產品與架構文件）
+   - `docs/TODO.md`（開發路線圖）
+   - `openspec/specs/` 內的相關規格
 
 ---
 
-*最後更新：2026-02-06*
+*最後更新：2026-02-27*

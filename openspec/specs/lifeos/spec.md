@@ -186,10 +186,10 @@ type Task struct {
 
 | 規則 | 限制 |
 |------|------|
-| Retinol (A 類) | Follicular 最多 2 晚/週，Luteal 最多 1 晚/週，Menstrual 禁用 |
+| A醇 (A 類) | Follicular 最多 2 晚/週，Luteal 最多 1 晚/週，Menstrual 禁用 |
 | 酸類 (Stridex) | 僅限 Ovulation + Early Luteal，PM only，T-Zone only |
-| 儀器 (Booster Pro) | 不可與 Retinol 同晚使用，禁用 Full Face Induction |
-| 眼霜 | `BoJ Retinal Eye` 最多 2 晚/週，不可與 Face Retinol 同晚 |
+| 儀器 (Booster Pro) | 不可與 A醇 同晚使用，禁用 Full Face Induction |
+| 眼霜 | `BOJ A醛` 最多 2 晚/週，不可與 A醇 同晚 |
 
 **排程規則 Model**：
 
@@ -206,7 +206,7 @@ type SkincareScheduleRule struct {
 
 - WHEN 使用者查看今日保養頁面
 - THEN 系統 MUST 根據當前週期階段回傳 AM/PM 保養步驟
-- AND 系統 SHALL 套用所有守門員規則（Retinol / 酸類 / 儀器衝突檢測）
+- AND 系統 SHALL 套用所有守門員規則（A醇 / 酸類 / 儀器衝突檢測）
 
 #### Scenario: 經期延遲處理
 
@@ -217,7 +217,7 @@ type SkincareScheduleRule struct {
 #### Scenario: 自訂排程規則
 
 - WHEN 使用者在排程設定 Modal 調整產品使用日
-- THEN 系統 MUST 即時檢測 Retinol ↔ BoJ Eye 同日衝突
+- THEN 系統 MUST 即時檢測 A醇 ↔ BOJ A醛 同日衝突
 - AND 系統 SHALL 透過 `PUT /api/lifeos/skincare/schedule` 儲存
 
 ---

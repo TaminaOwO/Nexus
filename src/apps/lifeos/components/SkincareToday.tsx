@@ -147,7 +147,7 @@ export function SkincareToday() {
     const overlap = retinolDays.filter((d) => bojDays.includes(d));
     if (overlap.length > 0) {
       const names = overlap.map((d) => `週${WEEKDAY_SHORT[d]}`).join("、");
-      return `Retinol 和 BoJ Eye 不可同天（${names} 衝突）`;
+      return `A醇 和 BOJ A醛 不可同天（${names} 衝突）`;
     }
     return null;
   }
@@ -395,7 +395,7 @@ export function SkincareToday() {
           <div className="schedule-modal" onClick={(e) => e.stopPropagation()}>
             <h3 className="schedule-modal-title">保養排程設定</h3>
             <p className="schedule-modal-desc">
-              設定每個週期階段的產品使用日。Retinol 和 BoJ Eye 不可安排在同一天。
+              設定每個週期階段的產品使用日。A醇 和 BOJ A醛 不可安排在同一天。
             </p>
 
             {(["follicular", "luteal"] as const).map((phase) => {

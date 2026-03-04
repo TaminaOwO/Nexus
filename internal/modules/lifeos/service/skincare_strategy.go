@@ -61,12 +61,22 @@ func DeterminePhase(cycleDay int, cycleLength int) (phase, phaseLabel, mode stri
 
 // CalculateCycleDay 計算今天是週期第幾天 (不自動循環，由確定階段處裡延遲)
 func CalculateCycleDay(cycleStartDate string, cycleLength int, targetDate time.Time) int {
-	start, err := time.Parse("2006-01-02", cycleStartDate)
+	// Parse the start date as local time to match the targetDate's location consistently,
+	// because Date strings "YYYY-MM-DD" from frontend means local date.
+	loc := targetDate.Location()
+	start, err := time.ParseInLocation("2006-01-02", cycleStartDate, loc)
 	if err != nil {
 		return 1
 	}
 
-	days := int(targetDate.Sub(start).Hours()/24) + 1 // Day 1 = start date
+	// Calculate days difference strictly based on calendar days in the target location
+	targetYear, targetMonth, targetDay := targetDate.Date()
+	targetMidnight := time.Date(targetYear, targetMonth, targetDay, 0, 0, 0, 0, loc)
+
+	startYear, startMonth, startDay := start.Date()
+	startMidnight := time.Date(startYear, startMonth, startDay, 0, 0, 0, 0, loc)
+
+	days := int(targetMidnight.Sub(startMidnight).Hours()/24) + 1 // Day 1 = start date
 	if days <= 0 {
 		return 1
 	}

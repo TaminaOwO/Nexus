@@ -41,6 +41,9 @@
   - [x] Kanban 狀態管理 API
 - [x] **War Room Dashboard**：
   - [x] 跨模組監控面板（Kite + LifeOS 指標）
+- [x] **Skincare 保養策略引擎更新**：
+  - [x] 修正週期判定與介面相容 (`ovulation`, 兩段式 `luteal`)
+  - [x] 加入新產品自訂排程 (Arencia, Stridex 等) 與衝突判定 (Stridex vs Arencia/Torriden 等)
 
 ---
 

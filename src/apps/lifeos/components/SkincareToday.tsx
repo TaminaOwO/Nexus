@@ -23,6 +23,7 @@ const PHASE_EMOJI: Record<string, string> = {
 
 const PHASE_LABEL: Record<string, string> = {
   follicular: "濾泡期",
+  ovulation: "排卵期",
   luteal: "黃體期",
 };
 
@@ -154,8 +155,9 @@ export function SkincareToday() {
 
   async function handleSaveSchedule() {
     const follicularConflict = hasConflict("follicular");
+    const ovulationConflict = hasConflict("ovulation");
     const lutealConflict = hasConflict("luteal");
-    if (follicularConflict || lutealConflict) return;
+    if (follicularConflict || ovulationConflict || lutealConflict) return;
 
     setSavingSchedule(true);
     try {
@@ -398,7 +400,7 @@ export function SkincareToday() {
               設定每個週期階段的產品使用日。A醇 和 BOJ A醛 不可安排在同一天。
             </p>
 
-            {(["follicular", "luteal"] as const).map((phase) => {
+            {(["follicular", "ovulation", "luteal"] as const).map((phase) => {
               const conflict = hasConflict(phase);
               return (
                 <div key={phase} className="schedule-phase-section">
@@ -444,6 +446,7 @@ export function SkincareToday() {
                 disabled={
                   savingSchedule ||
                   !!hasConflict("follicular") ||
+                  !!hasConflict("ovulation") ||
                   !!hasConflict("luteal")
                 }
               >

@@ -117,6 +117,12 @@ graph TB
 ## 🧠 LifeOS Module
 詳細功能與 BDD 規格請參考：[`openspec/specs/lifeos/spec.md`](file:///d:/Code/project/Nexus/openspec/specs/lifeos/spec.md)
 
+**主要子系統**：
+- **Habit Tracker**: 習慣與打卡追蹤
+- **Todo Board**: Kanban 任務與 F.L.O.W. 法則管理
+- **War Room**: 跨模組儀表板聚合
+- **Skincare Engine**: 根據生理週期的護膚排程與守門員防呆系統
+
 ---
 
 ## 💪 Choice-Fit Module

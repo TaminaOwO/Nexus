@@ -1,14 +1,14 @@
 import { Suspense, lazy } from 'react'
 import { Agentation } from 'agentation'
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
-import { IconLifeOS, IconKite, IconChoiceFit, IconDashboard } from './components/HandDrawnIcons'
+import { IconLifeOS, IconKite, IconDashboard } from './components/HandDrawnIcons'
 import { useAuth } from './shared/auth/AuthContext'
 import LoginPage from './shared/auth/LoginPage'
 
 // Lazy load module apps
 const LifeOS = lazy(() => import('./apps/lifeos'))
 const Kite = lazy(() => import('./apps/kite'))
-const ChoiceFit = lazy(() => import('./apps/choicefit'))
+
 
 function App() {
     const location = useLocation();
@@ -41,10 +41,6 @@ function App() {
                         <IconKite />
                         <span>Kite</span>
                     </Link>
-                    <Link to="/choice-fit" className={location.pathname.startsWith('/choice-fit') ? 'active' : ''}>
-                        <IconChoiceFit />
-                        <span>Choice</span>
-                    </Link>
                 </div>
             </nav>
 
@@ -54,7 +50,6 @@ function App() {
                         <Route path="/" element={<Home />} />
                         <Route path="/admin/*" element={<LifeOS />} />
                         <Route path="/kite/*" element={<Kite />} />
-                        <Route path="/choice-fit/*" element={<ChoiceFit />} />
                     </Routes>
                 </Suspense>
             </main>
@@ -82,13 +77,6 @@ function Home() {
                     <div>
                         <h2>Kite Stock</h2>
                         <p>Stock Strategy Visualization</p>
-                    </div>
-                </Link>
-                <Link to="/choice-fit" className="module-card">
-                    <span className="module-icon"><IconChoiceFit /></span>
-                    <div>
-                        <h2>Choice-Fit</h2>
-                        <p>Fitness & Coaching Platform</p>
                     </div>
                 </Link>
             </div>

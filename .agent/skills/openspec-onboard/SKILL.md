@@ -1,12 +1,12 @@
 ---
 name: openspec-onboard
-description: Guided onboarding for OpenSpec - walk through a complete workflow cycle with narration and real codebase work.
+description: Guided onboarding for OpenSpec workflow
 license: MIT
 compatibility: Requires openspec CLI.
 metadata:
   author: openspec
   version: "1.0"
-  generatedBy: "1.2.0"
+  generatedBy: "Spectra"
 ---
 
 Guide the user through their first complete OpenSpec workflow cycle. This is a teaching experience—you'll do real work in their codebase while explaining each step.
@@ -18,10 +18,7 @@ Guide the user through their first complete OpenSpec workflow cycle. This is a t
 Before starting, check if the OpenSpec CLI is installed:
 
 ```bash
-# Unix/macOS
 openspec --version 2>&1 || echo "CLI_NOT_INSTALLED"
-# Windows (PowerShell)
-# if (Get-Command openspec -ErrorAction SilentlyContinue) { openspec --version } else { echo "CLI_NOT_INSTALLED" }
 ```
 
 **If CLI not installed:**
@@ -70,10 +67,7 @@ Scan the codebase for small improvement opportunities. Look for:
 
 Also check recent git activity:
 ```bash
-# Unix/macOS
 git log --oneline -10 2>/dev/null || echo "No git history"
-# Windows (PowerShell)
-# git log --oneline -10 2>$null; if ($LASTEXITCODE -ne 0) { echo "No git history" }
 ```
 
 ### Present Suggestions
@@ -268,10 +262,7 @@ For a small task like this, we might only need one spec file.
 
 **DO:** Create the spec file:
 ```bash
-# Unix/macOS
 mkdir -p openspec/changes/<name>/specs/<capability-name>
-# Windows (PowerShell)
-# New-Item -ItemType Directory -Force -Path "openspec/changes/<name>/specs/<capability-name>"
 ```
 
 Draft the spec content:
@@ -466,29 +457,21 @@ This same rhythm works for any size change—a small fix or a major feature.
 
 ## Command Reference
 
-**Core workflow:**
-
 | Command | What it does |
 |---------|--------------|
-| `/opsx:propose` | Create a change and generate all artifacts |
 | `/opsx:explore` | Think through problems before/during work |
-| `/opsx:apply` | Implement tasks from a change |
-| `/opsx:archive` | Archive a completed change |
-
-**Additional commands:**
-
-| Command | What it does |
-|---------|--------------|
-| `/opsx:new` | Start a new change, step through artifacts one at a time |
-| `/opsx:continue` | Continue working on an existing change |
+| `/opsx:new` | Start a new change, step through artifacts |
 | `/opsx:ff` | Fast-forward: create all artifacts at once |
+| `/opsx:continue` | Continue working on an existing change |
+| `/opsx:apply` | Implement tasks from a change |
 | `/opsx:verify` | Verify implementation matches artifacts |
+| `/opsx:archive` | Archive a completed change |
 
 ---
 
 ## What's Next?
 
-Try `/opsx:propose` on something you actually want to build. You've got the rhythm now!
+Try `/opsx:new` or `/opsx:ff` on something you actually want to build. You've got the rhythm now!
 ```
 
 ---
@@ -518,25 +501,17 @@ If the user says they just want to see the commands or skip the tutorial:
 ```
 ## OpenSpec Quick Reference
 
-**Core workflow:**
-
 | Command | What it does |
 |---------|--------------|
-| `/opsx:propose <name>` | Create a change and generate all artifacts |
 | `/opsx:explore` | Think through problems (no code changes) |
+| `/opsx:new <name>` | Start a new change, step by step |
+| `/opsx:ff <name>` | Fast-forward: all artifacts at once |
+| `/opsx:continue <name>` | Continue an existing change |
 | `/opsx:apply <name>` | Implement tasks |
+| `/opsx:verify <name>` | Verify implementation |
 | `/opsx:archive <name>` | Archive when done |
 
-**Additional commands:**
-
-| Command | What it does |
-|---------|--------------|
-| `/opsx:new <name>` | Start a new change, step by step |
-| `/opsx:continue <name>` | Continue an existing change |
-| `/opsx:ff <name>` | Fast-forward: all artifacts at once |
-| `/opsx:verify <name>` | Verify implementation |
-
-Try `/opsx:propose` to start your first change.
+Try `/opsx:new` to start your first change, or `/opsx:ff` if you want to move fast.
 ```
 
 Exit gracefully.

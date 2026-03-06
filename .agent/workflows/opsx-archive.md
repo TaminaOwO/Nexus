@@ -1,7 +1,11 @@
 ---
+name: OPSX: Archive
 description: Archive a completed change in the experimental workflow
+category: Workflow
+tags: ["workflow", "archive", "experimental"]
 ---
 
+<!-- OPENSPEC:START -->
 Archive a completed change in the experimental workflow.
 
 **Input**: Optionally specify a change name after `/opsx:archive` (e.g., `/opsx:archive add-auth`). If omitted, check if it can be inferred from conversation context. If vague or ambiguous you MUST prompt for available changes.
@@ -60,20 +64,19 @@ Archive a completed change in the experimental workflow.
 
 5. **Perform the archive**
 
-   Create the archive directory if it doesn't exist:
-   ```bash
-   mkdir -p openspec/changes/archive
-   ```
-
-   Generate target name using current date: `YYYY-MM-DD-<change-name>`
-
-   **Check if target already exists:**
-   - If yes: Fail with error, suggest renaming existing archive or using different date
-   - If no: Move the change directory to archive
+   Use the `openspec archive` CLI command which handles the full archive workflow
+   (spec snapshot, delta application, @trace injection, identity recording, vector indexing):
 
    ```bash
-   mv openspec/changes/<name> openspec/changes/archive/YYYY-MM-DD-<name>
+   openspec archive <name>
    ```
+
+   **Optional flags:**
+   - `--skip-specs` — skip delta spec application (for tooling/doc-only changes)
+   - `--mark-tasks-complete` — mark all incomplete tasks as complete before archiving
+   - `--no-validate` — skip delta spec validation
+
+   **If archive fails** with "already exists" error, suggest renaming existing archive.
 
 6. **Display summary**
 
@@ -145,6 +148,7 @@ Target archive directory already exists.
 ```
 
 **Guardrails**
+
 - Always prompt for change selection if not provided
 - Use artifact graph (openspec status --json) for completion checking
 - Don't block archive on warnings - just inform and confirm
@@ -152,3 +156,4 @@ Target archive directory already exists.
 - Show clear summary of what happened
 - If sync is requested, use the Skill tool to invoke `openspec-sync-specs` (agent-driven)
 - If delta specs exist, always run the sync assessment and show the combined summary before prompting
+<!-- OPENSPEC:END -->

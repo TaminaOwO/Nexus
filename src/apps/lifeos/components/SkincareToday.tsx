@@ -395,49 +395,54 @@ export function SkincareToday() {
       {showSchedule && (
         <div className="schedule-overlay" onClick={() => setShowSchedule(false)}>
           <div className="schedule-modal" onClick={(e) => e.stopPropagation()}>
-            <h3 className="schedule-modal-title">保養排程設定</h3>
-            <p className="schedule-modal-desc">
-              設定每個週期階段的產品使用日。A醇 和 BOJ A醛 不可安排在同一天。
-            </p>
+            <div className="schedule-modal-header">
+              <h3 className="schedule-modal-title">保養排程設定</h3>
+              <button className="schedule-modal-close" onClick={() => setShowSchedule(false)}>✕</button>
+            </div>
+            <div className="schedule-modal-body">
+              <p className="schedule-modal-desc">
+                設定每個週期階段的產品使用日。A醇 和 BOJ A醛 不可安排在同一天。
+              </p>
 
-            {(["follicular", "ovulation", "luteal"] as const).map((phase) => {
-              const conflict = hasConflict(phase);
-              return (
-                <div key={phase} className="schedule-phase-section">
-                  <h4 className="schedule-phase-title">
-                    {PHASE_EMOJI[phase]} {PHASE_LABEL[phase]}
-                  </h4>
+              {(["follicular", "ovulation", "luteal"] as const).map((phase) => {
+                const conflict = hasConflict(phase);
+                return (
+                  <div key={phase} className="schedule-phase-section">
+                    <h4 className="schedule-phase-title">
+                      {PHASE_EMOJI[phase]} {PHASE_LABEL[phase]}
+                    </h4>
 
-                  {scheduleRules
-                    .filter((r) => r.phase === phase)
-                    .map((rule) => {
-                      const ruleKey = `${rule.product_key}_${rule.phase}`;
-                      const selected = editRules[ruleKey] || [];
-                      return (
-                        <div key={ruleKey} className="schedule-rule-row">
-                          <div className="schedule-rule-label">
-                            <span className="rule-product">{rule.label}</span>
-                            <span className="rule-limit">最多 {rule.max_per_week}x/週</span>
+                    {scheduleRules
+                      .filter((r) => r.phase === phase)
+                      .map((rule) => {
+                        const ruleKey = `${rule.product_key}_${rule.phase}`;
+                        const selected = editRules[ruleKey] || [];
+                        return (
+                          <div key={ruleKey} className="schedule-rule-row">
+                            <div className="schedule-rule-label">
+                              <span className="rule-product">{rule.label}</span>
+                              <span className="rule-limit">最多 {rule.max_per_week}x/週</span>
+                            </div>
+                            <div className="weekday-toggles">
+                              {ALL_WEEKDAYS.map((day) => (
+                                <button
+                                  key={day}
+                                  className={`weekday-toggle ${selected.includes(day) ? "active" : ""}`}
+                                  onClick={() => toggleWeekday(ruleKey, day)}
+                                >
+                                  {WEEKDAY_SHORT[day]}
+                                </button>
+                              ))}
+                            </div>
                           </div>
-                          <div className="weekday-toggles">
-                            {ALL_WEEKDAYS.map((day) => (
-                              <button
-                                key={day}
-                                className={`weekday-toggle ${selected.includes(day) ? "active" : ""}`}
-                                onClick={() => toggleWeekday(ruleKey, day)}
-                              >
-                                {WEEKDAY_SHORT[day]}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
 
-                  {conflict && <div className="schedule-conflict">{conflict}</div>}
-                </div>
-              );
-            })}
+                    {conflict && <div className="schedule-conflict">{conflict}</div>}
+                  </div>
+                );
+              })}
+            </div>
 
             <div className="schedule-modal-actions">
               <button
@@ -471,7 +476,7 @@ function StepRow({ step }: { step: SkincareStepType }) {
     <div className={`skincare-step ${step.optional ? "optional" : ""}`}>
       <span className="step-dot" />
       <span className="step-product">{step.product}</span>
-      {step.badge && <span className="step-badge">{step.badge}</span>}
+      {step.badges?.map((b, i) => <span key={i} className="step-badge">{b}</span>)}
       {step.optional && <span className="step-optional-tag">Optional</span>}
     </div>
   );

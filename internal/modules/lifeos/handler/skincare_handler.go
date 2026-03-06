@@ -12,12 +12,23 @@ import (
 	"github.com/google/uuid"
 )
 
-// loadScheduleRules 從 DB 載入排程規則，無資料則回傳預設
+// loadScheduleRules 從 DB 載入排程規則，無資料則回傳預設；Label 永遠以 code 為準
 func loadScheduleRules() []model.SkincareScheduleRule {
 	var rules []model.SkincareScheduleRule
 	database.DB.Find(&rules)
 	if len(rules) == 0 {
 		return service.GetDefaultScheduleRules()
+	}
+	// sync labels from defaults so renaming products takes effect without DB migration
+	defaults := service.GetDefaultScheduleRules()
+	labelMap := make(map[string]string, len(defaults))
+	for _, d := range defaults {
+		labelMap[d.ProductKey+"_"+d.Phase] = d.Label
+	}
+	for i := range rules {
+		if label, ok := labelMap[rules[i].ProductKey+"_"+rules[i].Phase]; ok {
+			rules[i].Label = label
+		}
 	}
 	return rules
 }

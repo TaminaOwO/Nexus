@@ -10,15 +10,15 @@ import (
 // GetDefaultScheduleRules 預設排程規則
 func GetDefaultScheduleRules() []model.SkincareScheduleRule {
 	return []model.SkincareScheduleRule{
-		{ProductKey: "retinol", Phase: "follicular", Weekdays: "Tuesday,Friday", MaxPerWeek: 2, Label: "A醇"},
-		{ProductKey: "retinol", Phase: "luteal", Weekdays: "Wednesday", MaxPerWeek: 1, Label: "A醇"},
+		{ProductKey: "retinol", Phase: "follicular", Weekdays: "Tuesday,Friday", MaxPerWeek: 2, Label: "INNISFREE A醇"},
+		{ProductKey: "retinol", Phase: "luteal", Weekdays: "Wednesday", MaxPerWeek: 1, Label: "INNISFREE A醇"},
 		{ProductKey: "boj_eye", Phase: "follicular", Weekdays: "Monday,Thursday", MaxPerWeek: 2, Label: "BOJ A醛眼霜"},
 		{ProductKey: "boj_eye", Phase: "luteal", Weekdays: "Monday,Friday", MaxPerWeek: 2, Label: "BOJ A醛眼霜"},
 		{ProductKey: "stridex", Phase: "follicular", Weekdays: "Wednesday,Saturday", MaxPerWeek: 2, Label: "Stridex"},
 		{ProductKey: "stridex", Phase: "ovulation", Weekdays: "Wednesday", MaxPerWeek: 1, Label: "Stridex"},
-		{ProductKey: "arencia", Phase: "follicular", Weekdays: "Sunday", MaxPerWeek: 1, Label: "Arencia"},
-		{ProductKey: "arencia", Phase: "luteal", Weekdays: "Sunday", MaxPerWeek: 1, Label: "Arencia"},
-		{ProductKey: "boj_rice_mask", Phase: "luteal", Weekdays: "Thursday", MaxPerWeek: 1, Label: "BOJ 米飯面膜"},
+		{ProductKey: "arencia", Phase: "follicular", Weekdays: "Sunday", MaxPerWeek: 1, Label: "Arencia 麻糬潔顏面膜"},
+		{ProductKey: "arencia", Phase: "luteal", Weekdays: "Sunday", MaxPerWeek: 1, Label: "Arencia 麻糬潔顏面膜"},
+		{ProductKey: "boj_rice_mask", Phase: "luteal", Weekdays: "Thursday", MaxPerWeek: 1, Label: "BOJ 蜂蜜米飯面膜"},
 	}
 }
 
@@ -128,14 +128,14 @@ func buildBaseAM(r *model.SkincareRoutine) {
 	r.AM = append(r.AM, model.SkincareStep{Product: "m̄enom̄eno Sr 集水精華"})
 	r.AM = append(r.AM, model.SkincareStep{Product: "TO 多胜肽眼部精華"})
 	// Q10 & Sunscreen Optional for going out
-	r.AM = append(r.AM, model.SkincareStep{Product: "IRITA Q10 水凝膜", Badge: "出門日薄擦", Optional: true})
-	r.AM = append(r.AM, model.SkincareStep{Product: "BOJ 防曬棒", Badge: "出門日", Optional: true})
+	r.AM = append(r.AM, model.SkincareStep{Product: "IRITA Q10 水凝膜", Badges: []string{"出門日", "薄擦"}, Optional: true})
+	r.AM = append(r.AM, model.SkincareStep{Product: "BOJ 防曬棒", Badges: []string{"出門日"}, Optional: true})
 }
 
 // applyPMCleansing 處理每日的潔膚前置步驟
 func applyPMCleansing(r *model.SkincareRoutine, isArencia, isStridex bool) {
 	if isArencia {
-		r.PM = append(r.PM, model.SkincareStep{Product: "潔膚：Arencia"})
+		r.PM = append(r.PM, model.SkincareStep{Product: "潔膚：Arencia 麻糬潔顏面膜"})
 		return // 若有 Arencia 就不加 Medicube Pad
 	}
 
@@ -143,8 +143,8 @@ func applyPMCleansing(r *model.SkincareRoutine, isArencia, isStridex bool) {
 	if isStridex {
 		r.PM = append(r.PM, model.SkincareStep{Product: cleanser})
 	} else {
-		// 平常日可視情況加 Medicube Pad
-		r.PM = append(r.PM, model.SkincareStep{Product: cleanser + " (+ Medicube Pad 若出油)", Optional: true})
+		r.PM = append(r.PM, model.SkincareStep{Product: cleanser})
+		r.PM = append(r.PM, model.SkincareStep{Product: "Medicube Pad", Badges: []string{"若出油"}, Optional: true})
 	}
 }
 
@@ -158,17 +158,17 @@ func buildMenstrual(r *model.SkincareRoutine, cycleDay int, weekday time.Weekday
 	applyPMCleansing(r, false, false)
 
 	if cycleDay%3 == 1 { // 每 3 天敷一次面膜 (Day 1, 4)
-		r.PM = append(r.PM, model.SkincareStep{Product: "IRITA Mask", Badge: "每 3 天一次"})
+		r.PM = append(r.PM, model.SkincareStep{Product: "IRITA Mask", Badges: []string{"每 3 天一次"}})
 	}
 	r.PM = append(r.PM, model.SkincareStep{Product: "IRITA 保濕修護精萃"})
 	r.PM = append(r.PM, model.SkincareStep{Product: "TO 多胜肽眼部精華"})
-	r.PM = append(r.PM, model.SkincareStep{Product: "IRITA B5 精華乳", Badge: "泛紅乾癢加", Optional: true})
+	r.PM = append(r.PM, model.SkincareStep{Product: "IRITA B5 精華乳", Badges: []string{"泛紅乾癢加"}, Optional: true})
 
 	// BANNED
 	r.Banned = []string{
-		"所有 A醇及A醛",
+		"所有 INNISFREE A醇及A醛",
 		"所有酸類（Stridex）",
-		"Arencia、BOJ 米飯面膜",
+		"Arencia 麻糬潔顏面膜、BOJ 蜂蜜米飯面膜",
 		"所有美容儀",
 	}
 }
@@ -187,34 +187,34 @@ func buildFollicular(r *model.SkincareRoutine, weekday time.Weekday, rules []mod
 
 	// Determine Active PM Step
 	if isStridex {
-		r.PM = append(r.PM, model.SkincareStep{Product: "Stridex", Badge: "T-Zone, 1 分鐘沖洗"})
+		r.PM = append(r.PM, model.SkincareStep{Product: "Stridex", Badges: []string{"T-Zone, 1 分鐘沖洗"}})
 		r.PM = append(r.PM, model.SkincareStep{Product: "IRITA 保濕修護精萃"})
 		r.PM = append(r.PM, model.SkincareStep{Product: "IRITA B5 精華乳"})
 		r.PM = append(r.PM, model.SkincareStep{Product: "IRITA Q10 水凝膜"})
-		r.Banned = append(r.Banned, "今晚水楊酸：禁 Arencia、BOJ 米飯面膜、Torriden 面膜")
+		r.Banned = append(r.Banned, "今晚水楊酸：禁 Arencia 麻糬潔顏面膜、BOJ 蜂蜜米飯面膜、Torriden 面膜")
 	} else if isRetinol {
 		r.PM = append(r.PM, model.SkincareStep{Product: "IRITA 保濕修護精萃"})
-		r.PM = append(r.PM, model.SkincareStep{Product: "A醇", Badge: "Pea Size"})
+		r.PM = append(r.PM, model.SkincareStep{Product: "INNISFREE A醇", Badges: []string{"Pea Size"}})
 		r.PM = append(r.PM, model.SkincareStep{Product: "IRITA B5 精華乳"})
 		r.PM = append(r.PM, model.SkincareStep{Product: "IRITA Q10 水凝膜"})
-		r.Banned = append(r.Banned, "今晚 A 醇：禁 BOJ A醛眼霜、美容儀")
+		r.Banned = append(r.Banned, "今晚 INNISFREE A醇：禁 BOJ A醛眼霜、美容儀")
 	} else if isArencia {
 		r.PM = append(r.PM, model.SkincareStep{Product: "IRITA 保濕修護精萃"})
 		r.PM = append(r.PM, model.SkincareStep{Product: "TO 多胜肽眼部精華"})
 		r.PM = append(r.PM, model.SkincareStep{Product: "Torriden 面膜", Optional: true})
 		// B5 optional on active days after
-		r.Banned = append(r.Banned, "今晚 Arencia：禁 Stridex、A 醇")
+		r.Banned = append(r.Banned, "今晚 Arencia 麻糬潔顏面膜：禁 Stridex、INNISFREE A醇")
 	} else {
 		// Foundation routine with optional device/BOJ
 		r.PM = append(r.PM, model.SkincareStep{Product: "IRITA 保濕修護精萃"})
 		if isBojEye {
 			r.PM = append(r.PM, model.SkincareStep{Product: "BOJ A醛眼霜"})
-			r.PM = append(r.PM, model.SkincareStep{Product: "BOJ 米飯面膜", Optional: true})
+			r.PM = append(r.PM, model.SkincareStep{Product: "BOJ 蜂蜜米飯面膜", Optional: true})
 		} else {
 			r.PM = append(r.PM, model.SkincareStep{Product: "TO 多胜肽眼部精華 或 BOJ A醛眼霜 (輪替)"})
 		}
 
-		r.PM = append(r.PM, model.SkincareStep{Product: "Booster Pro / Medicube Device", Badge: "導入/提拉模式", Optional: true})
+		r.PM = append(r.PM, model.SkincareStep{Product: "Booster Pro / Medicube Device", Badges: []string{"導入/提拉模式"}, Optional: true})
 		r.PM = append(r.PM, model.SkincareStep{Product: "IRITA B5 精華乳", Optional: true})
 	}
 }
@@ -248,12 +248,12 @@ func buildLuteal(r *model.SkincareRoutine, cycleDay int, weekday time.Weekday, r
 		if isArencia {
 			r.PM = append(r.PM, model.SkincareStep{Product: "TO 多胜肽眼部精華"}) // skip active eye
 			r.PM = append(r.PM, model.SkincareStep{Product: "Torriden 面膜", Optional: true})
-			r.Banned = append(r.Banned, "今晚 Arencia：禁 BOJ 米飯面膜")
+			r.Banned = append(r.Banned, "今晚 Arencia 麻糬潔顏面膜：禁 BOJ 蜂蜜米飯面膜")
 		} else if isRetinol {
-			r.PM = append(r.PM, model.SkincareStep{Product: "A醇", Badge: "1x/週 限定"})
+			r.PM = append(r.PM, model.SkincareStep{Product: "INNISFREE A醇", Badges: []string{"1x/週 限定"}})
 			r.PM = append(r.PM, model.SkincareStep{Product: "IRITA B5 精華乳"})
 			r.PM = append(r.PM, model.SkincareStep{Product: "IRITA Q10 水凝膜"})
-			r.Banned = append(r.Banned, "今晚 A 醇：禁 BOJ A醛、美容儀")
+			r.Banned = append(r.Banned, "今晚 INNISFREE A醇：禁 BOJ A醛、美容儀")
 		} else {
 			if isBojEye {
 				r.PM = append(r.PM, model.SkincareStep{Product: "BOJ A醛眼霜"})
@@ -262,10 +262,10 @@ func buildLuteal(r *model.SkincareRoutine, cycleDay int, weekday time.Weekday, r
 			}
 
 			if isRiceMask {
-				r.PM = append(r.PM, model.SkincareStep{Product: "BOJ 米飯面膜"})
+				r.PM = append(r.PM, model.SkincareStep{Product: "BOJ 蜂蜜米飯面膜"})
 			}
-			r.PM = append(r.PM, model.SkincareStep{Product: "Medicube Device", Badge: "非活性日可使用", Optional: true})
-			r.PM = append(r.PM, model.SkincareStep{Product: "IRITA B5 精華乳", Badge: "常備"})
+			r.PM = append(r.PM, model.SkincareStep{Product: "Medicube Device", Badges: []string{"非活性日可使用"}, Optional: true})
+			r.PM = append(r.PM, model.SkincareStep{Product: "IRITA B5 精華乳", Badges: []string{"常備"}})
 		}
 
 		r.Banned = append(r.Banned, "黃體期全面禁用 Stridex")
@@ -275,7 +275,7 @@ func buildLuteal(r *model.SkincareRoutine, cycleDay int, weekday time.Weekday, r
 		applyPMCleansing(r, false, false)
 
 		if cycleDay%3 == 1 { // 每 3 天一次面膜
-			r.PM = append(r.PM, model.SkincareStep{Product: "IRITA Mask", Badge: "每 3 天一次"})
+			r.PM = append(r.PM, model.SkincareStep{Product: "IRITA Mask", Badges: []string{"每 3 天一次"}})
 		}
 
 		r.PM = append(r.PM, model.SkincareStep{Product: "IRITA 保濕修護精萃"})
@@ -283,8 +283,8 @@ func buildLuteal(r *model.SkincareRoutine, cycleDay int, weekday time.Weekday, r
 		r.PM = append(r.PM, model.SkincareStep{Product: "IRITA B5 精華乳"})
 
 		banned := []string{
-			"Stridex、A醇、Arencia",
-			"BOJ 米飯面膜",
+			"Stridex、INNISFREE A醇、Arencia 麻糬潔顏面膜",
+			"BOJ 蜂蜜米飯面膜",
 			"所有美容儀",
 		}
 		if cycleDay >= 26 {

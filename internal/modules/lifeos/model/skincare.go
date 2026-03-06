@@ -39,7 +39,7 @@ type SkincareRoutine struct {
 // SkincareStep - 單一保養步驟
 type SkincareStep struct {
 	Product  string `json:"product"`
-	Badge    string `json:"badge,omitempty"`
+	Badges   []string `json:"badges,omitempty"`
 	Optional bool   `json:"optional,omitempty"`
 }
 

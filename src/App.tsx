@@ -1,4 +1,5 @@
 import { Suspense, lazy } from 'react'
+import { Agentation } from 'agentation'
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import { IconLifeOS, IconKite, IconChoiceFit, IconDashboard } from './components/HandDrawnIcons'
 import { useAuth } from './shared/auth/AuthContext'
@@ -99,4 +100,11 @@ function Home() {
     )
 }
 
-export default App
+export default function AppWithAgentation() {
+    return (
+        <>
+            <App />
+            {import.meta.env.DEV && <Agentation />}
+        </>
+    )
+}

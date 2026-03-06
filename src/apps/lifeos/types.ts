@@ -112,7 +112,7 @@ export interface SkincareCycleSetting {
 
 export interface SkincareStep {
   product: string;
-  badge?: string;
+  badges?: string[];
   optional?: boolean;
 }
 

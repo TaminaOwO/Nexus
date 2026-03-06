@@ -440,8 +440,8 @@ func formatStepsChinese(steps []model.SkincareStep) string {
 	var lines []string
 	for i, s := range steps {
 		line := fmt.Sprintf("**%d.** %s", i+1, s.Product)
-		if s.Badge != "" {
-			line += "（" + s.Badge + "）"
+		if len(s.Badges) > 0 {
+			line += "（" + strings.Join(s.Badges, "、") + "）"
 		}
 		if s.Optional {
 			line += " _← 可省略_"

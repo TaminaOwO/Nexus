@@ -183,14 +183,8 @@ type Task struct {
 **週期階段**：`menstrual` / `follicular` / `ovulation` / `luteal` / `waiting`
 
 **全域守門員規則**：
-
-| 規則 | 限制 |
-|------|------|
-| A醇 (A 類) | Follicular/Ovulation 最多 2 晚/週，Luteal 第一週最多 1 晚/週，Menstrual 禁用 |
-| 酸類 (Stridex) | 僅限 Follicular/Ovulation，PM only，T-Zone only。排他性：當天禁用 Arencia、BOJ 米飯面膜、Torriden 面膜 |
-| 泥膜 (Arencia) | 排他性：當天禁用 Stridex、A醇、BOJ 米飯面膜 |
-| 儀器 (Booster Pro) | 不可與 A醇 同晚使用，美容儀效期於排卵期最佳，建議安排提拉模式 |
-| 眼霜 | `BOJ A醛眼霜` 最多 2 晚/週 (至 Day 25 停用)，不可與 A醇 同晚 |
+- 列表參考 `./brain/identity-data/skincare-list.md`
+- 保養邏輯參考 `./brain/identity-data/skincare-routine.md`
 
 **排程規則 Model**：
 

@@ -43,6 +43,8 @@ func main() {
 		&lifeosModel.LifeOSNotificationLog{},
 		&lifeosModel.SkincareCycleSetting{},
 		&lifeosModel.SkincareScheduleRule{},
+		&lifeosModel.HealthSnapshot{},
+		&lifeosModel.WellnessRecommendation{},
 	)
 
 	// Backfill: 確保舊資料有 flow_type 預設值
@@ -120,6 +122,11 @@ func main() {
 		lifeos.GET("/skincare/schedule", lifeosHandler.GetSkincareSchedule)
 		lifeos.PUT("/skincare/schedule", lifeosHandler.UpdateSkincareSchedule)
 		lifeos.POST("/skincare/test-notify", lifeosHandler.TestSkincareNotify)
+		lifeos.POST("/skincare/test-wellness", lifeosHandler.TestWellnessNotify)
+
+		// Health Snapshot Routes
+		lifeos.POST("/health/sync", lifeosHandler.SyncHealthSnapshot)
+		lifeos.GET("/health/latest", lifeosHandler.GetLatestHealthSnapshot)
 	}
 
 	// Kite Stock Module Routes

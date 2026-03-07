@@ -289,6 +289,12 @@ func scanSkincareAM(now time.Time) {
 		msg += "\n\n⚠️ 今天記得避開：\n" + formatBannedChinese(routine.Banned)
 	}
 
+	// 取得健康快照並呼叫 Claude AI 生成建議
+	wellnessBlock := buildWellnessBlock(now, routine)
+	if wellnessBlock != "" {
+		msg += "\n\n" + wellnessBlock
+	}
+
 	msg += "\n\n祝你有個美好的一天！💪"
 
 	embed := discord.Embed{
@@ -306,6 +312,55 @@ func scanSkincareAM(now time.Time) {
 
 	logNotification("SKINCARE_AM", "", today)
 	log.Printf("[LifeOS Reminder] Sent skincare AM reminder (Day %d, %s)", routine.CycleDay, routine.PhaseLabel)
+}
+
+// buildWellnessBlock 取得健康快照、呼叫 Claude、存入 DB、回傳 Discord 區塊文字
+func buildWellnessBlock(now time.Time, routine *model.SkincareRoutine) string {
+	today := now.Format("2006-01-02")
+
+	// 取得最新健康快照（允許 nil）
+	snapshot, err := GetLatestSnapshot()
+	if err != nil {
+		log.Printf("[Claude] Failed to get health snapshot: %v", err)
+	}
+
+	ctx := WellnessContext{
+		CycleDay:   routine.CycleDay,
+		CyclePhase: routine.Phase,
+		PhaseLabel: routine.PhaseLabel,
+		Snapshot:   snapshot,
+	}
+
+	advice, err := GenerateWellnessAdvice(ctx)
+	if err != nil {
+		log.Printf("[Claude] Failed to generate wellness advice: %v", err)
+		return ""
+	}
+	if advice == nil {
+		return ""
+	}
+
+	// 儲存建議至 DB
+	rec := &model.WellnessRecommendation{
+		Date:           today,
+		CyclePhase:     routine.Phase,
+		DietAdvice:     advice.DietAdvice,
+		ExerciseAdvice: advice.ExerciseAdvice,
+		RawResponse:    advice.RawResponse,
+	}
+	if err := SaveWellnessRecommendation(rec); err != nil {
+		log.Printf("[Claude] Failed to save wellness recommendation: %v", err)
+	}
+
+	// 組裝 Discord 區塊
+	var sb strings.Builder
+	sb.WriteString("---\n🥗 **飲食建議**\n")
+	sb.WriteString(advice.DietAdvice)
+	if advice.ExerciseAdvice != "" {
+		sb.WriteString("\n\n🏃 **運動建議**\n")
+		sb.WriteString(advice.ExerciseAdvice)
+	}
+	return sb.String()
 }
 
 // --- 保養 PM 提醒 ---
@@ -368,6 +423,41 @@ func scanSkincarePM(now time.Time) {
 // GetSkincareRoutineForTest 給測試端點使用（exported）
 func GetSkincareRoutineForTest(now time.Time) *model.SkincareRoutine {
 	return getSkincareRoutineForNow(now)
+}
+
+// SendWellnessAMTestNotification 測試含 AI 建議的早安通知（跳過時間窗口與 dedup）
+func SendWellnessAMTestNotification(now time.Time) error {
+	routine := getSkincareRoutineForNow(now)
+	if routine == nil {
+		return fmt.Errorf("cycle not configured")
+	}
+
+	msg := fmt.Sprintf("Hi~ 主人早安！☀️\n\n"+
+		"今天是週期第 **%d** 天（%s），模式：**%s**\n\n"+
+		"起床後先喝杯溫水，接著開始早晨保養：\n\n%s",
+		routine.CycleDay, routine.PhaseLabel, routine.Mode,
+		formatStepsChinese(routine.AM))
+
+	if len(routine.Banned) > 0 {
+		msg += "\n\n⚠️ 今天記得避開：\n" + formatBannedChinese(routine.Banned)
+	}
+
+	wellnessBlock := buildWellnessBlock(now, routine)
+	if wellnessBlock != "" {
+		msg += "\n\n" + wellnessBlock
+	}
+
+	msg += "\n\n祝你有個美好的一天！💪"
+
+	embed := discord.Embed{
+		Title:       fmt.Sprintf("☀️ 早安保養 — Day %d %s（測試）", routine.CycleDay, routine.PhaseLabel),
+		Description: msg,
+		Color:       discord.ColorCoral,
+		Timestamp:   now.Format(time.RFC3339),
+		Footer:      &discord.EmbedFooter{Text: "LifeOS Skincare · Test"},
+	}
+
+	return sendLifeOSEmbed(embed)
 }
 
 // SendSkincareTestNotification 發送測試用 AM+PM 通知（跳過 dedup 和時間窗口）

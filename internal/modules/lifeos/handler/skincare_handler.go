@@ -139,6 +139,20 @@ func TestSkincareNotify(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Test notifications sent"})
 }
 
+// TestWellnessNotify - POST /api/lifeos/skincare/test-wellness
+// 測試含 Claude AI 建議的完整早安通知
+func TestWellnessNotify(c *gin.Context) {
+	loc, _ := time.LoadLocation("Asia/Taipei")
+	now := time.Now().In(loc)
+
+	if err := service.SendWellnessAMTestNotification(now); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Wellness test notification sent"})
+}
+
 // GetSkincareSchedule - GET /api/lifeos/skincare/schedule
 func GetSkincareSchedule(c *gin.Context) {
 	rules := loadScheduleRules()

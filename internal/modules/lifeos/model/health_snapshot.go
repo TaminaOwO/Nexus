@@ -18,8 +18,8 @@ type HealthSnapshot struct {
 	WorkoutType    *string   `json:"workout_type"`
 	WorkoutMinutes *float64  `json:"workout_minutes"`
 	Weight         *float64  `json:"weight"`
-	MoodScore      *float64  `json:"mood_score"`  // iOS State of Mind 1-5
-	MoodLabel      *string   `json:"mood_label"`  // 情緒標籤（如 happy, anxious）
+	BodyFat        *float64  `json:"body_fat"`    // 體脂率 %
+	Steps          *float64  `json:"steps"`       // 步數
 	CreatedAt      time.Time `json:"created_at"`
 	UpdatedAt      time.Time `json:"updated_at"`
 }

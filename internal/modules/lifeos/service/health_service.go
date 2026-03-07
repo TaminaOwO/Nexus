@@ -18,8 +18,8 @@ type HealthSnapshotInput struct {
 	WorkoutType    *string  `json:"workout_type"`
 	WorkoutMinutes *float64 `json:"workout_minutes"`
 	Weight         *float64 `json:"weight"`
-	MoodScore      *float64 `json:"mood_score"`
-	MoodLabel      *string  `json:"mood_label"`
+	BodyFat        *float64 `json:"body_fat"`
+	Steps          *float64 `json:"steps"`
 }
 
 // UpsertHealthSnapshot 建立或更新指定日期的健康快照
@@ -38,8 +38,8 @@ func UpsertHealthSnapshot(input HealthSnapshotInput) (*model.HealthSnapshot, err
 			WorkoutType:    input.WorkoutType,
 			WorkoutMinutes: input.WorkoutMinutes,
 			Weight:         input.Weight,
-			MoodScore:      input.MoodScore,
-			MoodLabel:      input.MoodLabel,
+			BodyFat:        input.BodyFat,
+			Steps:          input.Steps,
 		}
 		if err := database.DB.Create(&snap).Error; err != nil {
 			return nil, err
@@ -58,8 +58,8 @@ func UpsertHealthSnapshot(input HealthSnapshotInput) (*model.HealthSnapshot, err
 		"workout_type":    input.WorkoutType,
 		"workout_minutes": input.WorkoutMinutes,
 		"weight":          input.Weight,
-		"mood_score":      input.MoodScore,
-		"mood_label":      input.MoodLabel,
+		"body_fat":        input.BodyFat,
+		"steps":           input.Steps,
 	}
 	if err := database.DB.Model(&existing).Updates(updates).Error; err != nil {
 		return nil, err

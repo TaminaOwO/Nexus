@@ -33,14 +33,12 @@ func SyncHealthSnapshot(c *gin.Context) {
 		ActiveCalories: flexFloat(raw["active_calories"]),
 		WorkoutMinutes: flexFloat(raw["workout_minutes"]),
 		Weight:         flexFloat(raw["weight"]),
-		MoodScore:      flexFloat(raw["mood_score"]),
+		BodyFat:        flexFloat(raw["body_fat"]),
+		Steps:          flexFloat(raw["steps"]),
 	}
 
 	if wt, ok := raw["workout_type"].(string); ok && wt != "" {
 		input.WorkoutType = &wt
-	}
-	if ml, ok := raw["mood_label"].(string); ok && ml != "" {
-		input.MoodLabel = &ml
 	}
 
 	snap, err := service.UpsertHealthSnapshot(input)

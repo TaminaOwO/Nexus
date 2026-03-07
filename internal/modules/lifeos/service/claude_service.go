@@ -129,7 +129,7 @@ func buildWellnessPrompt(ctx WellnessContext) string {
 	sb.WriteString(fmt.Sprintf("今天是我的生理週期第 %d 天，目前處於%s。\n\n", ctx.CycleDay, ctx.PhaseLabel))
 
 	if ctx.Snapshot != nil {
-		sb.WriteString("昨晚 / 今日的健康數據：\n")
+		sb.WriteString("昨天的健康數據：\n")
 		if ctx.Snapshot.SleepHours != nil {
 			sb.WriteString(fmt.Sprintf("- 睡眠時數：%.1f 小時\n", *ctx.Snapshot.SleepHours))
 		}
@@ -148,12 +148,11 @@ func buildWellnessPrompt(ctx WellnessContext) string {
 		if ctx.Snapshot.Weight != nil {
 			sb.WriteString(fmt.Sprintf("- 體重：%.1f kg\n", *ctx.Snapshot.Weight))
 		}
-		if ctx.Snapshot.MoodScore != nil {
-			moodLine := fmt.Sprintf("- 心情狀態：%.0f/5 分", *ctx.Snapshot.MoodScore)
-			if ctx.Snapshot.MoodLabel != nil && *ctx.Snapshot.MoodLabel != "" {
-				moodLine += fmt.Sprintf("（%s）", *ctx.Snapshot.MoodLabel)
-			}
-			sb.WriteString(moodLine + "\n")
+		if ctx.Snapshot.BodyFat != nil {
+			sb.WriteString(fmt.Sprintf("- 體脂率：%.1f%%\n", *ctx.Snapshot.BodyFat))
+		}
+		if ctx.Snapshot.Steps != nil {
+			sb.WriteString(fmt.Sprintf("- 步數：%.0f 步\n", *ctx.Snapshot.Steps))
 		}
 		sb.WriteString("\n")
 	} else {

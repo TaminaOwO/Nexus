@@ -44,6 +44,7 @@ func main() {
 		&lifeosModel.SkincareCycleSetting{},
 		&lifeosModel.SkincareScheduleRule{},
 		&lifeosModel.HealthSnapshot{},
+		&lifeosModel.HealthWorkoutLog{},
 		&lifeosModel.WellnessRecommendation{},
 	)
 

@@ -15,8 +15,7 @@ type HealthSnapshot struct {
 	HRV            *float64  `json:"hrv"`
 	RestingHR      *float64  `json:"resting_hr"`
 	ActiveCalories *float64  `json:"active_calories"`
-	WorkoutType    *string   `json:"workout_type"`
-	WorkoutMinutes *float64  `json:"workout_minutes"`
+	WorkoutSummary *string   `json:"workout_summary"` // 自然語言摘要，由後端從 HealthWorkoutLog 生成
 	Weight         *float64  `json:"weight"`
 	BodyFat        *float64  `json:"body_fat"`    // 體脂率 %
 	Steps          *float64  `json:"steps"`       // 步數

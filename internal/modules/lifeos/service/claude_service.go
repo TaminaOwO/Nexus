@@ -142,8 +142,8 @@ func buildWellnessPrompt(ctx WellnessContext) string {
 		if ctx.Snapshot.ActiveCalories != nil {
 			sb.WriteString(fmt.Sprintf("- 活動消耗：%.0f kcal\n", *ctx.Snapshot.ActiveCalories))
 		}
-		if ctx.Snapshot.WorkoutType != nil && ctx.Snapshot.WorkoutMinutes != nil {
-			sb.WriteString(fmt.Sprintf("- 運動：%s %.0f 分鐘\n", *ctx.Snapshot.WorkoutType, *ctx.Snapshot.WorkoutMinutes))
+		if ctx.Snapshot.WorkoutSummary != nil {
+			sb.WriteString(fmt.Sprintf("- 運動：%s\n", *ctx.Snapshot.WorkoutSummary))
 		}
 		if ctx.Snapshot.Weight != nil {
 			sb.WriteString(fmt.Sprintf("- 體重：%.1f kg\n", *ctx.Snapshot.Weight))

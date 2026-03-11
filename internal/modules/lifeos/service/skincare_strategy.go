@@ -91,8 +91,66 @@ func CalculateCycleDay(cycleStartDate string, cycleLength int, targetDate time.T
 	return days
 }
 
+// weeklyUsageCounter tracks how many times each productKey has been scheduled
+// within a rolling 7-day generation window. Used by GenerateWeeklySkincare to
+// enforce MaxPerWeek limits across phase boundaries (e.g. retinol in ovulation
+// + luteal in the same week).
+type weeklyUsageCounter map[string]int
+
+// countAndCheck returns true if adding this product would stay within MaxPerWeek.
+// It increments the counter when returning true.
+// A nil counter means no cross-day tracking (single-day generation); in that
+// case the day-level schedule rule alone determines eligibility.
+func (w weeklyUsageCounter) countAndCheck(productKey string, rules []model.SkincareScheduleRule) bool {
+	if w == nil {
+		return true // no weekly tracking — allow (schedule rule already checked)
+	}
+	max := getMaxPerWeek(rules, productKey)
+	if max <= 0 {
+		return true // no limit defined, always allow
+	}
+	if w[productKey] >= max {
+		return false
+	}
+	w[productKey]++
+	return true
+}
+
+// getMaxPerWeek returns the minimum non-zero MaxPerWeek across all phases for a
+// productKey. Using the minimum ensures the most restrictive weekly cap wins
+// when multiple phases with different limits fall inside the same 7-day window
+// (e.g. retinol: follicular=2, luteal=1 → global cap = 1).
+// Custom rules are checked first; defaults are used as fallback.
+func getMaxPerWeek(rules []model.SkincareScheduleRule, productKey string) int {
+	min := 0
+	for _, r := range rules {
+		if r.ProductKey == productKey && r.MaxPerWeek > 0 {
+			if min == 0 || r.MaxPerWeek < min {
+				min = r.MaxPerWeek
+			}
+		}
+	}
+	if min > 0 {
+		return min
+	}
+	for _, r := range GetDefaultScheduleRules() {
+		if r.ProductKey == productKey && r.MaxPerWeek > 0 {
+			if min == 0 || r.MaxPerWeek < min {
+				min = r.MaxPerWeek
+			}
+		}
+	}
+	return min
+}
+
 // GenerateDailySkincare 產生單日保養建議
 func GenerateDailySkincare(cycleDay int, cycleLength int, targetDate time.Time, rules []model.SkincareScheduleRule) model.SkincareRoutine {
+	return generateDailySkincare(cycleDay, cycleLength, targetDate, rules, nil)
+}
+
+// generateDailySkincare is the internal implementation that accepts an optional
+// weeklyUsageCounter for cross-day MaxPerWeek enforcement.
+func generateDailySkincare(cycleDay int, cycleLength int, targetDate time.Time, rules []model.SkincareScheduleRule, counter weeklyUsageCounter) model.SkincareRoutine {
 	phase, phaseLabel, mode := DeterminePhase(cycleDay, cycleLength)
 	weekday := targetDate.Weekday()
 
@@ -112,11 +170,11 @@ func GenerateDailySkincare(cycleDay int, cycleLength int, targetDate time.Time, 
 	case "menstrual":
 		buildMenstrual(&routine, cycleDay, weekday)
 	case "follicular":
-		buildFollicular(&routine, weekday, rules)
+		buildFollicular(&routine, weekday, rules, counter)
 	case "ovulation":
-		buildOvulation(&routine, weekday, rules)
+		buildOvulation(&routine, weekday, rules, counter)
 	case "luteal", "waiting":
-		buildLuteal(&routine, cycleDay, weekday, rules)
+		buildLuteal(&routine, cycleDay, weekday, rules, counter)
 	}
 
 	return routine
@@ -175,10 +233,11 @@ func buildMenstrual(r *model.SkincareRoutine, cycleDay int, weekday time.Weekday
 
 // === Follicular Phase (Day 6-13) — Glow but Controlled ===
 
-func buildFollicular(r *model.SkincareRoutine, weekday time.Weekday, rules []model.SkincareScheduleRule) {
+func buildFollicular(r *model.SkincareRoutine, weekday time.Weekday, rules []model.SkincareScheduleRule, counter weeklyUsageCounter) {
 	buildBaseAM(r)
 
-	isRetinol := isScheduledDay(rules, "retinol", "follicular", weekday)
+	isRetinolDay := isScheduledDay(rules, "retinol", "follicular", weekday)
+	isRetinol := isRetinolDay && counter.countAndCheck("retinol", rules)
 	isBojEye := !isRetinol && isScheduledDay(rules, "boj_eye", "follicular", weekday)
 	isStridex := isScheduledDay(rules, "stridex", "follicular", weekday)
 	isArencia := !isStridex && !isRetinol && isScheduledDay(rules, "arencia", "follicular", weekday)
@@ -221,9 +280,9 @@ func buildFollicular(r *model.SkincareRoutine, weekday time.Weekday, rules []mod
 
 // === Ovulation Phase (Day 14) — Balance ===
 
-func buildOvulation(r *model.SkincareRoutine, weekday time.Weekday, rules []model.SkincareScheduleRule) {
+func buildOvulation(r *model.SkincareRoutine, weekday time.Weekday, rules []model.SkincareScheduleRule, counter weeklyUsageCounter) {
 	// Structure follows Follicular
-	buildFollicular(r, weekday, rules)
+	buildFollicular(r, weekday, rules, counter)
 
 	// Add extra note
 	r.Banned = append(r.Banned, "★ 排卵期美容儀效果最佳，優先安排提拉模式")
@@ -231,12 +290,13 @@ func buildOvulation(r *model.SkincareRoutine, weekday time.Weekday, rules []mode
 
 // === Luteal Phase (Day 15-28) — Calm > Treat (Split Half 1 and 2) ===
 
-func buildLuteal(r *model.SkincareRoutine, cycleDay int, weekday time.Weekday, rules []model.SkincareScheduleRule) {
+func buildLuteal(r *model.SkincareRoutine, cycleDay int, weekday time.Weekday, rules []model.SkincareScheduleRule, counter weeklyUsageCounter) {
 	buildBaseAM(r)
 
 	if cycleDay <= 21 {
 		// First Half (15-21): Transition, limited actives
-		isRetinol := isScheduledDay(rules, "retinol", "luteal", weekday)
+		isRetinolDay := isScheduledDay(rules, "retinol", "luteal", weekday)
+		isRetinol := isRetinolDay && counter.countAndCheck("retinol", rules)
 		isArencia := !isRetinol && isScheduledDay(rules, "arencia", "luteal", weekday)
 		isBojEye := !isRetinol && isScheduledDay(rules, "boj_eye", "luteal", weekday)
 		isRiceMask := !isArencia && isScheduledDay(rules, "boj_rice_mask", "luteal", weekday)
@@ -250,7 +310,7 @@ func buildLuteal(r *model.SkincareRoutine, cycleDay int, weekday time.Weekday, r
 			r.PM = append(r.PM, model.SkincareStep{Product: "Torriden 面膜", Optional: true})
 			r.Banned = append(r.Banned, "今晚 Arencia 麻糬潔顏面膜：禁 BOJ 蜂蜜米飯面膜")
 		} else if isRetinol {
-			r.PM = append(r.PM, model.SkincareStep{Product: "INNISFREE A醇", Badges: []string{"1x/週 限定"}})
+			r.PM = append(r.PM, model.SkincareStep{Product: "INNISFREE A醇", Badges: []string{"Pea Size", "1x/週"}})
 			r.PM = append(r.PM, model.SkincareStep{Product: "IRITA B5 精華乳"})
 			r.PM = append(r.PM, model.SkincareStep{Product: "IRITA Q10 水凝膜"})
 			r.Banned = append(r.Banned, "今晚 INNISFREE A醇：禁 BOJ A醛、美容儀")
@@ -298,12 +358,16 @@ func buildLuteal(r *model.SkincareRoutine, cycleDay int, weekday time.Weekday, r
 }
 
 // GenerateWeeklySkincare 產生本週 7 天保養排程
+// A shared weeklyUsageCounter is passed across all 7 days so that MaxPerWeek
+// limits are enforced globally across the window (e.g. retinol 1x/week caps
+// are respected even when ovulation and luteal phases fall in the same week).
 func GenerateWeeklySkincare(cycleStartDate string, cycleLength int, today time.Time, rules []model.SkincareScheduleRule) []model.SkincareRoutine {
+	counter := make(weeklyUsageCounter)
 	routines := make([]model.SkincareRoutine, 7)
 	for i := 0; i < 7; i++ {
 		targetDate := today.AddDate(0, 0, i)
 		cycleDay := CalculateCycleDay(cycleStartDate, cycleLength, targetDate)
-		routines[i] = GenerateDailySkincare(cycleDay, cycleLength, targetDate, rules)
+		routines[i] = generateDailySkincare(cycleDay, cycleLength, targetDate, rules, counter)
 	}
 	return routines
 }

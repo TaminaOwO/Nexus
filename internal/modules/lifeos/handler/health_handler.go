@@ -71,6 +71,12 @@ func parseHealthAutoExportPayload(body []byte) (*HealthAutoExportEnvelope, error
 	return &envelope, nil
 }
 
+// sumMetrics are metrics where multiple data points should be summed (daily totals).
+var sumMetrics = map[string]bool{
+	"step_count":    true,
+	"active_energy": true,
+}
+
 // mapMetricsToInput converts the parsed envelope into a HealthSnapshotInput.
 func mapMetricsToInput(envelope *HealthAutoExportEnvelope) service.HealthSnapshotInput {
 	input := service.HealthSnapshotInput{}
@@ -95,7 +101,17 @@ func mapMetricsToInput(envelope *HealthAutoExportEnvelope) service.HealthSnapsho
 			continue
 		}
 
-		values[dbField] = metric.Data[0].Qty
+		if sumMetrics[metric.Name] {
+			// Cumulative metrics: sum all data points
+			var total float64
+			for _, dp := range metric.Data {
+				total += dp.Qty
+			}
+			values[dbField] = total
+		} else {
+			// Point-in-time metrics: take the last (most recent) data point
+			values[dbField] = metric.Data[len(metric.Data)-1].Qty
+		}
 	}
 
 	input.Date = firstDate

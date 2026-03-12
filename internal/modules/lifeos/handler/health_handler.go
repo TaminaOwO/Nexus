@@ -44,17 +44,24 @@ type MetricDataPoint struct {
 // metricMapping maps Health Auto Export metric names to HealthSnapshotInput field names.
 // sleep_analysis is handled separately (special struct, not qty-based).
 var metricMapping = map[string]string{
-	"heart_rate_variability":      "hrv",
-	"heart_rate_variability_sdnn": "hrv",
-	"resting_heart_rate":          "resting_hr",
-	"active_energy":               "active_calories",
-	"body_mass":                   "weight",
-	"body_fat_percentage":         "body_fat",
-	"step_count":                  "steps",
-	"state_of_mind":               "mood_score",
-	"respiratory_rate":            "respiratory_rate",
-	"vo2_max":                     "vo2_max",
-	"wrist_temperature":           "wrist_temp_deviation",
+	"heart_rate_variability":           "hrv",
+	"resting_heart_rate":               "resting_hr",
+	"active_energy":                    "active_calories",
+	"body_mass":                        "weight",
+	"body_fat_percentage":              "body_fat",
+	"step_count":                       "steps",
+	"state_of_mind":                    "mood_score",
+	"respiratory_rate":                 "respiratory_rate",
+	"vo2_max":                          "vo2_max",
+	"apple_sleeping_wrist_temperature": "wrist_temp_deviation",
+}
+
+// kjToKcal converts kilojoules to kilocalories.
+const kjToKcal = 4.184
+
+// unitConversions maps metric names to conversion factors applied after aggregation.
+var unitConversions = map[string]float64{
+	"active_energy": 1.0 / kjToKcal, // kJ → kcal
 }
 
 // extractDate parses "2026-03-11 23:30:00 -0800" → "2026-03-11"
@@ -120,17 +127,22 @@ func mapMetricsToInput(envelope *HealthAutoExportEnvelope) service.HealthSnapsho
 			continue
 		}
 
+		var val float64
 		if sumMetrics[metric.Name] {
 			// Cumulative metrics: sum all data points
-			var total float64
 			for _, dp := range metric.Data {
-				total += dp.Qty
+				val += dp.Qty
 			}
-			values[dbField] = total
 		} else {
 			// Point-in-time metrics: take the last (most recent) data point
-			values[dbField] = metric.Data[len(metric.Data)-1].Qty
+			val = metric.Data[len(metric.Data)-1].Qty
 		}
+
+		// Apply unit conversion if needed (e.g. kJ → kcal)
+		if factor, ok := unitConversions[metric.Name]; ok {
+			val *= factor
+		}
+		values[dbField] = val
 	}
 
 	input.Date = firstDate

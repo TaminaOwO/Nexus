@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"math"
 	"testing"
 )
 
@@ -70,8 +71,9 @@ func TestParseHealthAutoExportPayload_ValidPayload(t *testing.T) {
 	if input.RestingHR == nil || *input.RestingHR != 55.0 {
 		t.Errorf("expected resting_hr=55.0, got %v", input.RestingHR)
 	}
-	if input.ActiveCalories == nil || *input.ActiveCalories != 450.0 {
-		t.Errorf("expected active_calories=450.0 (sum), got %v", input.ActiveCalories)
+	// active_energy is in kJ, converted to kcal (÷4.184): (200+250)/4.184 ≈ 107.6
+	if input.ActiveCalories == nil || math.Abs(*input.ActiveCalories-450.0/4.184) > 0.1 {
+		t.Errorf("expected active_calories≈107.6 (kJ→kcal), got %v", input.ActiveCalories)
 	}
 	if input.Weight == nil || *input.Weight != 62.5 {
 		t.Errorf("expected weight=62.5, got %v", input.Weight)
@@ -197,14 +199,14 @@ func TestParseHealthAutoExportPayload_AllMetrics(t *testing.T) {
 				{"name": "sleep_analysis", "units": "hr", "data": [{"date": "2026-03-11 23:30:00 -0800", "totalSleep": 6.8, "deep": 1.8}]},
 				{"name": "heart_rate_variability", "units": "ms", "data": [{"date": "2026-03-11 06:00:00 -0800", "qty": 85.0}]},
 				{"name": "resting_heart_rate", "units": "bpm", "data": [{"date": "2026-03-11 06:00:00 -0800", "qty": 55.0}]},
-				{"name": "active_energy", "units": "kcal", "data": [{"date": "2026-03-11 06:00:00 -0800", "qty": 450.0}]},
+				{"name": "active_energy", "units": "kJ", "data": [{"date": "2026-03-11 06:00:00 -0800", "qty": 450.0}]},
 				{"name": "body_mass", "units": "kg", "data": [{"date": "2026-03-11 06:00:00 -0800", "qty": 62.5}]},
 				{"name": "body_fat_percentage", "units": "%", "data": [{"date": "2026-03-11 06:00:00 -0800", "qty": 22.5}]},
 				{"name": "step_count", "units": "steps", "data": [{"date": "2026-03-11 06:00:00 -0800", "qty": 8500.0}]},
 				{"name": "state_of_mind", "units": "score", "data": [{"date": "2026-03-11 06:00:00 -0800", "qty": 7.0}]},
 				{"name": "respiratory_rate", "units": "bpm", "data": [{"date": "2026-03-11 06:00:00 -0800", "qty": 15.0}]},
 				{"name": "vo2_max", "units": "ml/kg/min", "data": [{"date": "2026-03-11 06:00:00 -0800", "qty": 42.0}]},
-				{"name": "wrist_temperature", "units": "degC", "data": [{"date": "2026-03-11 06:00:00 -0800", "qty": 0.3}]}
+				{"name": "apple_sleeping_wrist_temperature", "units": "degC", "data": [{"date": "2026-03-11 06:00:00 -0800", "qty": 0.3}]}
 			]
 		}
 	}`
@@ -257,9 +259,9 @@ func TestExtractDateFromPayloadTimestamp(t *testing.T) {
 func TestMetricMapping_AllKeysPresent(t *testing.T) {
 	// sleep_analysis is handled specially, not in metricMapping
 	expectedKeys := []string{
-		"heart_rate_variability", "heart_rate_variability_sdnn", "resting_heart_rate",
+		"heart_rate_variability", "resting_heart_rate",
 		"active_energy", "body_mass", "body_fat_percentage", "step_count",
-		"state_of_mind", "respiratory_rate", "vo2_max", "wrist_temperature",
+		"state_of_mind", "respiratory_rate", "vo2_max", "apple_sleeping_wrist_temperature",
 	}
 	for _, key := range expectedKeys {
 		if _, ok := metricMapping[key]; !ok {

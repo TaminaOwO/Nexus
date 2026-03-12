@@ -315,41 +315,50 @@ func scanSkincareAM(now time.Time) {
 	log.Printf("[LifeOS Reminder] Sent skincare AM reminder (Day %d, %s)", routine.CycleDay, routine.PhaseLabel)
 }
 
-// buildWellnessBlock 取得健康快照、呼叫 Claude、存入 DB、回傳 Discord 區塊文字
+// buildWellnessBlock 取得健康快照、統計、規則引擎、呼叫 AI V2、存入 DB、回傳 Discord 區塊文字
 func buildWellnessBlock(now time.Time, routine *model.SkincareRoutine) string {
 	today := now.Format("2006-01-02")
 
-	// 取得最新健康快照（允許 nil）
+	// 1. 取得最新健康快照（允許 nil）
 	snapshot, err := GetLatestSnapshot()
 	if err != nil {
 		log.Printf("[Claude] Failed to get health snapshot: %v", err)
 	}
 
-	ctx := WellnessContext{
+	// 2. 取得近 30 天快照
+	recentSnaps, err := GetRecentSnapshots(30)
+	if err != nil {
+		log.Printf("[Claude] Failed to get recent snapshots: %v", err)
+	}
+
+	// 3. 計算統計摘要
+	stats := ComputeStatsSummary(recentSnaps)
+
+	// 4. 規則引擎評估
+	flags := EvaluateRules(snapshot, stats, recentSnaps)
+
+	// 5. 組裝 V2 context
+	ctx := WellnessContextV2{
 		CycleDay:   routine.CycleDay,
 		CyclePhase: routine.Phase,
 		PhaseLabel: routine.PhaseLabel,
-		Snapshot:   snapshot,
+		Today:      snapshot,
+		Stats:      stats,
+		Flags:      flags,
 	}
 
-	advice, err := GenerateWellnessAdvice(ctx)
+	// 6. 呼叫 AI V2
+	advice, err := GenerateWellnessAdviceV2(ctx)
 	if err != nil {
-		log.Printf("[Claude] Failed to generate wellness advice: %v", err)
+		log.Printf("[Claude] Failed to generate wellness advice V2: %v", err)
 		return ""
 	}
 	if advice == nil {
 		return ""
 	}
 
-	// 儲存建議至 DB（轉換為 sections JSON 格式）
-	sections := []map[string]string{}
-	if advice.DietAdvice != "" {
-		sections = append(sections, map[string]string{"title": "飲食建議", "content": advice.DietAdvice})
-	}
-	if advice.ExerciseAdvice != "" {
-		sections = append(sections, map[string]string{"title": "運動建議", "content": advice.ExerciseAdvice})
-	}
-	sectionsJSON, _ := json.Marshal(sections)
+	// 7. 儲存建議至 DB
+	sectionsJSON, _ := json.Marshal(advice.Sections)
 	rec := &model.WellnessRecommendation{
 		Date:        today,
 		CyclePhase:  routine.Phase,
@@ -360,14 +369,71 @@ func buildWellnessBlock(now time.Time, routine *model.SkincareRoutine) string {
 		log.Printf("[Claude] Failed to save wellness recommendation: %v", err)
 	}
 
-	// 組裝 Discord 區塊
+	// 8. 組裝 Discord 區塊
 	var sb strings.Builder
-	sb.WriteString("---\n🥗 **飲食建議**\n")
-	sb.WriteString(advice.DietAdvice)
-	if advice.ExerciseAdvice != "" {
-		sb.WriteString("\n\n🏃 **運動建議**\n")
-		sb.WriteString(advice.ExerciseAdvice)
+
+	// 若有觸發警報，先顯示警報區塊
+	if alertBlock := formatFlagsBlock(flags); alertBlock != "" {
+		sb.WriteString(alertBlock)
 	}
+
+	// 動態 section 輸出
+	for _, section := range advice.Sections {
+		icon := sectionIcon(section.Title)
+		sb.WriteString(fmt.Sprintf("---\n%s **%s**\n%s\n", icon, section.Title, section.Content))
+	}
+
+	return strings.TrimRight(sb.String(), "\n")
+}
+
+// sectionIcon 根據 section 標題內容回傳對應圖示
+func sectionIcon(title string) string {
+	switch {
+	case strings.Contains(title, "飲食"):
+		return "🥗"
+	case strings.Contains(title, "訓練"):
+		return "🏋️"
+	case strings.Contains(title, "恢復"):
+		return "💤"
+	case strings.Contains(title, "心理"):
+		return "🧠"
+	case strings.Contains(title, "長期"):
+		return "📊"
+	default:
+		return "💡"
+	}
+}
+
+// formatFlagsBlock 將觸發的規則警報格式化為 Discord 警報區塊
+func formatFlagsBlock(flags []RuleFlag) string {
+	if len(flags) == 0 {
+		return ""
+	}
+
+	var highs, mediums, lows []string
+	for _, f := range flags {
+		switch f.Severity {
+		case "high":
+			highs = append(highs, "🔴 "+f.Message)
+		case "medium":
+			mediums = append(mediums, "🟡 "+f.Message)
+		default:
+			lows = append(lows, "🔵 "+f.Message)
+		}
+	}
+
+	var sb strings.Builder
+	sb.WriteString("---\n⚠️ **今日健康警報**\n")
+	for _, line := range highs {
+		sb.WriteString(line + "\n")
+	}
+	for _, line := range mediums {
+		sb.WriteString(line + "\n")
+	}
+	for _, line := range lows {
+		sb.WriteString(line + "\n")
+	}
+	sb.WriteString("\n")
 	return sb.String()
 }
 

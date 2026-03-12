@@ -9,6 +9,7 @@ import (
 
 	"nexus/internal/auth"
 	"nexus/internal/database"
+	"nexus/internal/middleware"
 	kiteHandler "nexus/internal/modules/kite/handler"
 	"nexus/internal/modules/kite/model"
 	kiteService "nexus/internal/modules/kite/service"
@@ -83,6 +84,13 @@ func main() {
 	r.GET("/api/auth/me", auth.MeHandler)
 	r.POST("/api/auth/logout", auth.LogoutHandler)
 
+	// Webhook routes (API Key auth, no user auth required)
+	webhook := r.Group("/api/lifeos/health")
+	webhook.Use(middleware.APIKeyAuth())
+	{
+		webhook.POST("/sync", lifeosHandler.SyncHealthSnapshot)
+	}
+
 	// Protected API routes
 	api := r.Group("/api")
 	api.Use(auth.AuthMiddleware())
@@ -126,7 +134,6 @@ func main() {
 		lifeos.POST("/skincare/test-wellness", lifeosHandler.TestWellnessNotify)
 
 		// Health Snapshot Routes
-		lifeos.POST("/health/sync", lifeosHandler.SyncHealthSnapshot)
 		lifeos.GET("/health/latest", lifeosHandler.GetLatestHealthSnapshot)
 	}
 

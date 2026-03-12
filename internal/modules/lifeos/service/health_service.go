@@ -66,8 +66,6 @@ func saveWorkoutLogs(date string, workouts []WorkoutEntry) error {
 
 // UpsertHealthSnapshot 建立或更新指定日期的健康快照
 func UpsertHealthSnapshot(input HealthSnapshotInput) (*model.HealthSnapshot, error) {
-	workoutSummary := buildWorkoutSummary(input.Workouts)
-
 	var existing model.HealthSnapshot
 	err := database.DB.Where("date = ?", input.Date).First(&existing).Error
 
@@ -78,7 +76,6 @@ func UpsertHealthSnapshot(input HealthSnapshotInput) (*model.HealthSnapshot, err
 			HRV:                input.HRV,
 			RestingHR:          input.RestingHR,
 			ActiveCalories:     input.ActiveCalories,
-			WorkoutSummary:     workoutSummary,
 			Weight:             input.Weight,
 			BodyFat:            input.BodyFat,
 			Steps:              input.Steps,
@@ -89,10 +86,13 @@ func UpsertHealthSnapshot(input HealthSnapshotInput) (*model.HealthSnapshot, err
 			VO2Max:             input.VO2Max,
 			WristTempDeviation: input.WristTempDeviation,
 		}
-		if err := database.DB.Create(&snap).Error; err != nil {
-			return nil, err
+		if len(input.Workouts) > 0 {
+			snap.WorkoutSummary = buildWorkoutSummary(input.Workouts)
+			if err := saveWorkoutLogs(input.Date, input.Workouts); err != nil {
+				return nil, err
+			}
 		}
-		if err := saveWorkoutLogs(input.Date, input.Workouts); err != nil {
+		if err := database.DB.Create(&snap).Error; err != nil {
 			return nil, err
 		}
 		return &snap, nil
@@ -100,27 +100,57 @@ func UpsertHealthSnapshot(input HealthSnapshotInput) (*model.HealthSnapshot, err
 		return nil, err
 	}
 
-	updates := map[string]interface{}{
-		"sleep_hours":          input.SleepHours,
-		"hrv":                  input.HRV,
-		"resting_hr":           input.RestingHR,
-		"active_calories":      input.ActiveCalories,
-		"workout_summary":      workoutSummary,
-		"weight":               input.Weight,
-		"body_fat":             input.BodyFat,
-		"steps":                input.Steps,
-		"mood_score":           input.MoodScore,
-		"mood_label":           input.MoodLabel,
-		"deep_sleep_hours":     input.DeepSleepHours,
-		"respiratory_rate":     input.RespiratoryRate,
-		"vo2_max":              input.VO2Max,
-		"wrist_temp_deviation": input.WristTempDeviation,
+	// Only include non-nil fields to avoid overwriting existing data with NULL
+	updates := map[string]interface{}{}
+	if input.SleepHours != nil {
+		updates["sleep_hours"] = input.SleepHours
 	}
-	if err := database.DB.Model(&existing).Updates(updates).Error; err != nil {
-		return nil, err
+	if input.HRV != nil {
+		updates["hrv"] = input.HRV
 	}
-	if err := saveWorkoutLogs(input.Date, input.Workouts); err != nil {
-		return nil, err
+	if input.RestingHR != nil {
+		updates["resting_hr"] = input.RestingHR
+	}
+	if input.ActiveCalories != nil {
+		updates["active_calories"] = input.ActiveCalories
+	}
+	if input.Weight != nil {
+		updates["weight"] = input.Weight
+	}
+	if input.BodyFat != nil {
+		updates["body_fat"] = input.BodyFat
+	}
+	if input.Steps != nil {
+		updates["steps"] = input.Steps
+	}
+	if input.MoodScore != nil {
+		updates["mood_score"] = input.MoodScore
+	}
+	if input.MoodLabel != nil {
+		updates["mood_label"] = input.MoodLabel
+	}
+	if input.DeepSleepHours != nil {
+		updates["deep_sleep_hours"] = input.DeepSleepHours
+	}
+	if input.RespiratoryRate != nil {
+		updates["respiratory_rate"] = input.RespiratoryRate
+	}
+	if input.VO2Max != nil {
+		updates["vo2_max"] = input.VO2Max
+	}
+	if input.WristTempDeviation != nil {
+		updates["wrist_temp_deviation"] = input.WristTempDeviation
+	}
+	if len(input.Workouts) > 0 {
+		updates["workout_summary"] = buildWorkoutSummary(input.Workouts)
+		if err := saveWorkoutLogs(input.Date, input.Workouts); err != nil {
+			return nil, err
+		}
+	}
+	if len(updates) > 0 {
+		if err := database.DB.Model(&existing).Updates(updates).Error; err != nil {
+			return nil, err
+		}
 	}
 	return &existing, nil
 }

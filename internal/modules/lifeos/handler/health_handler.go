@@ -28,15 +28,23 @@ type MetricEntry struct {
 }
 
 // MetricDataPoint represents a single data point within a metric.
+// Standard metrics use Qty; sleep_analysis uses TotalSleep/Deep/REM/Core.
 type MetricDataPoint struct {
 	Date   string  `json:"date"`
 	Qty    float64 `json:"qty"`
 	Source string  `json:"source"`
+	// Sleep-specific fields (sleep_analysis)
+	TotalSleep *float64 `json:"totalSleep,omitempty"`
+	Deep       *float64 `json:"deep,omitempty"`
+	REM        *float64 `json:"rem,omitempty"`
+	Core       *float64 `json:"core,omitempty"`
+	Awake      *float64 `json:"awake,omitempty"`
 }
 
 // metricMapping maps Health Auto Export metric names to HealthSnapshotInput field names.
+// sleep_analysis is handled separately (special struct, not qty-based).
 var metricMapping = map[string]string{
-	"sleep_analysis":              "sleep_hours",
+	"heart_rate_variability":      "hrv",
 	"heart_rate_variability_sdnn": "hrv",
 	"resting_heart_rate":          "resting_hr",
 	"active_energy":               "active_calories",
@@ -44,7 +52,6 @@ var metricMapping = map[string]string{
 	"body_fat_percentage":         "body_fat",
 	"step_count":                  "steps",
 	"state_of_mind":               "mood_score",
-	"deep_sleep":                  "deep_sleep_hours",
 	"respiratory_rate":            "respiratory_rate",
 	"vo2_max":                     "vo2_max",
 	"wrist_temperature":           "wrist_temp_deviation",
@@ -93,6 +100,18 @@ func mapMetricsToInput(envelope *HealthAutoExportEnvelope) service.HealthSnapsho
 		// Extract date from first metric that has data
 		if firstDate == "" {
 			firstDate = extractDate(metric.Data[0].Date)
+		}
+
+		// sleep_analysis uses structured fields, not qty
+		if metric.Name == "sleep_analysis" {
+			dp := metric.Data[0]
+			if dp.TotalSleep != nil {
+				values["sleep_hours"] = *dp.TotalSleep
+			}
+			if dp.Deep != nil {
+				values["deep_sleep_hours"] = *dp.Deep
+			}
+			continue
 		}
 
 		dbField, ok := metricMapping[metric.Name]

@@ -12,9 +12,8 @@ type WellnessRecommendation struct {
 	ID            string    `gorm:"primaryKey" json:"id"`
 	Date          string    `json:"date"`         // YYYY-MM-DD
 	CyclePhase    string    `json:"cycle_phase"`  // menstrual/follicular/ovulation/luteal
-	DietAdvice    string    `json:"diet_advice"`
-	ExerciseAdvice string   `json:"exercise_advice"`
-	RawResponse   string    `json:"raw_response"`
+	Sections    string    `json:"sections"`     // JSON array of {title, content}
+	RawResponse string    `json:"raw_response"`
 	CreatedAt     time.Time `json:"created_at"`
 }
 

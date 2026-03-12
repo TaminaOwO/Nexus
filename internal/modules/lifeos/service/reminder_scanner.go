@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"strings"
@@ -340,13 +341,20 @@ func buildWellnessBlock(now time.Time, routine *model.SkincareRoutine) string {
 		return ""
 	}
 
-	// 儲存建議至 DB
+	// 儲存建議至 DB（轉換為 sections JSON 格式）
+	sections := []map[string]string{}
+	if advice.DietAdvice != "" {
+		sections = append(sections, map[string]string{"title": "飲食建議", "content": advice.DietAdvice})
+	}
+	if advice.ExerciseAdvice != "" {
+		sections = append(sections, map[string]string{"title": "運動建議", "content": advice.ExerciseAdvice})
+	}
+	sectionsJSON, _ := json.Marshal(sections)
 	rec := &model.WellnessRecommendation{
-		Date:           today,
-		CyclePhase:     routine.Phase,
-		DietAdvice:     advice.DietAdvice,
-		ExerciseAdvice: advice.ExerciseAdvice,
-		RawResponse:    advice.RawResponse,
+		Date:        today,
+		CyclePhase:  routine.Phase,
+		Sections:    string(sectionsJSON),
+		RawResponse: advice.RawResponse,
 	}
 	if err := SaveWellnessRecommendation(rec); err != nil {
 		log.Printf("[Claude] Failed to save wellness recommendation: %v", err)

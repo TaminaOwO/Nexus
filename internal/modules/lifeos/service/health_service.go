@@ -12,15 +12,21 @@ import (
 
 // HealthSnapshotInput - 來自 iOS 捷徑的資料（所有欄位可選）
 type HealthSnapshotInput struct {
-	Date           string          `json:"date" binding:"required"`
-	SleepHours     *float64        `json:"sleep_hours"`
-	HRV            *float64        `json:"hrv"`
-	RestingHR      *float64        `json:"resting_hr"`
-	ActiveCalories *float64        `json:"active_calories"`
-	Workouts       []WorkoutEntry  `json:"workouts"` // 結構化運動記錄
-	Weight         *float64        `json:"weight"`
-	BodyFat        *float64        `json:"body_fat"`
-	Steps          *float64        `json:"steps"`
+	Date               string          `json:"date" binding:"required"`
+	SleepHours         *float64        `json:"sleep_hours"`
+	HRV                *float64        `json:"hrv"`
+	RestingHR          *float64        `json:"resting_hr"`
+	ActiveCalories     *float64        `json:"active_calories"`
+	Workouts           []WorkoutEntry  `json:"workouts"` // 結構化運動記錄
+	Weight             *float64        `json:"weight"`
+	BodyFat            *float64        `json:"body_fat"`
+	Steps              *float64        `json:"steps"`
+	MoodScore          *float64        `json:"mood_score"`
+	MoodLabel          *string         `json:"mood_label"`
+	DeepSleepHours     *float64        `json:"deep_sleep_hours"`
+	RespiratoryRate    *float64        `json:"respiratory_rate"`
+	VO2Max             *float64        `json:"vo2_max"`
+	WristTempDeviation *float64        `json:"wrist_temp_deviation"`
 }
 
 // WorkoutEntry - 單筆運動記錄
@@ -67,15 +73,21 @@ func UpsertHealthSnapshot(input HealthSnapshotInput) (*model.HealthSnapshot, err
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		snap := model.HealthSnapshot{
-			Date:           input.Date,
-			SleepHours:     input.SleepHours,
-			HRV:            input.HRV,
-			RestingHR:      input.RestingHR,
-			ActiveCalories: input.ActiveCalories,
-			WorkoutSummary: workoutSummary,
-			Weight:         input.Weight,
-			BodyFat:        input.BodyFat,
-			Steps:          input.Steps,
+			Date:               input.Date,
+			SleepHours:         input.SleepHours,
+			HRV:                input.HRV,
+			RestingHR:          input.RestingHR,
+			ActiveCalories:     input.ActiveCalories,
+			WorkoutSummary:     workoutSummary,
+			Weight:             input.Weight,
+			BodyFat:            input.BodyFat,
+			Steps:              input.Steps,
+			MoodScore:          input.MoodScore,
+			MoodLabel:          input.MoodLabel,
+			DeepSleepHours:     input.DeepSleepHours,
+			RespiratoryRate:    input.RespiratoryRate,
+			VO2Max:             input.VO2Max,
+			WristTempDeviation: input.WristTempDeviation,
 		}
 		if err := database.DB.Create(&snap).Error; err != nil {
 			return nil, err
@@ -89,14 +101,20 @@ func UpsertHealthSnapshot(input HealthSnapshotInput) (*model.HealthSnapshot, err
 	}
 
 	updates := map[string]interface{}{
-		"sleep_hours":     input.SleepHours,
-		"hrv":             input.HRV,
-		"resting_hr":      input.RestingHR,
-		"active_calories": input.ActiveCalories,
-		"workout_summary": workoutSummary,
-		"weight":          input.Weight,
-		"body_fat":        input.BodyFat,
-		"steps":           input.Steps,
+		"sleep_hours":          input.SleepHours,
+		"hrv":                  input.HRV,
+		"resting_hr":           input.RestingHR,
+		"active_calories":      input.ActiveCalories,
+		"workout_summary":      workoutSummary,
+		"weight":               input.Weight,
+		"body_fat":             input.BodyFat,
+		"steps":                input.Steps,
+		"mood_score":           input.MoodScore,
+		"mood_label":           input.MoodLabel,
+		"deep_sleep_hours":     input.DeepSleepHours,
+		"respiratory_rate":     input.RespiratoryRate,
+		"vo2_max":              input.VO2Max,
+		"wrist_temp_deviation": input.WristTempDeviation,
 	}
 	if err := database.DB.Model(&existing).Updates(updates).Error; err != nil {
 		return nil, err

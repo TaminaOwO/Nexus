@@ -1,0 +1,194 @@
+package service
+
+import (
+	"errors"
+	"fmt"
+	"strings"
+
+	"nexus/internal/database"
+	"nexus/internal/modules/lifeos/model"
+	"gorm.io/gorm"
+)
+
+// HealthSnapshotInput - 來自 iOS 捷徑的資料（所有欄位可選）
+type HealthSnapshotInput struct {
+	Date               string          `json:"date" binding:"required"`
+	SleepHours         *float64        `json:"sleep_hours"`
+	HRV                *float64        `json:"hrv"`
+	RestingHR          *float64        `json:"resting_hr"`
+	ActiveCalories     *float64        `json:"active_calories"`
+	Workouts           []WorkoutEntry  `json:"workouts"` // 結構化運動記錄
+	Weight             *float64        `json:"weight"`
+	BodyFat            *float64        `json:"body_fat"`
+	Steps              *float64        `json:"steps"`
+	MoodScore          *float64        `json:"mood_score"`
+	MoodLabel          *string         `json:"mood_label"`
+	DeepSleepHours     *float64        `json:"deep_sleep_hours"`
+	RespiratoryRate    *float64        `json:"respiratory_rate"`
+	VO2Max             *float64        `json:"vo2_max"`
+	WristTempDeviation *float64        `json:"wrist_temp_deviation"`
+}
+
+// WorkoutEntry - 單筆運動記錄
+type WorkoutEntry struct {
+	Type    string  `json:"type"`
+	Minutes float64 `json:"minutes"`
+}
+
+// buildWorkoutSummary 把結構化運動記錄轉成自然語言摘要
+func buildWorkoutSummary(workouts []WorkoutEntry) *string {
+	if len(workouts) == 0 {
+		return nil
+	}
+	parts := make([]string, 0, len(workouts))
+	for _, w := range workouts {
+		parts = append(parts, fmt.Sprintf("%s %.0f 分鐘", w.Type, w.Minutes))
+	}
+	s := strings.Join(parts, "、")
+	return &s
+}
+
+// saveWorkoutLogs 刪除舊記錄後寫入新的結構化運動記錄
+func saveWorkoutLogs(date string, workouts []WorkoutEntry) error {
+	database.DB.Where("snapshot_date = ?", date).Delete(&model.HealthWorkoutLog{})
+	for _, w := range workouts {
+		log := model.HealthWorkoutLog{
+			SnapshotDate: date,
+			WorkoutType:  w.Type,
+			Minutes:      w.Minutes,
+		}
+		if err := database.DB.Create(&log).Error; err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// UpsertHealthSnapshot 建立或更新指定日期的健康快照
+func UpsertHealthSnapshot(input HealthSnapshotInput) (*model.HealthSnapshot, error) {
+	var existing model.HealthSnapshot
+	err := database.DB.Where("date = ?", input.Date).First(&existing).Error
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		snap := model.HealthSnapshot{
+			Date:               input.Date,
+			SleepHours:         input.SleepHours,
+			HRV:                input.HRV,
+			RestingHR:          input.RestingHR,
+			ActiveCalories:     input.ActiveCalories,
+			Weight:             input.Weight,
+			BodyFat:            input.BodyFat,
+			Steps:              input.Steps,
+			MoodScore:          input.MoodScore,
+			MoodLabel:          input.MoodLabel,
+			DeepSleepHours:     input.DeepSleepHours,
+			RespiratoryRate:    input.RespiratoryRate,
+			VO2Max:             input.VO2Max,
+			WristTempDeviation: input.WristTempDeviation,
+		}
+		if len(input.Workouts) > 0 {
+			snap.WorkoutSummary = buildWorkoutSummary(input.Workouts)
+			if err := saveWorkoutLogs(input.Date, input.Workouts); err != nil {
+				return nil, err
+			}
+		}
+		if err := database.DB.Create(&snap).Error; err != nil {
+			return nil, err
+		}
+		return &snap, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	// Only include non-nil fields to avoid overwriting existing data with NULL
+	updates := map[string]interface{}{}
+	if input.SleepHours != nil {
+		updates["sleep_hours"] = input.SleepHours
+	}
+	if input.HRV != nil {
+		updates["hrv"] = input.HRV
+	}
+	if input.RestingHR != nil {
+		updates["resting_hr"] = input.RestingHR
+	}
+	if input.ActiveCalories != nil {
+		updates["active_calories"] = input.ActiveCalories
+	}
+	if input.Weight != nil {
+		updates["weight"] = input.Weight
+	}
+	if input.BodyFat != nil {
+		updates["body_fat"] = input.BodyFat
+	}
+	if input.Steps != nil {
+		updates["steps"] = input.Steps
+	}
+	if input.MoodScore != nil {
+		updates["mood_score"] = input.MoodScore
+	}
+	if input.MoodLabel != nil {
+		updates["mood_label"] = input.MoodLabel
+	}
+	if input.DeepSleepHours != nil {
+		updates["deep_sleep_hours"] = input.DeepSleepHours
+	}
+	if input.RespiratoryRate != nil {
+		updates["respiratory_rate"] = input.RespiratoryRate
+	}
+	if input.VO2Max != nil {
+		updates["vo2_max"] = input.VO2Max
+	}
+	if input.WristTempDeviation != nil {
+		updates["wrist_temp_deviation"] = input.WristTempDeviation
+	}
+	if len(input.Workouts) > 0 {
+		updates["workout_summary"] = buildWorkoutSummary(input.Workouts)
+		if err := saveWorkoutLogs(input.Date, input.Workouts); err != nil {
+			return nil, err
+		}
+	}
+	if len(updates) > 0 {
+		if err := database.DB.Model(&existing).Updates(updates).Error; err != nil {
+			return nil, err
+		}
+	}
+	return &existing, nil
+}
+
+// GetLatestSnapshot 取得最新一筆健康快照（按 date 排序）
+func GetLatestSnapshot() (*model.HealthSnapshot, error) {
+	var snap model.HealthSnapshot
+	err := database.DB.Order("date DESC").First(&snap).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil
+	}
+	return &snap, err
+}
+
+// GetRecentSnapshots 取得最近 N 天的健康快照
+func GetRecentSnapshots(days int) ([]model.HealthSnapshot, error) {
+	var snaps []model.HealthSnapshot
+	err := database.DB.Order("date DESC").Limit(days).Find(&snaps).Error
+	return snaps, err
+}
+
+// DeleteSnapshotByDate 刪除指定日期的健康快照及關聯運動記錄
+func DeleteSnapshotByDate(date string) error {
+	tx := database.DB.Begin()
+	tx.Where("snapshot_date = ?", date).Delete(&model.HealthWorkoutLog{})
+	result := tx.Where("date = ?", date).Delete(&model.HealthSnapshot{})
+	if result.Error != nil {
+		tx.Rollback()
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		tx.Rollback()
+		return gorm.ErrRecordNotFound
+	}
+	return tx.Commit().Error
+}
+
+// SaveWellnessRecommendation 儲存 AI 建議
+func SaveWellnessRecommendation(rec *model.WellnessRecommendation) error {
+	return database.DB.Create(rec).Error
+}

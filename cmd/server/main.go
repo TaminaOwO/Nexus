@@ -89,6 +89,7 @@ func main() {
 	webhook.Use(middleware.APIKeyAuth())
 	{
 		webhook.POST("/sync", lifeosHandler.SyncHealthSnapshot)
+		webhook.DELETE("/:date", lifeosHandler.DeleteHealthSnapshot)
 	}
 
 	// Protected API routes

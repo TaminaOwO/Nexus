@@ -231,6 +231,25 @@ func SyncHealthSnapshot(c *gin.Context) {
 	c.JSON(http.StatusOK, snap)
 }
 
+// DeleteHealthSnapshot DELETE /api/lifeos/health/:date
+func DeleteHealthSnapshot(c *gin.Context) {
+	date := c.Param("date")
+	if len(date) != 10 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "date must be YYYY-MM-DD"})
+		return
+	}
+	err := service.DeleteSnapshotByDate(date)
+	if err != nil {
+		if err.Error() == "record not found" {
+			c.JSON(http.StatusNotFound, gin.H{"error": "no snapshot found for " + date})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"deleted": date})
+}
+
 // GetLatestHealthSnapshot GET /api/lifeos/health/latest
 func GetLatestHealthSnapshot(c *gin.Context) {
 	snap, err := service.GetLatestSnapshot()

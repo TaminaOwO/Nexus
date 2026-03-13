@@ -172,6 +172,22 @@ func GetRecentSnapshots(days int) ([]model.HealthSnapshot, error) {
 	return snaps, err
 }
 
+// DeleteSnapshotByDate 刪除指定日期的健康快照及關聯運動記錄
+func DeleteSnapshotByDate(date string) error {
+	tx := database.DB.Begin()
+	tx.Where("snapshot_date = ?", date).Delete(&model.HealthWorkoutLog{})
+	result := tx.Where("date = ?", date).Delete(&model.HealthSnapshot{})
+	if result.Error != nil {
+		tx.Rollback()
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		tx.Rollback()
+		return gorm.ErrRecordNotFound
+	}
+	return tx.Commit().Error
+}
+
 // SaveWellnessRecommendation 儲存 AI 建議
 func SaveWellnessRecommendation(rec *model.WellnessRecommendation) error {
 	return database.DB.Create(rec).Error

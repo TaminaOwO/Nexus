@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { fetchTasks, createTask, updateTask, deleteTask, moveTask } from "../api";
 import type { Task, CreateTaskRequest, UpdateTaskRequest, FlowType } from "../types";
 import { FLOW_CONFIG } from "../types";
+import { TrashIcon, XIcon } from "../../../components/Icons";
 import "./TodoBoard.css";
 
 const COLUMN_ORDER = ["backlog", "this_week", "today", "done"];
@@ -272,7 +273,7 @@ export function TodoBoard({ compact = false }: { compact?: boolean }) {
                                                             </button>
                                                         )}
                                                         <button className="delete-btn-sm" onClick={() => handleDeleteTask(task)} title="刪除">
-                                                            ✕
+                                                            <TrashIcon size={14} />
                                                         </button>
                                                     </div>
                                                 )}
@@ -312,7 +313,7 @@ export function TodoBoard({ compact = false }: { compact?: boolean }) {
                     <div className="task-modal" onClick={(e) => e.stopPropagation()}>
                         <div className="modal-header">
                             <h3>{editingTask ? "編輯任務" : "新增任務"}</h3>
-                            <button className="modal-close" onClick={() => setShowTaskModal(false)}>✕</button>
+                            <button className="modal-close" onClick={() => setShowTaskModal(false)}><XIcon size={16} /></button>
                         </div>
                         <div className="modal-body">
                             <div className="form-group">

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { IconLifeOS, IconDashboard, IconSettings } from "../../components/HandDrawnIcons";
+import { ZapIcon } from "../../components/Icons";
 import { HabitTracker } from "./components/HabitTracker";
 import { TodoBoard } from "./components/TodoBoard";
 import { OverviewStats } from "./components/OverviewStats";
@@ -63,7 +64,7 @@ export default function LifeDashboard() {
                     className={`tab-btn ${activeTab === 'warroom' ? 'active' : ''}`}
                     onClick={() => setActiveTab('warroom')}
                 >
-                    ⚡ War Room
+                    <ZapIcon size={16} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '2px' }} /> War Room
                 </button>
             </div>
 

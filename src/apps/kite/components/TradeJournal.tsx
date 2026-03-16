@@ -11,6 +11,7 @@ import {
     TrashIcon,
     DollarSignIcon,
     BookOpenIcon,
+    XIcon,
 } from "../../../components/Icons";
 import { IconBOSS, IconCompany } from "../../../components/HandDrawnIcons";
 import "./TradeJournal.css";
@@ -81,10 +82,10 @@ function formatMoney(value: number): string {
     if (abs >= 1000000) {
         return `${sign}$${(abs / 1000000).toFixed(2)}M`;
     }
-    if (abs >= 1000) {
+    if (abs >= 100000) {
         return `${sign}$${(abs / 1000).toFixed(1)}K`;
     }
-    return `${sign}$${abs.toFixed(0)}`;
+    return `${sign}$${abs.toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
 }
 
 export function TradeJournal() {
@@ -245,7 +246,7 @@ export function TradeJournal() {
                         <div className="alert-modal-header">
                             <h3><AlertTriangleIcon size={20} /> Action Required!</h3>
                             <button className="modal-close" onClick={() => setShowAlertModal(false)} style={{ color: '#374151', fontSize: '1.25rem', lineHeight: 1 }}>
-                                ✕
+                                <XIcon size={20} />
                             </button>
                         </div>
                         <div className="alert-modal-body">
@@ -280,7 +281,7 @@ export function TradeJournal() {
                         <div className="modal-header">
                             <h3><CheckCircleIcon size={20} /> 平倉結算 Settle Trade</h3>
                             <button className="modal-close" onClick={() => setShowSettleModal(false)} style={{ color: '#374151', fontSize: '1.25rem', lineHeight: 1 }}>
-                                ✕
+                                <XIcon size={20} />
                             </button>
                         </div>
                         <div className="modal-body">

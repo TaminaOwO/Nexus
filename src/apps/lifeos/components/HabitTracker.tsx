@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { fetchHabits, fetchHabitLogs, checkHabit, createHabit, updateHabit, deleteHabit, freezeHabit } from "../api";
 import type { Habit, HabitLog } from "../types";
 import { HabitHeatmap } from "./HabitHeatmap";
+import { EditIcon, TrashIcon, XIcon, FlameIcon } from "../../../components/Icons";
 import "./HabitTracker.css";
 
 // Inline Hand-Drawn Check Icon
@@ -205,7 +206,7 @@ export function HabitTracker({ compact = false }: { compact?: boolean }) {
                                     {habit.name}
                                 </span>
                                 <span className="habit-streak">
-                                    {streak > 0 && "🔥 "}{streak} day streak
+                                    {streak > 0 && <><FlameIcon size={14} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '2px' }} /> </>}{streak} day streak
                                     {habit.freeze_cards > 0 && (
                                         <span className="freeze-badge" title={`${habit.freeze_cards} freeze cards left`}>
                                             ❄️ {habit.freeze_cards}
@@ -230,14 +231,14 @@ export function HabitTracker({ compact = false }: { compact?: boolean }) {
                                         onClick={(e) => { e.stopPropagation(); openEditHabit(habit); }}
                                         title="編輯"
                                     >
-                                        ✏️
+                                        <EditIcon size={14} />
                                     </button>
                                     <button
                                         className="habit-action-btn delete"
                                         onClick={(e) => { e.stopPropagation(); handleDeleteHabit(habit); }}
                                         title="刪除"
                                     >
-                                        ✕
+                                        <TrashIcon size={14} />
                                     </button>
                                 </div>
                             )}
@@ -265,7 +266,7 @@ export function HabitTracker({ compact = false }: { compact?: boolean }) {
                     <div className="habit-modal" onClick={(e) => e.stopPropagation()}>
                         <div className="modal-header">
                             <h3>{editingHabit ? "編輯習慣" : "新增習慣"}</h3>
-                            <button className="modal-close" onClick={() => setShowHabitModal(false)}>✕</button>
+                            <button className="modal-close" onClick={() => setShowHabitModal(false)}><XIcon size={16} /></button>
                         </div>
                         <div className="modal-body">
                             <div className="form-group">

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createChart, IChartApi, ColorType } from "lightweight-charts";
 import { QuoteData, StructureType, SubStrategyType, WindType } from "../types";
 import { calculateMacdStatus, MACD_STATUS_COLORS, MacdTrendStatus } from "../utils/macdUtils";
+import { XIcon } from "../../../components/Icons";
 import { StrategyChecklist } from "./StrategyChecklist";
 import "./StockChart.css";
 
@@ -375,7 +376,7 @@ export function StockChart({
                         </div>
                     </div>
                     <button className="close-btn" onClick={onClose} style={{ color: 'var(--text-primary, #d1d4dc)', fontSize: '1.5rem', lineHeight: 1 }}>
-                        ✕
+                        <XIcon size={20} />
                     </button>
                 </div>
 

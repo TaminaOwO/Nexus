@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { fetchHabits, fetchHabitLogs, fetchTasks } from "../api";
 import type { Habit, HabitLog, Task } from "../types";
+import { ZapIcon, ClipboardIcon, TargetIcon, ChartLineIcon, FlameIcon } from "../../../components/Icons";
 import "./WarRoom.css";
 
 // ========== Local Types (Kite API response shapes, no cross-module import) ==========
@@ -407,7 +408,7 @@ export function WarRoom({ onNavigateTab }: WarRoomProps) {
                                 <span className="war-stat-label">最長連勝</span>
                                 <span className="war-stat-value">
                                     {lifeos.maxStreak > 0
-                                        ? `\u{1F525} ${lifeos.maxStreak} 天`
+                                        ? <><FlameIcon size={14} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '2px' }} /> {lifeos.maxStreak} 天</>
                                         : "—"}
                                 </span>
                             </div>
@@ -434,7 +435,7 @@ export function WarRoom({ onNavigateTab }: WarRoomProps) {
 
             {/* ===== Quick Actions ===== */}
             <div className="war-quick-actions">
-                <h3>⚡ 快速行動</h3>
+                <h3><ZapIcon size={16} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }} /> 快速行動</h3>
                 <div className="quick-action-grid">
                     <a href="/kite" className="quick-action-btn kite-action">
                         {"\u{1FA81}"} 記錄風型
@@ -443,16 +444,16 @@ export function WarRoom({ onNavigateTab }: WarRoomProps) {
                         className="quick-action-btn"
                         onClick={() => onNavigateTab("todos")}
                     >
-                        📋 新增任務
+                        <ClipboardIcon size={14} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }} /> 新增任務
                     </button>
                     <button
                         className="quick-action-btn"
                         onClick={() => onNavigateTab("habits")}
                     >
-                        🎯 記錄習慣
+                        <TargetIcon size={14} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }} /> 記錄習慣
                     </button>
                     <a href="/kite" className="quick-action-btn kite-action">
-                        📊 查看持倉
+                        <ChartLineIcon size={14} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }} /> 查看持倉
                     </a>
                 </div>
             </div>

@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { fetchReminderSettings, updateReminderSetting, testReminderWebhook } from "../api";
 import type { ReminderSetting, ReminderType } from "../types";
+import { ClipboardIcon, XIcon } from "../../../components/Icons";
 import "./ReminderSettings.css";
 
-const REMINDER_CONFIG: Record<ReminderType, { icon: string; label: string; description: string; showLeadDays: boolean }> = {
+const REMINDER_CONFIG: Record<ReminderType, { icon: React.ReactNode; label: string; description: string; showLeadDays: boolean }> = {
     HABIT_DAILY: {
         icon: "🧠",
         label: "習慣打卡提醒",
@@ -11,7 +12,7 @@ const REMINDER_CONFIG: Record<ReminderType, { icon: string; label: string; descr
         showLeadDays: false,
     },
     TASK_DUE_SOON: {
-        icon: "📋",
+        icon: <ClipboardIcon size={16} />,
         label: "任務即將到期",
         description: "任務到期前提醒（可設定提前天數）",
         showLeadDays: true,
@@ -129,7 +130,7 @@ export function ReminderSettings({ onClose }: Props) {
             <div className="reminder-modal" onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
                     <h3>提醒設定</h3>
-                    <button className="modal-close" onClick={onClose}>✕</button>
+                    <button className="modal-close" onClick={onClose}><XIcon size={16} /></button>
                 </div>
 
                 <div className="modal-body">

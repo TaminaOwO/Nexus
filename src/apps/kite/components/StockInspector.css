@@ -528,6 +528,7 @@
 .modal-close {
     width: 2.5rem;
     height: 2.5rem;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -538,6 +539,7 @@
     font-size: 1.25rem;
     cursor: pointer;
     transition: all 0.2s ease;
+    flex-shrink: 0;
 }
 
 .modal-close:hover {
@@ -1356,6 +1358,7 @@
     width: 2.5rem;
     height: 2.5rem;
     min-width: 2.5rem;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;

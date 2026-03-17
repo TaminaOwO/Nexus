@@ -48,6 +48,7 @@
 .reminder-modal .modal-close {
     width: 2.5rem;
     height: 2.5rem;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -58,6 +59,7 @@
     font-size: 1rem;
     cursor: pointer;
     transition: all 0.2s ease;
+    flex-shrink: 0;
 }
 
 .reminder-modal .modal-close:hover {
@@ -274,10 +276,13 @@
 }
 
 /* ========== Mobile ========== */
-@media (max-width: 640px) {
+@media (max-width: 767px) {
     .reminder-modal {
         max-width: 100%;
         border-radius: 1rem;
+        /* Override base max-height to account for fixed bottom nav (~80px) */
+        max-height: calc(100vh - 100px - var(--safe-bottom, 0px));
+        max-height: calc(100dvh - 100px - var(--safe-bottom, 0px));
     }
 
     .reminder-modal .modal-header {

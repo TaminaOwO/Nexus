@@ -5,7 +5,7 @@ const octokit = new Octokit({
 })
 
 const OWNER = process.env.GITHUB_OWNER ?? ''
-const REPO = process.env.GITHUB_REPO ?? 'HQ'
+const REPO = process.env.GITHUB_REPO ?? 'H--HQ'
 
 /**
  * 讀取 HQ repo 中的檔案內容（base64 decoded）

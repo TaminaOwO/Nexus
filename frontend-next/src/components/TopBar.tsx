@@ -1,3 +1,5 @@
+'use client'
+
 import TerminalChrome from './TerminalChrome'
 
 interface TopBarProps {
@@ -15,7 +17,10 @@ export default function TopBar({ departmentName }: TopBarProps) {
       </div>
       <div className="flex items-center gap-4">
         <span className="text-primary text-lg animate-blink">█</span>
-        <button className="bg-primary text-white px-4 py-1.5 rounded text-sm font-sans">
+        <button
+          className="bg-primary text-white px-4 py-1.5 rounded text-sm font-sans"
+          onClick={() => window.alert('🌅 Good morning, Tamina. Starting your day...')}
+        >
           Start Day
         </button>
       </div>

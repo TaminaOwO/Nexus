@@ -1,5 +1,12 @@
 import type { CareerCoachData } from '@/lib/nexus-backend'
 
+const DOMAIN_NAME_MAP: Record<string, string> = {
+  'Exercise Science': '運動科學',
+  'Client Relations': '客戶關係',
+  'Program Design': '課程設計',
+  'Safety': '安全',
+}
+
 interface CareerCoachCardProps {
   data: CareerCoachData
   isLive: boolean
@@ -39,10 +46,12 @@ export default function CareerCoachCard({ data, isLive }: CareerCoachCardProps) 
         {data.phase}
       </p>
 
-      {data.domains.map((domain) => (
+      {data.domains.map((domain) => {
+        const displayName = DOMAIN_NAME_MAP[domain.name] ?? domain.name
+        return (
         <div key={domain.name} className="mb-2">
           <div className="flex justify-between text-xs text-text-muted mb-1">
-            <span>{domain.name}</span>
+            <span>{displayName}</span>
             <span className="font-mono">{domain.progress}%</span>
           </div>
           <div className="w-full h-1.5 bg-surface-raised rounded-none overflow-hidden">
@@ -52,7 +61,7 @@ export default function CareerCoachCard({ data, isLive }: CareerCoachCardProps) 
             />
           </div>
         </div>
-      ))}
+      )})}
 
       {data.streak > 0 && (
         <p className="text-xs text-text-muted mt-2 font-mono">

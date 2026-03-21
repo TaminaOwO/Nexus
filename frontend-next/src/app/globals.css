@@ -1,0 +1,34 @@
+/* Cagliostro - Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Cagliostro&display=swap');
+
+/* IBM Plex Sans - Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* mononoki - self-hosted (place mononoki-Regular.ttf in public/fonts/) */
+@font-face {
+  font-family: 'mononoki';
+  src: url('/fonts/mononoki-Regular.woff2') format('woff2'),
+       url('/fonts/mononoki-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  background-color: #F8F5F1;
+  color: #2C2420;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.animate-blink {
+  animation: blink 1s step-end infinite;
+}

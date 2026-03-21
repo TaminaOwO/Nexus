@@ -1,7 +1,6 @@
 import Sidebar from '@/components/Sidebar'
 import TopBar from '@/components/TopBar'
 import ManifestCard from '@/components/dev/ManifestCard'
-import PipelineStatus from '@/components/dev/PipelineStatus'
 import QAWarningBlock from '@/components/dev/QAWarningBlock'
 import DevEmployeeStatus from '@/components/dev/DevEmployeeStatus'
 import ActiveCasesCard from '@/components/dev/ActiveCasesCard'
@@ -56,11 +55,6 @@ export default async function DevPage() {
                   <ManifestCard key={m.projectName ?? idx} manifest={m} />
                 ))
               )}
-
-              <h2 className="font-display text-xl text-text-primary mt-6 mb-2">
-                Pipeline
-              </h2>
-              <PipelineStatus items={inboxItems} activeCases={pipeline.activeCases} />
 
               <h2 className="font-display text-xl text-text-primary mt-6 mb-2">
                 Active Cases

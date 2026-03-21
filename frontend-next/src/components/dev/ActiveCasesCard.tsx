@@ -1,4 +1,5 @@
 import type { ActiveCase } from '@/lib/types'
+import CasePipeline from './CasePipeline'
 
 interface Props {
   cases: ActiveCase[]
@@ -39,6 +40,7 @@ export default function ActiveCasesCard({ cases }: Props) {
               {c.current_step}
             </p>
           )}
+          <CasePipeline activeCase={c} />
         </div>
       ))}
     </div>

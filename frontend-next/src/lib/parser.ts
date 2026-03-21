@@ -79,6 +79,112 @@ export function parseTaskState(jsonContent: string): {
 }
 
 /**
+ * Dev 部門員工清單 — 用於從 active_cases 推導員工狀態
+ */
+const DEV_EMPLOYEES = [
+  { name: 'Architect-Office', role: 'CTO / Gatekeeper' },
+  { name: 'Engineer', role: 'TDD Implementer' },
+  { name: 'Code-Reviewer', role: 'Quality Gate' },
+] as const
+
+/**
+ * 從 task-state.json 提取 Dev Pipeline 完整狀態（Dev Dashboard 用）
+ */
+export function parseDevPipeline(jsonContent: string): {
+  activeCases: Array<{ id: string; title: string; status: string; current_step?: string; updated?: string }>
+  pendingApprovals: string[]
+  employeeStatuses: Array<{ name: string; role: string; status: 'idle' | 'executing' | 'awaiting'; taskLabel?: string }>
+  lastMorningRun?: string | null
+} {
+  try {
+    const data = JSON.parse(jsonContent)
+    const pipeline = data?.dev_pipeline ?? {}
+
+    const activeCases: Array<{ id: string; title: string; status: string; current_step?: string; updated?: string }> =
+      (pipeline.active_cases ?? []).map((c: Record<string, unknown>) => ({
+        id: (c.id as string) ?? '',
+        title: (c.title as string) ?? '',
+        status: (c.status as string) ?? '',
+        current_step: c.current_step as string | undefined,
+        updated: c.updated as string | undefined,
+      }))
+
+    const pendingApprovals: string[] = pipeline.pending_approvals ?? []
+
+    // Derive employee statuses from active_cases content
+    const employeeStatuses = DEV_EMPLOYEES.map(emp => {
+      // Check if any active case references this employee
+      const matchingCase = activeCases.find(c => {
+        const statusLower = (c.status ?? '').toLowerCase()
+        const stepLower = (c.current_step ?? '').toLowerCase()
+        const empLower = emp.name.toLowerCase()
+        return statusLower.includes(empLower) || stepLower.includes(empLower)
+      })
+
+      if (matchingCase) {
+        return {
+          name: emp.name,
+          role: emp.role,
+          status: 'executing' as const,
+          taskLabel: matchingCase.id,
+        }
+      }
+
+      // Check if pending approvals exist (Architect-Office is awaiting)
+      if (emp.name === 'Architect-Office' && pendingApprovals.length > 0) {
+        return {
+          name: emp.name,
+          role: emp.role,
+          status: 'awaiting' as const,
+          taskLabel: 'Pending approval',
+        }
+      }
+
+      // Also check for generic "Executing" status in active cases
+      const anyExecuting = activeCases.length > 0
+      if (emp.name === 'Engineer' && anyExecuting) {
+        // If there are active cases but no specific employee match,
+        // check if status contains "executing" broadly
+        const executingCase = activeCases.find(c =>
+          (c.status ?? '').toLowerCase().startsWith('executing')
+        )
+        if (executingCase) {
+          return {
+            name: emp.name,
+            role: emp.role,
+            status: 'executing' as const,
+            taskLabel: executingCase.id,
+          }
+        }
+      }
+
+      return {
+        name: emp.name,
+        role: emp.role,
+        status: 'idle' as const,
+      }
+    })
+
+    return {
+      activeCases,
+      pendingApprovals,
+      employeeStatuses,
+      lastMorningRun: data?.last_morning_run,
+    }
+  } catch {
+    return {
+      activeCases: [],
+      pendingApprovals: [],
+      employeeStatuses: DEV_EMPLOYEES.map(emp => ({
+        name: emp.name,
+        role: emp.role,
+        status: 'idle' as const,
+      })),
+    }
+  }
+}
+
+/**
  * 從 task-state.json 提取各部門狀態摘要（Life Dashboard 用）
  */
 export function parseTaskStateDepartments(jsonContent: string): {
@@ -93,7 +199,9 @@ export function parseTaskStateDepartments(jsonContent: string): {
     return {
       catlab: data?.catlab?.status ?? null,
       kite: data?.kite ? { gate_confirmed: data.kite.gate_confirmed ?? false } : null,
-      dev: data?.dev_pipeline?.active_cases?.length > 0 ? 'pending' : null,
+      dev: data?.dev_pipeline?.active_cases?.length > 0
+        ? (data.dev_pipeline.active_cases[0]?.status ?? 'active')
+        : null,
       life: data?.life?.pending_reminders?.length > 0 ? 'pending' : null,
       choice_forge: data?.choice_forge?.last_checked ?? null,
     }

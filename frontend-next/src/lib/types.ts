@@ -36,3 +36,34 @@ export interface TaskState {
   life?: string | null
   choice_forge?: string | null
 }
+
+/**
+ * Active case from dev_pipeline.active_cases
+ */
+export interface ActiveCase {
+  id: string
+  title: string
+  status: string
+  current_step?: string
+  updated?: string
+}
+
+/**
+ * Dev pipeline state — used by Dev Dashboard
+ */
+export interface DevPipelineState {
+  activeCases: ActiveCase[]
+  pendingApprovals: string[]
+  employeeStatuses: EmployeeStatus[]
+  lastMorningRun?: string | null
+}
+
+/**
+ * Employee status derived from active_cases
+ */
+export interface EmployeeStatus {
+  name: string
+  role: string
+  status: 'idle' | 'executing' | 'awaiting'
+  taskLabel?: string
+}

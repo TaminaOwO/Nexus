@@ -1,5 +1,5 @@
 import { getFileContent, listDirectory } from './github'
-import { parseManifest, parseInboxItems, parseTaskState, parseTaskStateDepartments } from './parser'
+import { parseManifest, parseInboxItems, parseTaskState, parseTaskStateDepartments, parseDevPipeline } from './parser'
 import { unstable_cache } from 'next/cache'
 
 /**
@@ -56,6 +56,22 @@ export const getTaskState = unstable_cache(
     return content ? parseTaskState(content) : {}
   },
   ['hq-task-state'],
+  { revalidate: 60, tags: ['hq-github', 'hq-task-state'] }
+)
+
+/**
+ * 取得 Dev Pipeline 完整狀態（含 active_cases + employee statuses，ISR 60s）
+ */
+export const getDevPipeline = unstable_cache(
+  async () => {
+    const content = await getFileContent('Orchestrator/state/task-state.json')
+    return content ? parseDevPipeline(content) : {
+      activeCases: [],
+      pendingApprovals: [],
+      employeeStatuses: [],
+    }
+  },
+  ['hq-dev-pipeline'],
   { revalidate: 60, tags: ['hq-github', 'hq-task-state'] }
 )
 

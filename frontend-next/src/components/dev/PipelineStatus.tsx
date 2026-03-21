@@ -1,14 +1,15 @@
-import type { InboxItem } from '@/lib/types'
+import type { InboxItem, ActiveCase } from '@/lib/types'
 
 interface PipelineStatusProps {
   items: InboxItem[]
+  activeCases?: ActiveCase[]
 }
 
 const STEPS = ['REQ', 'PROP', 'Approved', 'Engineer', 'QA', 'Archive'] as const
 type Step = (typeof STEPS)[number]
 type StepState = 'pending' | 'active' | 'done'
 
-function deriveStepStates(items: InboxItem[]): Record<Step, StepState> {
+function deriveStepStates(items: InboxItem[], activeCases: ActiveCase[]): Record<Step, StepState> {
   const states: Record<Step, StepState> = {
     REQ: 'pending',
     PROP: 'pending',
@@ -17,8 +18,6 @@ function deriveStepStates(items: InboxItem[]): Record<Step, StepState> {
     QA: 'pending',
     Archive: 'pending',
   }
-
-  if (items.length === 0) return states
 
   const hasREQ = items.some(i => i.type === 'REQ')
   const hasPROP = items.some(i => i.type === 'PROP')
@@ -29,6 +28,39 @@ function deriveStepStates(items: InboxItem[]): Record<Step, StepState> {
   if (hasPROP) {
     states.REQ = 'done'
     states.PROP = 'active'
+  }
+
+  // Derive from active_cases statuses
+  for (const c of activeCases) {
+    const statusLower = (c.status ?? '').toLowerCase()
+    const stepLower = (c.current_step ?? '').toLowerCase()
+
+    // If status mentions "executing" or step mentions "engineer"
+    if (statusLower.includes('executing') || stepLower.includes('engineer')) {
+      states.REQ = 'done'
+      states.PROP = 'done'
+      states.Approved = 'done'
+      states.Engineer = 'active'
+    }
+
+    // If status mentions "qa" or "awaiting qa"
+    if (statusLower.includes('qa') || stepLower.includes('qa')) {
+      states.REQ = 'done'
+      states.PROP = 'done'
+      states.Approved = 'done'
+      states.Engineer = 'done'
+      states.QA = 'active'
+    }
+
+    // If status mentions "archived" or "verified"
+    if (statusLower.includes('archived') || statusLower.includes('verified')) {
+      states.REQ = 'done'
+      states.PROP = 'done'
+      states.Approved = 'done'
+      states.Engineer = 'done'
+      states.QA = 'done'
+      states.Archive = 'done'
+    }
   }
 
   return states
@@ -46,8 +78,8 @@ const lineStyles: Record<StepState, string> = {
   done: 'bg-[#27C93F]',
 }
 
-export default function PipelineStatus({ items }: PipelineStatusProps) {
-  if (items.length === 0) {
+export default function PipelineStatus({ items, activeCases = [] }: PipelineStatusProps) {
+  if (items.length === 0 && activeCases.length === 0) {
     return (
       <div className="bg-white border border-[#E8E4DF] rounded-lg p-4 mb-3">
         <p className="font-mono text-sm text-text-muted opacity-50">
@@ -57,7 +89,7 @@ export default function PipelineStatus({ items }: PipelineStatusProps) {
     )
   }
 
-  const states = deriveStepStates(items)
+  const states = deriveStepStates(items, activeCases)
 
   return (
     <div className="bg-white border border-[#E8E4DF] rounded-lg p-4 mb-3">

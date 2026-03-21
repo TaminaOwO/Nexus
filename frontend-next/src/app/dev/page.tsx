@@ -3,12 +3,15 @@ import TopBar from '@/components/TopBar'
 import ManifestCard from '@/components/dev/ManifestCard'
 import PipelineStatus from '@/components/dev/PipelineStatus'
 import QAWarningBlock from '@/components/dev/QAWarningBlock'
-import { getDevManifests, getInboxItems } from '@/lib/fetchers'
-import type { ManifestData, InboxItem } from '@/lib/types'
+import DevEmployeeStatus from '@/components/dev/DevEmployeeStatus'
+import ActiveCasesCard from '@/components/dev/ActiveCasesCard'
+import { getDevManifests, getInboxItems, getDevPipeline } from '@/lib/fetchers'
+import type { ManifestData, InboxItem, DevPipelineState } from '@/lib/types'
 
 export default async function DevPage() {
   let manifests: { nexus: ManifestData | null; choiceForge: ManifestData | null }
   let inboxItems: InboxItem[]
+  let pipeline: DevPipelineState
 
   try {
     manifests = await getDevManifests()
@@ -20,6 +23,12 @@ export default async function DevPage() {
     inboxItems = await getInboxItems()
   } catch {
     inboxItems = []
+  }
+
+  try {
+    pipeline = await getDevPipeline()
+  } catch {
+    pipeline = { activeCases: [], pendingApprovals: [], employeeStatuses: [] }
   }
 
   const manifestList = [manifests.nexus, manifests.choiceForge].filter(
@@ -51,12 +60,22 @@ export default async function DevPage() {
               <h2 className="font-display text-xl text-text-primary mt-6 mb-2">
                 Pipeline
               </h2>
-              <PipelineStatus items={inboxItems} />
+              <PipelineStatus items={inboxItems} activeCases={pipeline.activeCases} />
+
+              <h2 className="font-display text-xl text-text-primary mt-6 mb-2">
+                Active Cases
+              </h2>
+              <ActiveCasesCard cases={pipeline.activeCases} />
             </div>
 
             {/* Right column — 1/3 */}
             <div className="col-span-1 space-y-4">
               <h2 className="font-display text-xl text-text-primary mb-2">
+                Employee Status
+              </h2>
+              <DevEmployeeStatus employees={pipeline.employeeStatuses} />
+
+              <h2 className="font-display text-xl text-text-primary mt-4 mb-2">
                 Alerts
               </h2>
               <QAWarningBlock items={inboxItems} />

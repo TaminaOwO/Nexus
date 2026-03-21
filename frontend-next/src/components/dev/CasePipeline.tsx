@@ -77,13 +77,13 @@ export default function CasePipeline({ activeCase }: CasePipelineProps) {
           <div key={step} className="flex items-center">
             <div className="flex flex-col items-center">
               <div
-                className={`w-5 h-5 rounded-full border-[1.5px] flex items-center justify-center ${stepStyles[state]}`}
+                className={`w-9 h-9 rounded-full border-[1.5px] flex items-center justify-center ${stepStyles[state]}`}
               >
                 <span className="text-[7px] font-mono font-bold leading-none">
                   {idx + 1}
                 </span>
               </div>
-              <span className="font-mono text-[8px] text-text-secondary mt-0.5">
+              <span className="font-mono text-[10px] text-text-secondary mt-0.5">
                 {step}
               </span>
             </div>

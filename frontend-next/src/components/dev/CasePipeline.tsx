@@ -79,7 +79,7 @@ export default function CasePipeline({ activeCase }: CasePipelineProps) {
               <div
                 className={`w-9 h-9 rounded-full border-[1.5px] flex items-center justify-center ${stepStyles[state]}`}
               >
-                <span className="text-[7px] font-mono font-bold leading-none">
+                <span className="text-[11px] font-mono font-bold leading-none">
                   {idx + 1}
                 </span>
               </div>

@@ -364,10 +364,10 @@
         border-radius: var(--radius-md, 12px);
     }
 
-    /* Buttons - Touch friendly (scoped to kite-dashboard to avoid leaking into other modules) */
-    .kite-dashboard .btn-primary,
-    .kite-dashboard .btn-secondary,
-    .kite-dashboard button:not(.modal-close):not(.si-modal-close):not(.close-btn) {
+    /* Buttons - Touch friendly */
+    .btn-primary,
+    .btn-secondary,
+    button {
         min-height: 48px;
         padding: 12px 20px;
     }

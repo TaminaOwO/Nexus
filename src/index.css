@@ -446,43 +446,6 @@ textarea:focus {
   gap: var(--space-md);
 }
 
-/* ============================================
-   Global Modal Fix: Prevent bottom nav overlap
-   On mobile, the fixed bottom nav (~80px + safe-area)
-   can block modal footer buttons. We add bottom padding
-   to overlays AND cap modal max-height so the modal
-   container never extends behind the nav bar.
-   ============================================ */
-@media (max-width: 767px) {
-  .trade-modal-overlay,
-  .alert-modal-overlay,
-  .settle-modal-overlay,
-  .import-modal-overlay,
-  .si-modal-overlay,
-  .task-modal-overlay,
-  .habit-modal-overlay,
-  .reminder-overlay,
-  .schedule-overlay,
-  .stock-chart-modal {
-    padding-bottom: calc(80px + var(--safe-bottom, 0px));
-  }
-
-  /* Cap modal container height so footer stays above bottom nav */
-  .trade-modal,
-  .alert-modal,
-  .settle-modal,
-  .import-modal,
-  .si-modal,
-  .task-modal,
-  .habit-modal,
-  .reminder-modal,
-  .schedule-modal,
-  .stock-chart-container {
-    max-height: calc(100vh - 100px - var(--safe-bottom, 0px));
-    max-height: calc(100dvh - 100px - var(--safe-bottom, 0px));
-  }
-}
-
 /* Default Icon Base */
 .icon-base {
   width: 1.5em;

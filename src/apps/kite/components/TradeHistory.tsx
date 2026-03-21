@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { IconBOSS, IconCompany } from "../../../components/HandDrawnIcons";
-import { AlertTriangleIcon, ChartLineIcon, TargetIcon, DollarSignIcon, BookOpenIcon, ChartCandlestickIcon, TrendingUpIcon, XIcon } from "../../../components/Icons";
+import { AlertTriangleIcon, ChartLineIcon, TargetIcon, DollarSignIcon, BookOpenIcon, ChartCandlestickIcon, TrendingUpIcon } from "../../../components/Icons";
 import "./TradeHistory.css";
 
 interface ClosedTrade {
@@ -50,10 +50,10 @@ function formatMoney(value: number): string {
     if (abs >= 1000000) {
         return `${sign}$${(abs / 1000000).toFixed(2)}M`;
     }
-    if (abs >= 100000) {
+    if (abs >= 1000) {
         return `${sign}$${(abs / 1000).toFixed(1)}K`;
     }
-    return `${sign}$${abs.toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
+    return `${sign}$${abs.toFixed(0)}`;
 }
 
 function formatDate(dateStr: string): string {
@@ -286,7 +286,7 @@ export function TradeHistory() {
                                     flexShrink: 0,
                                 }}
                             >
-                                <XIcon size={20} />
+                                ✕
                             </button>
                         </div>
                         <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>

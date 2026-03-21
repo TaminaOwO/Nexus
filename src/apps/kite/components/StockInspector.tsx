@@ -12,7 +12,7 @@ import {
 } from "../types";
 import { getStrategyVerdict } from "../utils/strategyDiagnosis";
 import { IconCompany, IconBOSS } from "../../../components/HandDrawnIcons";
-import { StockInspectorIcon, CheckboxIcon, SearchIcon, BookOpenIcon, TrendingUpIcon, LoaderIcon, DollarSignIcon, TagIcon, StrongWeekIcon, WeeklyPullbackIcon, WeeklyTrendIcon, TargetIcon, StopCircleIcon, CheckCircleIcon, AlertTriangleIcon, XCircleIcon, SpellCheckIcon, SaveIcon, BellRingIcon, TrendingDownIcon, CycleIcon, XIcon } from "../../../components/Icons";
+import { StockInspectorIcon, CheckboxIcon, SearchIcon, BookOpenIcon, TrendingUpIcon, LoaderIcon, DollarSignIcon, TagIcon, StrongWeekIcon, WeeklyPullbackIcon, WeeklyTrendIcon, TargetIcon, StopCircleIcon, CheckCircleIcon, AlertTriangleIcon, XCircleIcon, SpellCheckIcon, SaveIcon, BellRingIcon, TrendingDownIcon, CycleIcon } from "../../../components/Icons";
 import { StrategyChecklist } from "./StrategyChecklist";
 import { StockChart } from "./StockChart";
 import { MACD_STATUS_COLORS, MacdTrendStatus } from "../utils/macdUtils";
@@ -39,11 +39,10 @@ interface StockInspectorProps {
 const API_BASE = "/api/kite";
 
 // Format large numbers in Chinese style (億/萬)
-// < 100,000: show full number; >= 100,000: abbreviate
 function formatTradeValue(value: number): string {
     if (value >= 100000000) {
         return `${(value / 100000000).toFixed(2)}億`;
-    } else if (value >= 100000) {
+    } else if (value >= 10000) {
         return `${(value / 10000).toFixed(0)}萬`;
     }
     return value.toLocaleString();
@@ -273,7 +272,7 @@ export function StockInspector({ gateLight, strategy: defaultStrategy, structure
                                 <BookOpenIcon size={20} /> 記錄交易 Log Trade
                             </h3>
                             <button className="si-modal-close" onClick={() => setShowTradeModal(false)} style={{ color: '#374151', fontSize: '1.25rem', lineHeight: 1 }}>
-                                <XIcon size={20} />
+                                ✕
                             </button>
                         </div>
 

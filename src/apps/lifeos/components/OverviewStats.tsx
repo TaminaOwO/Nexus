@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { fetchHabits, fetchHabitLogs, fetchTasks } from "../api";
 import type { Habit, HabitLog, Task } from "../types";
-import { TargetIcon, FlameIcon, ClipboardIcon, CheckCircleIcon } from "../../../components/Icons";
 
 export function OverviewStats() {
     const [habits, setHabits] = useState<Habit[]>([]);
@@ -111,7 +110,7 @@ export function OverviewStats() {
 
     const cards = [
         {
-            icon: <TargetIcon size={18} />,
+            icon: "🎯",
             label: "今日習慣",
             value: stats.totalHabits > 0
                 ? `${stats.completedToday}/${stats.totalHabits}`
@@ -119,19 +118,19 @@ export function OverviewStats() {
             accent: stats.completedToday === stats.totalHabits && stats.totalHabits > 0,
         },
         {
-            icon: <FlameIcon size={18} />,
+            icon: "🔥",
             label: "最長 Streak",
             value: stats.maxStreak > 0 ? `${stats.maxStreak} 天` : "—",
             accent: stats.maxStreak >= 7,
         },
         {
-            icon: <CheckCircleIcon size={18} />,
+            icon: "✅",
             label: "本週完成",
             value: `${stats.doneThisWeek} 個`,
             accent: false,
         },
         {
-            icon: <ClipboardIcon size={18} />,
+            icon: "📋",
             label: "待辦",
             value: `${stats.pending} 個`,
             accent: stats.pending > 5,

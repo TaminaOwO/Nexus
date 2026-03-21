@@ -212,12 +212,10 @@ func SyncHealthSnapshot(c *gin.Context) {
 		return
 	}
 
-	// Layer 4: Temporal validation (skip with ?historical=true for backfill)
-	if c.Query("historical") != "true" {
-		if err := ValidateTemporalDate(input.Date); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
+	// Layer 4: Temporal validation
+	if err := ValidateTemporalDate(input.Date); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
 	// Layer 3: Sanity check — discard out-of-range values (does not reject)

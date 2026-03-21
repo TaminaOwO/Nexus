@@ -11,7 +11,6 @@ import type {
   SkincareStep as SkincareStepType,
   SkincareScheduleRule,
 } from "../types";
-import { XIcon } from "../../../components/Icons";
 import "./SkincareToday.css";
 
 const PHASE_EMOJI: Record<string, string> = {
@@ -398,7 +397,7 @@ export function SkincareToday() {
           <div className="schedule-modal" onClick={(e) => e.stopPropagation()}>
             <div className="schedule-modal-header">
               <h3 className="schedule-modal-title">保養排程設定</h3>
-              <button className="schedule-modal-close" onClick={() => setShowSchedule(false)}><XIcon size={16} /></button>
+              <button className="schedule-modal-close" onClick={() => setShowSchedule(false)}>✕</button>
             </div>
             <div className="schedule-modal-body">
               <p className="schedule-modal-desc">

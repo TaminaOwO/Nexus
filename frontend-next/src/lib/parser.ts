@@ -45,12 +45,16 @@ export function parseManifest(content: string): {
     return undefined
   }
 
+  // Extract project name from H1 heading: "# <Name> Manifest" / "# <Name> Product Manifest" / "# <Name> MANIFEST"
+  const headingMatch = content.match(/^#\s+(.+?)(?:\s+Product)?\s+Manifest\b/im)
+  const projectName = headingMatch?.[1]?.trim() ?? extract('Project') ?? extract('專案')
+
   return {
-    projectName: extract('Project') ?? extract('專案'),
+    projectName,
     status: extract('Status') ?? extract('狀態'),
-    version: extract('Version') ?? extract('版本'),
-    lastUpdated: extract('Last Updated') ?? extract('最後更新'),
-    testStatus: extract('Test') ?? extract('測試'),
+    version: extract('Version') ?? extract('版本') ?? extract('目前版本'),
+    lastUpdated: extract('Last Updated') ?? extract('最後更新') ?? extract('最近更新'),
+    testStatus: extract('Test') ?? extract('測試') ?? extract('測試狀態'),
     deployStatus: extract('Deploy') ?? extract('部署'),
     description: extract('Description') ?? extract('描述'),
   }

@@ -1,20 +1,37 @@
 import { Octokit } from '@octokit/rest'
 
-const octokit = new Octokit({
-  auth: process.env.GITHUB_PAT,
-})
+let _octokit: Octokit | null = null
 
-const OWNER = process.env.GITHUB_OWNER ?? ''
-const REPO = process.env.GITHUB_REPO ?? 'H--HQ'
+function getOctokit(): Octokit {
+  if (!_octokit) {
+    const token = process.env.GITHUB_PAT
+    if (!token) {
+      console.error('[GitHub] GITHUB_PAT is not set')
+    }
+    _octokit = new Octokit({ auth: token })
+  }
+  return _octokit
+}
+
+function getOwner(): string {
+  return process.env.GITHUB_OWNER ?? 'TaminaOwO'
+}
+
+function getRepo(): string {
+  return process.env.GITHUB_REPO ?? 'HQ'
+}
 
 /**
  * 讀取 HQ repo 中的檔案內容（base64 decoded）
  */
 export async function getFileContent(path: string): Promise<string | null> {
   try {
-    const response = await octokit.repos.getContent({
-      owner: OWNER,
-      repo: REPO,
+    const owner = getOwner()
+    const repo = getRepo()
+    console.log(`[GitHub] getFileContent: ${owner}/${repo}/${path}`)
+    const response = await getOctokit().repos.getContent({
+      owner,
+      repo,
       path,
     })
     const data = response.data
@@ -22,8 +39,9 @@ export async function getFileContent(path: string): Promise<string | null> {
       return Buffer.from(data.content, 'base64').toString('utf-8')
     }
     return null
-  } catch (error) {
-    console.error(`[GitHub] Failed to fetch ${path}:`, error)
+  } catch (error: unknown) {
+    const status = error instanceof Error && 'status' in error ? (error as { status: number }).status : 'unknown'
+    console.error(`[GitHub] Failed to fetch ${getOwner()}/${getRepo()}/${path} (HTTP ${status}):`, error instanceof Error ? error.message : error)
     return null
   }
 }
@@ -33,9 +51,12 @@ export async function getFileContent(path: string): Promise<string | null> {
  */
 export async function listDirectory(path: string): Promise<Array<{ name: string; path: string; type: string }>> {
   try {
-    const response = await octokit.repos.getContent({
-      owner: OWNER,
-      repo: REPO,
+    const owner = getOwner()
+    const repo = getRepo()
+    console.log(`[GitHub] listDirectory: ${owner}/${repo}/${path}`)
+    const response = await getOctokit().repos.getContent({
+      owner,
+      repo,
       path,
     })
     const data = response.data
@@ -47,8 +68,9 @@ export async function listDirectory(path: string): Promise<Array<{ name: string;
       }))
     }
     return []
-  } catch (error) {
-    console.error(`[GitHub] Failed to list ${path}:`, error)
+  } catch (error: unknown) {
+    const status = error instanceof Error && 'status' in error ? (error as { status: number }).status : 'unknown'
+    console.error(`[GitHub] Failed to list ${getOwner()}/${getRepo()}/${path} (HTTP ${status}):`, error instanceof Error ? error.message : error)
     return []
   }
 }

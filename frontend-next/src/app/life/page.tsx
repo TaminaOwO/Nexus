@@ -1,10 +1,11 @@
 import Sidebar from '@/components/Sidebar'
 import TopBar from '@/components/TopBar'
-import CareerCoachCard from '@/components/life/CareerCoachCard'
+import CareerCoachCard, { MOCK_CAREER_COACH_DATA } from '@/components/life/CareerCoachCard'
 import SkincareCard from '@/components/life/SkincareCard'
 import HealthCycleCard from '@/components/life/HealthCycleCard'
 import TaskReminderCard from '@/components/life/TaskReminderCard'
 import { getTaskStateDepartments } from '@/lib/fetchers'
+import { getCareerCoachData } from '@/lib/nexus-backend'
 import type { TaskState } from '@/lib/types'
 
 export default async function LifePage() {
@@ -16,6 +17,12 @@ export default async function LifePage() {
     taskState = {}
   }
 
+  let careerCoachIsLive = true
+  const careerCoachData = await getCareerCoachData().catch(() => {
+    careerCoachIsLive = false
+    return MOCK_CAREER_COACH_DATA
+  })
+
   return (
     <div className="flex min-h-screen">
       <Sidebar />
@@ -25,7 +32,7 @@ export default async function LifePage() {
           <div className="grid grid-cols-3 gap-6">
             {/* Left column */}
             <div className="space-y-6">
-              <CareerCoachCard />
+              <CareerCoachCard data={careerCoachData} isLive={careerCoachIsLive} />
             </div>
 
             {/* Middle column */}

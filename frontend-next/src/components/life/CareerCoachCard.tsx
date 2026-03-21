@@ -1,8 +1,31 @@
-export default function CareerCoachCard() {
+import type { CareerCoachData } from '@/lib/nexus-backend'
+
+interface CareerCoachCardProps {
+  data: CareerCoachData
+  isLive: boolean
+}
+
+export const MOCK_CAREER_COACH_DATA: CareerCoachData = {
+  targetDate: '2026-12-31',
+  phase: 'Phase 2 — 空大報名中',
+  domains: [
+    { name: '運動科學', progress: 40 },
+    { name: '營養學', progress: 25 },
+    { name: '教練實務', progress: 15 },
+  ],
+  overdueTodos: ['完成空大選課系統註冊，確認 113-2 學期課程'],
+  streak: 0,
+}
+
+export default function CareerCoachCard({ data, isLive }: CareerCoachCardProps) {
+  const avgProgress = data.domains.length > 0
+    ? Math.round(data.domains.reduce((sum, d) => sum + d.progress, 0) / data.domains.length)
+    : 0
+
   return (
     <div className="bg-white border border-border rounded-md p-4">
       <span className="text-xs opacity-40 font-mono">
-        [MOCK - Phase 1.2 will connect Firestore]
+        {isLive ? '[LIVE - nexus-backend]' : '[MOCK - backend unreachable]'}
       </span>
 
       <h3 className="font-display text-lg text-text-primary mt-3 mb-2">
@@ -13,27 +36,45 @@ export default function CareerCoachCard() {
         Current Phase
       </p>
       <p className="font-mono text-base text-primary mb-3">
-        Phase 2 — 空大報名中
+        {data.phase}
       </p>
 
-      <div className="mb-2">
-        <div className="flex justify-between text-xs text-text-muted mb-1">
-          <span>Progress</span>
-          <span className="font-mono">40%</span>
+      {data.domains.map((domain) => (
+        <div key={domain.name} className="mb-2">
+          <div className="flex justify-between text-xs text-text-muted mb-1">
+            <span>{domain.name}</span>
+            <span className="font-mono">{domain.progress}%</span>
+          </div>
+          <div className="w-full h-1.5 bg-surface-raised rounded-none overflow-hidden">
+            <div
+              className="h-full bg-primary rounded-none"
+              style={{ width: `${domain.progress}%` }}
+            />
+          </div>
         </div>
-        <div className="w-full h-1.5 bg-surface-raised rounded-none overflow-hidden">
-          <div
-            className="h-full bg-primary rounded-none"
-            style={{ width: '40%' }}
-          />
-        </div>
-      </div>
+      ))}
 
-      <p className="text-sm text-text-secondary mt-3">
-        Next Action
-      </p>
-      <p className="text-sm text-text-primary">
-        完成空大選課系統註冊，確認 113-2 學期課程
+      {data.streak > 0 && (
+        <p className="text-xs text-text-muted mt-2 font-mono">
+          Streak: {data.streak} days
+        </p>
+      )}
+
+      {data.overdueTodos.length > 0 && (
+        <>
+          <p className="text-sm text-text-secondary mt-3">
+            {data.overdueTodos.length === 1 ? 'Next Action' : 'Overdue'}
+          </p>
+          {data.overdueTodos.map((todo, i) => (
+            <p key={i} className="text-sm text-text-primary">
+              {todo}
+            </p>
+          ))}
+        </>
+      )}
+
+      <p className="text-xs text-text-muted mt-3 font-mono">
+        Target: {data.targetDate}
       </p>
     </div>
   )

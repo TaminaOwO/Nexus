@@ -2,9 +2,13 @@ const NEXUS_BACKEND_URL = process.env.NEXUS_BACKEND_URL
 const NEXUS_API_KEY = process.env.NEXUS_API_KEY
 
 async function fetchFromBackend<T>(path: string): Promise<T> {
+  if (!NEXUS_BACKEND_URL) {
+    throw new Error('NEXUS_BACKEND_URL is not set')
+  }
   const res = await fetch(`${NEXUS_BACKEND_URL}${path}`, {
     headers: { 'X-API-Key': NEXUS_API_KEY ?? '' },
     next: { revalidate: 300 }, // ISR 5 minutes
+    signal: AbortSignal.timeout(10_000), // 10s timeout
   })
   if (!res.ok) throw new Error(`nexus-backend error: ${res.status}`)
   return res.json()

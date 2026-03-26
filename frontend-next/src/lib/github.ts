@@ -8,7 +8,7 @@ function getOctokit(): Octokit {
     if (!token) {
       console.error('[GitHub] GITHUB_PAT is not set')
     }
-    _octokit = new Octokit({ auth: token })
+    _octokit = new Octokit({ auth: token, request: { timeout: 10_000 } })
   }
   return _octokit
 }

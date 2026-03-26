@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import Sidebar from '@/components/Sidebar'
 import TopBar from '@/components/TopBar'
 import CareerCoachCard, { MOCK_CAREER_COACH_DATA } from '@/components/life/CareerCoachCard'

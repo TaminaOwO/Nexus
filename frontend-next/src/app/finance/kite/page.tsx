@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { getMarketIndex, getMarketFutures, getStrategyStats, getStrategyOffice, getStrategyWorker, getStrategyBoss, getPortfolio } from '@/lib/nexus-backend';
 import TopBar from '@/components/TopBar';
 import Sidebar from '@/components/Sidebar';

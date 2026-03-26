@@ -19,7 +19,7 @@ const NAV_TREE: NavNode[] = [
     children: [
       { label: 'Dev', icon: '$', enabled: true, href: '/dev' },
       { label: 'Life', icon: '$', enabled: true, href: '/life' },
-      { label: 'Finance', icon: '$', enabled: false },
+      { label: 'Finance', icon: '$', enabled: true, href: '/finance/kite' },
       { label: 'Marketing', icon: '$', enabled: false },
       { label: 'Business', icon: '$', enabled: false },
     ],

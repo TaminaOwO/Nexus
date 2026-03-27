@@ -253,9 +253,8 @@ function StrategyStockRow({
                     {conditions.map((c) => (
                       <span
                         key={c.label}
-                        className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded ${
-                          c.value ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600'
-                        }`}
+                        className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded ${c.value ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600'
+                          }`}
                       >
                         {c.value ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
                         {c.label}
@@ -302,16 +301,14 @@ export default function StrategyPanel({ stocks, category }: StrategyPanelProps) 
               <button
                 key={strategy.id}
                 onClick={() => setActiveStrategyIdx(idx)}
-                className={`px-6 py-3 text-sm font-sans transition-all border-b-2 ${
-                  activeStrategyIdx === idx
+                className={`px-6 py-3 text-sm font-sans transition-all border-b-2 ${activeStrategyIdx === idx
                     ? 'border-primary text-primary font-semibold'
                     : 'border-transparent text-text-muted hover:text-text-primary hover:border-gray-300'
-                }`}
+                  }`}
               >
                 {strategy.label}
-                <span className={`ml-2 text-xs px-1.5 py-0.5 rounded-full ${
-                  activeStrategyIdx === idx ? 'bg-primary text-white' : 'bg-gray-100 text-gray-500'
-                }`}>
+                <span className={`ml-2 text-xs px-1.5 py-0.5 rounded-full ${activeStrategyIdx === idx ? 'bg-primary text-white' : 'bg-gray-100 text-gray-500'
+                  }`}>
                   {count}
                 </span>
               </button>

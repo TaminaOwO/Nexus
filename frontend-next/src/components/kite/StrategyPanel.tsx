@@ -41,34 +41,74 @@ const CONDITION_KEYS = [
   { key: 'isTrendUp', label: '趨勢向上' },
 ];
 
+// Sort configuration type supporting primary + secondary sort
+type SortConfig = { key: string; direction: 'asc' | 'desc' };
+
+// Get a sortable value from a stock, supporting both top-level and extra_json fields
+function getSortValue(stock: StrategyStock, key: string): number | string | null {
+  if (key === 'volume' || key === 'monthly_revenue_growth' || key === 'cumulative_revenue_growth') {
+    const val = stock.extra_json?.[key];
+    return typeof val === 'number' ? val : null;
+  }
+  const val = (stock as unknown as Record<string, unknown>)[key];
+  return val == null ? null : (val as number | string);
+}
+
+// Compare two values for sorting; nulls sort to end
+function compareValues(aVal: number | string | null, bVal: number | string | null, direction: 'asc' | 'desc'): number {
+  if (aVal == null && bVal == null) return 0;
+  if (aVal == null) return 1;
+  if (bVal == null) return -1;
+  if (aVal < bVal) return direction === 'asc' ? -1 : 1;
+  if (aVal > bVal) return direction === 'asc' ? 1 : -1;
+  return 0;
+}
+
+// Default sort configs per category
+const DEFAULT_SORT: Record<string, SortConfig[]> = {
+  worker: [
+    { key: 'volume', direction: 'desc' },
+    { key: 'monthly_revenue_growth', direction: 'desc' },
+  ],
+  office: [
+    { key: 'volume', direction: 'desc' },
+    { key: 'monthly_revenue_growth', direction: 'desc' },
+  ],
+  boss: [
+    { key: 'monthly_revenue_growth', direction: 'desc' },
+    { key: 'volume', direction: 'desc' },
+  ],
+};
+
 function StockTable({
   stocks,
   getScreenerLabel,
+  category,
 }: {
   stocks: StrategyStock[];
   getScreenerLabel: (id: string) => string;
+  category: 'boss' | 'office' | 'worker';
 }) {
-  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
+  const defaultSort = DEFAULT_SORT[category];
+  const [sortConfig, setSortConfig] = useState<SortConfig[]>(defaultSort);
   const [expandedSymbol, setExpandedSymbol] = useState<string | null>(null);
 
   const handleSort = (key: string) => {
-    let direction: 'asc' | 'desc' = 'asc';
-    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
+    const current = sortConfig[0];
+    let direction: 'asc' | 'desc' = 'desc';
+    if (current && current.key === key && current.direction === 'desc') {
+      direction = 'asc';
     }
-    setSortConfig({ key, direction });
+    setSortConfig([{ key, direction }]);
   };
 
   const sortedStocks = [...stocks].sort((a, b) => {
-    if (!sortConfig) return 0;
-    const { key, direction } = sortConfig;
-    const aVal = (a as unknown as Record<string, unknown>)[key];
-    const bVal = (b as unknown as Record<string, unknown>)[key];
-    if (aVal == null && bVal == null) return 0;
-    if (aVal == null) return 1;
-    if (bVal == null) return -1;
-    if (aVal < bVal) return direction === 'asc' ? -1 : 1;
-    if (aVal > bVal) return direction === 'asc' ? 1 : -1;
+    for (const { key, direction } of sortConfig) {
+      const aVal = getSortValue(a, key);
+      const bVal = getSortValue(b, key);
+      const cmp = compareValues(aVal, bVal, direction);
+      if (cmp !== 0) return cmp;
+    }
     return 0;
   });
 
@@ -86,13 +126,15 @@ function StockTable({
     }).filter(Boolean) as { label: string; value: boolean }[];
   };
 
-  // Extract revenue fields from extra_json
-  const getRevenue = (stock: StrategyStock) => {
+  // Extract revenue and volume fields from extra_json
+  const getExtraFields = (stock: StrategyStock) => {
     const monthly = stock.extra_json?.monthly_revenue_growth;
     const cumulative = stock.extra_json?.cumulative_revenue_growth;
+    const volume = stock.extra_json?.volume;
     return {
       monthly: typeof monthly === 'number' ? monthly : null,
       cumulative: typeof cumulative === 'number' ? cumulative : null,
+      volume: typeof volume === 'number' ? volume : null,
     };
   };
 
@@ -117,7 +159,24 @@ function StockTable({
             <th className="px-4 py-3 border-b border-border font-semibold cursor-pointer" onClick={() => handleSort('change_pct')}>
               <span className="flex items-center gap-1">漲跌% <ArrowUpDown className="w-3 h-3" /></span>
             </th>
-            <th className="px-4 py-3 border-b border-border font-semibold">單月營收成長</th>
+            <th className="px-4 py-3 border-b border-border font-semibold cursor-pointer" onClick={() => handleSort('volume')}>
+              <span className="flex items-center gap-1">
+                成交金額(億)
+                <ArrowUpDown className="w-3 h-3" />
+                {sortConfig[0]?.key === 'volume' && (
+                  <span className="text-primary text-[10px]">{sortConfig[0].direction === 'desc' ? '▼' : '▲'}</span>
+                )}
+              </span>
+            </th>
+            <th className="px-4 py-3 border-b border-border font-semibold cursor-pointer" onClick={() => handleSort('monthly_revenue_growth')}>
+              <span className="flex items-center gap-1">
+                單月營收成長
+                <ArrowUpDown className="w-3 h-3" />
+                {sortConfig[0]?.key === 'monthly_revenue_growth' && (
+                  <span className="text-primary text-[10px]">{sortConfig[0].direction === 'desc' ? '▼' : '▲'}</span>
+                )}
+              </span>
+            </th>
             <th className="px-4 py-3 border-b border-border font-semibold">累計營收成長</th>
             <th className="px-4 py-3 border-b border-border font-semibold">策略</th>
             <th className="px-4 py-3 border-b border-border font-semibold">條件檢核</th>
@@ -126,7 +185,7 @@ function StockTable({
         <tbody className="text-sm font-sans divide-y divide-border">
           {sortedStocks.map((stock, i) => {
             const conditions = getConditions(stock);
-            const revenue = getRevenue(stock);
+            const extraFields = getExtraFields(stock);
             const isExpanded = expandedSymbol === stock.symbol;
 
             return (
@@ -134,7 +193,7 @@ function StockTable({
                 key={`${stock.symbol}-${i}`}
                 stock={stock}
                 conditions={conditions}
-                revenue={revenue}
+                extraFields={extraFields}
                 isExpanded={isExpanded}
                 onToggle={() => toggleExpand(stock.symbol)}
                 getScreenerLabel={getScreenerLabel}
@@ -143,7 +202,7 @@ function StockTable({
           })}
           {stocks.length === 0 && (
             <tr>
-              <td colSpan={10} className="px-6 py-10 text-center text-text-muted italic">
+              <td colSpan={11} className="px-6 py-10 text-center text-text-muted italic">
                 今日尚無符合此策略的選股結果。
               </td>
             </tr>
@@ -157,14 +216,14 @@ function StockTable({
 function StrategyStockRow({
   stock,
   conditions,
-  revenue,
+  extraFields,
   isExpanded,
   onToggle,
   getScreenerLabel,
 }: {
   stock: StrategyStock;
   conditions: { label: string; value: boolean }[];
-  revenue: { monthly: number | null; cumulative: number | null };
+  extraFields: { monthly: number | null; cumulative: number | null; volume: number | null };
   isExpanded: boolean;
   onToggle: () => void;
   getScreenerLabel: (id: string) => string;
@@ -187,11 +246,14 @@ function StrategyStockRow({
         <td className={`px-4 py-4 font-mono font-semibold ${(stock.change_pct ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
           {stock.change_pct != null ? `${stock.change_pct >= 0 ? '+' : ''}${stock.change_pct}%` : '--'}
         </td>
-        <td className={`px-4 py-4 font-mono ${revenue.monthly != null ? (revenue.monthly >= 0 ? 'text-green-600' : 'text-red-600') : 'text-text-muted'}`}>
-          {revenue.monthly != null ? `${revenue.monthly >= 0 ? '+' : ''}${revenue.monthly.toFixed(1)}%` : '--'}
+        <td className="px-4 py-4 font-mono text-text-primary">
+          {extraFields.volume != null ? extraFields.volume.toFixed(2) : '--'}
         </td>
-        <td className={`px-4 py-4 font-mono ${revenue.cumulative != null ? (revenue.cumulative >= 0 ? 'text-green-600' : 'text-red-600') : 'text-text-muted'}`}>
-          {revenue.cumulative != null ? `${revenue.cumulative >= 0 ? '+' : ''}${revenue.cumulative.toFixed(1)}%` : '--'}
+        <td className={`px-4 py-4 font-mono ${extraFields.monthly != null ? (extraFields.monthly >= 0 ? 'text-green-600' : 'text-red-600') : 'text-text-muted'}`}>
+          {extraFields.monthly != null ? `${extraFields.monthly >= 0 ? '+' : ''}${extraFields.monthly.toFixed(1)}%` : '--'}
+        </td>
+        <td className={`px-4 py-4 font-mono ${extraFields.cumulative != null ? (extraFields.cumulative >= 0 ? 'text-green-600' : 'text-red-600') : 'text-text-muted'}`}>
+          {extraFields.cumulative != null ? `${extraFields.cumulative >= 0 ? '+' : ''}${extraFields.cumulative.toFixed(1)}%` : '--'}
         </td>
         <td className="px-4 py-4">
           <span className="text-[10px] bg-green-50 text-green-700 border border-green-200 px-1.5 py-0.5 rounded">
@@ -218,7 +280,7 @@ function StrategyStockRow({
       </tr>
       {isExpanded && (
         <tr className="bg-gray-50">
-          <td colSpan={10} className="px-6 py-4">
+          <td colSpan={11} className="px-6 py-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div>
                 <span className="text-text-muted text-xs block">代號</span>
@@ -317,7 +379,7 @@ export default function StrategyPanel({ stocks, category }: StrategyPanelProps) 
         </div>
       </div>
 
-      <StockTable stocks={filteredStocks} getScreenerLabel={getScreenerLabel} />
+      <StockTable stocks={filteredStocks} getScreenerLabel={getScreenerLabel} category={category} />
     </div>
   );
 }

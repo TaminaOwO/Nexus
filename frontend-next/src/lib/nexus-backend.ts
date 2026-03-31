@@ -101,3 +101,19 @@ export interface PortfolioPosition {
 export async function getPortfolio(): Promise<{ data: PortfolioPosition[] }> {
   return fetchFromBackend('/api/v1/kite/portfolio')
 }
+
+// ── Kite: Revenue Growth ─────────────────────
+
+export interface RevenueGrowthStock {
+  stockCode: string
+  stockName: string
+  closingPrice: number
+  priceChangePercent: number | null
+  tradeVolumeBillions: number | null
+  monthlyRevenueGrowthPercent: number | null
+  cumulativeRevenueGrowthPercent: number | null
+}
+
+export async function getMonthlyRevenueGrowthStocks(): Promise<{ data: RevenueGrowthStock[] }> {
+  return fetchFromBackend('/api/v1/kite/monthly-revenue-growth-stocks')
+}

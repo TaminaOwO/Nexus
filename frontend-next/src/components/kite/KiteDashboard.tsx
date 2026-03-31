@@ -1,14 +1,16 @@
 'use client'
 
 import { useState } from 'react';
-import { Wind, TrendingUp, Briefcase, HardHat, Wallet, BarChart3 } from 'lucide-react';
+import { Wind, TrendingUp, Briefcase, HardHat, Wallet, BarChart3, DollarSign } from 'lucide-react';
 import MarketPanel from './MarketPanel';
 import StrategyPanel from './StrategyPanel';
 import PortfolioPanel from './PortfolioPanel';
-import type { MarketIndex, StrategyStock, StrategyStat, PortfolioPosition } from '@/lib/nexus-backend';
+import RevenueGrowthPanel from './RevenueGrowthPanel';
+import type { MarketIndex, StrategyStock, StrategyStat, PortfolioPosition, RevenueGrowthStock } from '@/lib/nexus-backend';
 
 const TABS = [
   { id: 'market', label: '大盤儀表板', icon: BarChart3 },
+  { id: 'revenue', label: '營收成長', icon: DollarSign },
   { id: 'boss', label: '老闆型', icon: Briefcase },
   { id: 'office', label: '上班族型', icon: TrendingUp },
   { id: 'worker', label: '打工型', icon: HardHat },
@@ -23,6 +25,7 @@ interface KiteDashboardProps {
   workerStocks: StrategyStock[];
   bossStocks: StrategyStock[];
   portfolio: PortfolioPosition[];
+  revenueGrowthStocks: RevenueGrowthStock[];
 }
 
 // Wind status mapping: backend stores wind code as number in WIND symbol's price field
@@ -98,6 +101,7 @@ export default function KiteDashboard(props: KiteDashboardProps) {
 
       <div className="min-h-[600px]">
         {activeTab === 'market' && <MarketPanel indices={displayIndices} futures={props.futures} stats={props.stats} />}
+        {activeTab === 'revenue' && <RevenueGrowthPanel stocks={props.revenueGrowthStocks} />}
         {activeTab === 'boss' && <StrategyPanel stocks={props.bossStocks} category="boss" />}
         {activeTab === 'office' && <StrategyPanel stocks={props.officeStocks} category="office" />}
         {activeTab === 'worker' && <StrategyPanel stocks={props.workerStocks} category="worker" />}

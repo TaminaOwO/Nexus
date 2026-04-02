@@ -1,6 +1,6 @@
 'use client'
 
-import { TrendingUp, TrendingDown, Minus, BarChart3, Activity } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, BarChart3, Activity, AlertTriangle } from 'lucide-react';
 import type { MarketIndex, StrategyStat } from '@/lib/nexus-backend';
 
 interface MarketPanelProps {
@@ -25,6 +25,39 @@ export default function MarketPanel({ indices, futures, stats }: MarketPanelProp
     return <Minus className="w-5 h-5 text-text-muted" />;
   };
 
+  const renderIndexCard = (idx: MarketIndex, isFutures = false) => {
+    const isError = idx.fetch_status === 'error';
+    const baseBg = isFutures ? 'bg-secondary bg-opacity-5' : 'bg-background';
+    const borderClass = isFutures ? 'border-l-4 border-secondary' : '';
+    const errorClass = isError ? 'border border-amber-200 bg-amber-50/40' : '';
+
+    return (
+      <div
+        key={idx.symbol}
+        className={`flex justify-between items-center p-3 rounded-sm ${isError ? errorClass : `${baseBg} ${borderClass}`}`}
+      >
+        <div>
+          <div className="font-sans font-semibold text-text-primary flex items-center gap-1.5">
+            {isError && <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0" />}
+            {isFutures ? '台指期' : (idx.name || idx.symbol)}
+          </div>
+          <div className="text-xs text-text-muted font-mono flex items-center gap-1.5">
+            {idx.symbol}
+            {isError && <span className="text-[10px] text-amber-600 font-sans">上次成功數據</span>}
+          </div>
+        </div>
+        <div className="text-right">
+          <div className={`text-lg font-display ${isError ? 'opacity-50' : ''}`}>
+            {idx.price?.toLocaleString() ?? '--'}
+          </div>
+          <div className={`text-xs font-sans ${isError ? 'opacity-50' : ''} ${(idx.change ?? 0) >= 0 ? 'text-secondary' : 'text-error'}`}>
+            {(idx.change ?? 0) >= 0 ? '+' : ''}{idx.change ?? 0} ({idx.change_pct ?? 0}%)
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* 大盤指數與期貨 */}
@@ -34,35 +67,8 @@ export default function MarketPanel({ indices, futures, stats }: MarketPanelProp
           大盤指數
         </h3>
         <div className="space-y-4">
-          {indices.map((idx) => (
-            <div key={idx.symbol} className="flex justify-between items-center bg-background p-3 rounded-sm">
-              <div>
-                <div className="font-sans font-semibold text-text-primary">{idx.name || idx.symbol}</div>
-                <div className="text-xs text-text-muted font-mono">{idx.symbol}</div>
-              </div>
-              <div className="text-right">
-                <div className="text-lg font-display">{idx.price?.toLocaleString() ?? '--'}</div>
-                <div className={`text-xs font-sans ${(idx.change ?? 0) >= 0 ? 'text-secondary' : 'text-error'}`}>
-                  {(idx.change ?? 0) >= 0 ? '+' : ''}{idx.change ?? 0} ({idx.change_pct ?? 0}%)
-                </div>
-              </div>
-            </div>
-          ))}
-
-          {futures && (
-            <div className="flex justify-between items-center bg-secondary bg-opacity-5 p-3 rounded-sm border-l-4 border-secondary">
-              <div>
-                <div className="font-sans font-semibold text-text-primary">台指期</div>
-                <div className="text-xs text-text-muted font-mono">TXF1</div>
-              </div>
-              <div className="text-right">
-                <div className="text-lg font-display">{futures.price?.toLocaleString() ?? '--'}</div>
-                <div className={`text-xs font-sans ${(futures.change ?? 0) >= 0 ? 'text-secondary' : 'text-error'}`}>
-                  {(futures.change ?? 0) >= 0 ? '+' : ''}{futures.change ?? 0} ({futures.change_pct ?? 0}%)
-                </div>
-              </div>
-            </div>
-          )}
+          {indices.map((idx) => renderIndexCard(idx))}
+          {futures && renderIndexCard(futures, true)}
 
           {indices.length === 0 && !futures && (
             <div className="text-center text-text-muted py-10 italic">尚無大盤資料，請確認後端排程是否已執行。</div>

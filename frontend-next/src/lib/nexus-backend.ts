@@ -39,6 +39,7 @@ export interface MarketIndex {
   change_pct: number | null
   extra_json?: Record<string, unknown>
   fetched_at: string
+  fetch_status?: 'ok' | 'error'
 }
 
 export async function getMarketIndex(): Promise<{ data: MarketIndex[] }> {
@@ -102,18 +103,45 @@ export async function getPortfolio(): Promise<{ data: PortfolioPosition[] }> {
   return fetchFromBackend('/api/v1/kite/portfolio')
 }
 
-// ── Kite: Revenue Growth ─────────────────────
+// ── Kite: Strategy Indicators (NEXUS-005-R1) ──
 
-export interface RevenueGrowthStock {
-  stockCode: string
-  stockName: string
-  closingPrice: number
-  priceChangePercent: number | null
-  tradeVolumeBillions: number | null
-  monthlyRevenueGrowthPercent: number | null
-  cumulativeRevenueGrowthPercent: number | null
+export interface StrategyCondition {
+  label: string
+  indicators: string[]
+  operator: string
+  left_field: string
+  right_field?: string
+  right_value?: number | null
 }
 
-export async function getMonthlyRevenueGrowthStocks(): Promise<{ data: RevenueGrowthStock[] }> {
-  return fetchFromBackend('/api/v1/kite/monthly-revenue-growth-stocks')
+export interface StrategyDefinition {
+  id: string
+  name: string
+  category: string
+  conditions: StrategyCondition[]
 }
+
+export interface StockIndicator {
+  symbol: string
+  name: string
+  price: number | null
+  change_pct: number | null
+  macd_dif: number | null
+  macd_macd: number | null
+  macd_histogram: number | null
+  ma5: number | null
+  ma20: number | null
+  ma60: number | null
+  volume: number | null
+  monthly_revenue_growth: number | null
+  cumulative_revenue_growth: number | null
+}
+
+export async function getStrategyDefinitions(): Promise<{ data: StrategyDefinition[] }> {
+  return fetchFromBackend('/api/v1/kite/strategy/definitions')
+}
+
+export async function getStrategyIndicators(strategyId: string): Promise<{ data: StockIndicator[] }> {
+  return fetchFromBackend(`/api/v1/kite/strategy/indicators?strategy_id=${encodeURIComponent(strategyId)}`)
+}
+

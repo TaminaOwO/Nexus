@@ -1,13 +1,13 @@
 export const dynamic = 'force-dynamic'
 
-import { getMarketIndex, getMarketFutures, getStrategyStats, getStrategyOffice, getStrategyWorker, getStrategyBoss, getPortfolio, getMonthlyRevenueGrowthStocks } from '@/lib/nexus-backend';
+import { getMarketIndex, getMarketFutures, getStrategyStats, getStrategyOffice, getStrategyWorker, getStrategyBoss, getPortfolio, getStrategyDefinitions } from '@/lib/nexus-backend';
 import TopBar from '@/components/TopBar';
 import Sidebar from '@/components/Sidebar';
 import KiteDashboard from '@/components/kite/KiteDashboard';
 
 export default async function KitePage() {
   // Fetch all data server-side (uses NEXUS_API_KEY, no client exposure)
-  const [indexData, futuresData, statsData, officeData, workerData, bossData, portfolioData, revenueData] = await Promise.allSettled([
+  const [indexData, futuresData, statsData, officeData, workerData, bossData, portfolioData, defsData] = await Promise.allSettled([
     getMarketIndex(),
     getMarketFutures(),
     getStrategyStats(),
@@ -15,7 +15,7 @@ export default async function KitePage() {
     getStrategyWorker(),
     getStrategyBoss(),
     getPortfolio(),
-    getMonthlyRevenueGrowthStocks(),
+    getStrategyDefinitions(),
   ]);
 
   const safeValue = <T,>(result: PromiseSettledResult<{ data: T }>, fallback: T): T =>
@@ -29,7 +29,7 @@ export default async function KitePage() {
     workerStocks: safeValue(workerData, []),
     bossStocks: safeValue(bossData, []),
     portfolio: safeValue(portfolioData, []),
-    revenueGrowthStocks: safeValue(revenueData, []),
+    strategyDefinitions: safeValue(defsData, []),
   };
 
   return (

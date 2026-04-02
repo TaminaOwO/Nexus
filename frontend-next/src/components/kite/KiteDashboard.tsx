@@ -1,16 +1,14 @@
 'use client'
 
 import { useState } from 'react';
-import { Wind, TrendingUp, Briefcase, HardHat, Wallet, BarChart3, DollarSign } from 'lucide-react';
+import { Wind, TrendingUp, Briefcase, HardHat, Wallet, BarChart3 } from 'lucide-react';
 import MarketPanel from './MarketPanel';
 import StrategyPanel from './StrategyPanel';
 import PortfolioPanel from './PortfolioPanel';
-import RevenueGrowthPanel from './RevenueGrowthPanel';
-import type { MarketIndex, StrategyStock, StrategyStat, PortfolioPosition, RevenueGrowthStock } from '@/lib/nexus-backend';
+import type { MarketIndex, StrategyStock, StrategyStat, PortfolioPosition, StrategyDefinition } from '@/lib/nexus-backend';
 
 const TABS = [
   { id: 'market', label: '大盤儀表板', icon: BarChart3 },
-  { id: 'revenue', label: '營收成長', icon: DollarSign },
   { id: 'boss', label: '老闆型', icon: Briefcase },
   { id: 'office', label: '上班族型', icon: TrendingUp },
   { id: 'worker', label: '打工型', icon: HardHat },
@@ -25,16 +23,14 @@ interface KiteDashboardProps {
   workerStocks: StrategyStock[];
   bossStocks: StrategyStock[];
   portfolio: PortfolioPosition[];
-  revenueGrowthStocks: RevenueGrowthStock[];
+  strategyDefinitions: StrategyDefinition[];
 }
 
-// Wind status mapping: backend stores wind code as number in WIND symbol's price field
-// { 1: "陣風", 2: "強風", 3: "無風", 4: "亂流" }
+// Wind status mapping: backend stores CMoney 不魯-盤勢 code as number in WIND symbol's price field
+// CMoney API: 1 = 亂流, 2 = 強風
 const WIND_CODE_MAP: Record<number, string> = {
-  1: 'gust',
+  1: 'turbulence',
   2: 'strong',
-  3: 'none',
-  4: 'turbulence',
 };
 
 const WIND_MAP: Record<string, { label: string; color: string; bgColor: string }> = {
@@ -49,6 +45,7 @@ export default function KiteDashboard(props: KiteDashboardProps) {
 
   // Extract wind status from indices (stored as WIND symbol in market_index_cache)
   const windEntry = props.indices.find((idx) => idx.symbol === 'WIND');
+  const windIsError = windEntry?.fetch_status === 'error';
   const windNumericCode = windEntry ? Math.round(windEntry.price) : 3;
   const windCode = WIND_CODE_MAP[windNumericCode] || 'none';
   const wind = WIND_MAP[windCode] || WIND_MAP['none'];
@@ -72,9 +69,16 @@ export default function KiteDashboard(props: KiteDashboardProps) {
         </div>
 
         {/* 風度警語 */}
-        <div className={`px-3 py-2 rounded-sm text-sm font-sans ${wind.bgColor} ${wind.color}`}>
+        <div className={`px-3 py-2 rounded-sm text-sm font-sans ${windIsError ? 'bg-amber-50 border border-amber-200' : wind.bgColor} ${windIsError ? 'text-amber-700' : wind.color}`}>
           <Wind className="w-4 h-4 inline-block mr-1.5 -mt-0.5" />
-          {wind.label}
+          {windIsError ? (
+            <>
+              <span className="line-through opacity-60 mr-2">{wind.label}</span>
+              <span className="text-xs font-semibold bg-amber-100 px-1.5 py-0.5 rounded">⚠ 風度資料取得失敗，顯示為上次成功數據</span>
+            </>
+          ) : (
+            wind.label
+          )}
         </div>
 
         {/* Tabs */}
@@ -101,10 +105,9 @@ export default function KiteDashboard(props: KiteDashboardProps) {
 
       <div className="min-h-[600px]">
         {activeTab === 'market' && <MarketPanel indices={displayIndices} futures={props.futures} stats={props.stats} />}
-        {activeTab === 'revenue' && <RevenueGrowthPanel stocks={props.revenueGrowthStocks} />}
-        {activeTab === 'boss' && <StrategyPanel stocks={props.bossStocks} category="boss" />}
-        {activeTab === 'office' && <StrategyPanel stocks={props.officeStocks} category="office" />}
-        {activeTab === 'worker' && <StrategyPanel stocks={props.workerStocks} category="worker" />}
+        {activeTab === 'boss' && <StrategyPanel stocks={props.bossStocks} category="boss" strategyDefinitions={props.strategyDefinitions} />}
+        {activeTab === 'office' && <StrategyPanel stocks={props.officeStocks} category="office" strategyDefinitions={props.strategyDefinitions} />}
+        {activeTab === 'worker' && <StrategyPanel stocks={props.workerStocks} category="worker" strategyDefinitions={props.strategyDefinitions} />}
         {activeTab === 'portfolio' && <PortfolioPanel positions={props.portfolio} />}
       </div>
     </div>

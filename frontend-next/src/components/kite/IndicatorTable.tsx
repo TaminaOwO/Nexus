@@ -17,12 +17,14 @@ const INDICATOR_LABELS: Record<string, string> = {
   ma5: '5MA',
   ma20: '20MA',
   ma60: '60MA',
+  yesterday_close: '昨日收盤價',
   close: '收盤',
 }
 
 // Get a numeric value from a stock indicator by field name
 function getFieldValue(stock: StockIndicator, field: string): number | null {
   if (field === 'close') return stock.price
+  if (field === 'yesterday_close') return stock.yesterday_close
   const val = (stock as unknown as Record<string, unknown>)[field]
   return typeof val === 'number' ? val : null
 }

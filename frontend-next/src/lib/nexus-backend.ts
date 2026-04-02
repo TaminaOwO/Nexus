@@ -119,6 +119,7 @@ export interface StrategyDefinition {
   name: string
   category: string
   conditions: StrategyCondition[]
+  display_conditions?: string[]
 }
 
 export interface StockIndicator {
@@ -132,6 +133,7 @@ export interface StockIndicator {
   ma5: number | null
   ma20: number | null
   ma60: number | null
+  yesterday_close: number | null
   volume: number | null
   monthly_revenue_growth: number | null
   cumulative_revenue_growth: number | null

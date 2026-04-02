@@ -82,12 +82,17 @@ const INDICATOR_LABELS: Record<string, string> = {
   ma5: '5MA',
   ma20: '20MA',
   ma60: '60MA',
+  yesterday_close: '昨日收盤價',
   close: '收盤',
 }
+
+// Fixed display order for expanded indicator row (Issue 2: NEXUS-006-R1)
+const EXPANDED_INDICATOR_FIELDS = ['ma5', 'ma20', 'ma60', 'yesterday_close'] as const
 
 // Get a numeric value from a stock indicator by field name
 function getIndicatorFieldValue(stock: StockIndicator, field: string): number | null {
   if (field === 'close') return stock.price
+  if (field === 'yesterday_close') return stock.yesterday_close
   const val = (stock as unknown as Record<string, unknown>)[field]
   return typeof val === 'number' ? val : null
 }
@@ -143,18 +148,13 @@ function ExpandedIndicatorRow({
     )
   }
 
-  // Collect unique indicator fields from conditions
-  const indicatorFields = Array.from(
-    new Set(definition.conditions.flatMap((c) => c.indicators))
-  )
-
   return (
     <tr>
       <td colSpan={colSpan} className="p-0">
         <div className="bg-slate-50 border-t border-b border-blue-100 px-6 py-4 space-y-3 animate-in">
-          {/* Indicator values */}
+          {/* Indicator values — fixed order: 5MA → 20MA → 60MA → 昨日收盤價 */}
           <div className="flex flex-wrap gap-x-6 gap-y-2">
-            {indicatorFields.map((field) => {
+            {EXPANDED_INDICATOR_FIELDS.map((field) => {
               const val = getIndicatorFieldValue(indicator, field)
               return (
                 <div key={field} className="flex flex-col">

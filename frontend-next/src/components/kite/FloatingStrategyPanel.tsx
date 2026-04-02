@@ -39,13 +39,16 @@ export default function FloatingStrategyPanel({ definition }: FloatingStrategyPa
             </div>
           </div>
 
-          {/* Conditions list */}
+          {/* Conditions list — prefer display_conditions (precise text) over raw conditions */}
           <div className="p-4 space-y-3">
             <p className="text-xs text-text-muted font-sans tracking-wider uppercase">
               策略條件
             </p>
             <ul className="space-y-2">
-              {definition.conditions.map((cond, idx) => (
+              {(definition.display_conditions && definition.display_conditions.length > 0
+                ? definition.display_conditions
+                : definition.conditions.map((c) => c.label)
+              ).map((label, idx) => (
                 <li
                   key={idx}
                   className="flex items-start gap-2 text-sm font-sans text-text-primary"
@@ -53,7 +56,7 @@ export default function FloatingStrategyPanel({ definition }: FloatingStrategyPa
                   <span className="flex-shrink-0 w-5 h-5 rounded-full bg-primary/10 text-primary text-xs flex items-center justify-center font-semibold mt-0.5">
                     {idx + 1}
                   </span>
-                  <span>{cond.label}</span>
+                  <span>{label}</span>
                 </li>
               ))}
             </ul>

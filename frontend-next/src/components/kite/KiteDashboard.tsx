@@ -105,9 +105,9 @@ export default function KiteDashboard(props: KiteDashboardProps) {
 
       <div className="min-h-[600px]">
         {activeTab === 'market' && <MarketPanel indices={displayIndices} futures={props.futures} stats={props.stats} />}
-        {activeTab === 'boss' && <StrategyPanel stocks={props.bossStocks} category="boss" strategyDefinitions={props.strategyDefinitions} />}
-        {activeTab === 'office' && <StrategyPanel stocks={props.officeStocks} category="office" strategyDefinitions={props.strategyDefinitions} />}
-        {activeTab === 'worker' && <StrategyPanel stocks={props.workerStocks} category="worker" strategyDefinitions={props.strategyDefinitions} />}
+        {activeTab === 'boss' && <StrategyPanel stocks={props.bossStocks} category="boss" strategyDefinitions={props.strategyDefinitions} windCode={windCode} />}
+        {activeTab === 'office' && <StrategyPanel stocks={props.officeStocks} category="office" strategyDefinitions={props.strategyDefinitions} windCode={windCode} />}
+        {activeTab === 'worker' && <StrategyPanel stocks={props.workerStocks} category="worker" strategyDefinitions={props.strategyDefinitions} windCode={windCode} />}
         {activeTab === 'portfolio' && <PortfolioPanel positions={props.portfolio} />}
       </div>
     </div>

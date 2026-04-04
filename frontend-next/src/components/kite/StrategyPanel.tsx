@@ -5,10 +5,23 @@ import { ArrowUpDown, ChevronDown, ChevronUp, Check, X } from 'lucide-react'
 import FloatingStrategyPanel from './FloatingStrategyPanel'
 import type { StrategyStock, StrategyDefinition, StockIndicator, StrategyCondition } from '@/lib/nexus-backend'
 
+// Wind code to Chinese label mapping (matches KiteDashboard WIND_CODE_MAP values)
+const WIND_LABEL: Record<string, string> = {
+  strong: '強風',
+  turbulence: '亂流',
+  gust: '陣風',
+  none: '無風',
+}
+
+// Which wind codes each strategy category accepts
+const BOSS_WIND_ACCEPT = new Set(['strong', 'turbulence', 'gust', 'none']) // all-weather
+const OFFICE_WIND_ACCEPT = new Set(['strong', 'gust'])
+
 interface StrategyPanelProps {
   stocks: StrategyStock[]
   category: 'boss' | 'office' | 'worker'
   strategyDefinitions: StrategyDefinition[]
+  windCode?: string
 }
 
 const CATEGORY_CONFIG = {
@@ -93,6 +106,9 @@ const EXPANDED_INDICATOR_FIELDS = ['ma5', 'ma20', 'ma60', 'yesterday_close'] as 
 function getIndicatorFieldValue(stock: StockIndicator, field: string): number | null {
   if (field === 'close') return stock.price
   if (field === 'yesterday_close') return stock.yesterday_close
+  if (field === 'monthly_revenue_growth') return stock.monthly_revenue_growth
+  if (field === 'weekly_macd_dif') return stock.weekly_macd_dif
+  if (field === 'weekly_macd_histogram') return stock.weekly_macd_histogram
   const val = (stock as unknown as Record<string, unknown>)[field]
   return typeof val === 'number' ? val : null
 }
@@ -128,15 +144,114 @@ function fmt(val: number | null | undefined): string {
   return val.toFixed(2)
 }
 
+// ── Condition Tag ─────────────────────────────
+interface ConditionTag {
+  pass: boolean | null
+  label: string
+}
+
+function buildBossTags(indicator: StockIndicator, windCode: string): ConditionTag[] {
+  // 1. Wind — boss is all-weather
+  const windPass = BOSS_WIND_ACCEPT.has(windCode)
+  const windLabel = WIND_LABEL[windCode] || windCode
+  const windSuffix = windPass ? '（全天候）' : ''
+
+  // 2. Revenue YOY > 30%
+  const rev = indicator.monthly_revenue_growth
+  const revPass = rev !== null ? rev > 30 : null
+  const revLabel = rev !== null ? `營收 ${rev >= 0 ? '+' : ''}${rev.toFixed(1)}%` : '營收 --'
+
+  // 3. MA20 distance: abs((price - ma20) / ma20 * 100) <= 3%
+  const price = indicator.price
+  const ma20 = indicator.ma20
+  let distPass: boolean | null = null
+  let distLabel = '距月線 --'
+  if (price !== null && ma20 !== null && ma20 !== 0) {
+    const dist = (price - ma20) / ma20 * 100
+    distPass = Math.abs(dist) <= 3
+    distLabel = `距月線 ${dist >= 0 ? '+' : ''}${dist.toFixed(1)}%`
+  }
+
+  return [
+    { pass: windPass, label: `${windLabel}${windSuffix}` },
+    { pass: revPass, label: revLabel },
+    { pass: distPass, label: distLabel },
+  ]
+}
+
+function buildOfficeTags(indicator: StockIndicator, windCode: string, strategyId: string): ConditionTag[] {
+  // 1. Wind — office accepts strong + gust
+  const windPass = OFFICE_WIND_ACCEPT.has(windCode)
+  const windLabel = WIND_LABEL[windCode] || windCode
+
+  // 2. Weekly MACD trend up (weekly_macd_histogram > 0)
+  const wHist = indicator.weekly_macd_histogram
+  const wHistPass = wHist !== null ? wHist > 0 : null
+  const wHistLabel = wHist !== null
+    ? `週MACD ${wHist > 0 ? '上升' : '下降'}`
+    : '週MACD --'
+
+  const tags: ConditionTag[] = [
+    { pass: windPass, label: windLabel },
+    { pass: wHistPass, label: wHistLabel },
+  ]
+
+  if (strategyId === 'office_strong') {
+    // 3. Daily MACD histogram > 0 (red bar)
+    const dHist = indicator.macd_histogram
+    const dHistPass = dHist !== null ? dHist > 0 : null
+    const dHistLabel = dHist !== null
+      ? `日MACD ${dHist > 0 ? '紅柱' : '綠柱'}`
+      : '日MACD --'
+    tags.push({ pass: dHistPass, label: dHistLabel })
+  } else if (strategyId === 'office_trend') {
+    // 3. Price near MA5 (within 1.5%)
+    const price = indicator.price
+    const ma5 = indicator.ma5
+    let ma5Pass: boolean | null = null
+    let ma5Label = '距日線 --'
+    if (price !== null && ma5 !== null && ma5 !== 0) {
+      const dist = (price - ma5) / ma5 * 100
+      ma5Pass = Math.abs(dist) <= 1.5
+      ma5Label = `距日線 ${dist >= 0 ? '+' : ''}${dist.toFixed(1)}%`
+    }
+    tags.push({ pass: ma5Pass, label: ma5Label })
+  }
+
+  return tags
+}
+
+function ConditionTagBadge({ tag }: { tag: ConditionTag }) {
+  const cls = tag.pass === null
+    ? 'bg-gray-100 text-gray-400'
+    : tag.pass
+      ? 'bg-green-100 text-green-700'
+      : 'bg-red-100 text-red-700'
+  return (
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${cls}`}>
+      {tag.pass === null ? (
+        <span>-</span>
+      ) : tag.pass ? (
+        <Check className="w-3 h-3" />
+      ) : (
+        <X className="w-3 h-3" />
+      )}
+      {tag.label}
+    </span>
+  )
+}
+
 // ── Expandable Indicator Row ──────────────────
 function ExpandedIndicatorRow({
   indicator,
   definition,
   colSpan,
+  windCode,
 }: {
   indicator: StockIndicator | null
   definition: StrategyDefinition
   colSpan: number
+  windCode: string
 }) {
   if (!indicator) {
     return (
@@ -146,6 +261,22 @@ function ExpandedIndicatorRow({
         </td>
       </tr>
     )
+  }
+
+  // Determine tags based on category
+  const category = definition.category
+  const strategyId = definition.id
+  let tags: ConditionTag[]
+  if (category === 'boss') {
+    tags = buildBossTags(indicator, windCode)
+  } else if (category === 'office') {
+    tags = buildOfficeTags(indicator, windCode, strategyId)
+  } else {
+    // Worker: keep original generic evaluation
+    tags = definition.conditions.map((cond) => {
+      const result = evaluateCondition(cond, indicator)
+      return { pass: result, label: cond.label }
+    })
   }
 
   return (
@@ -169,32 +300,11 @@ function ExpandedIndicatorRow({
             })}
           </div>
 
-          {/* Condition evaluations */}
+          {/* Condition tags — category-specific */}
           <div className="flex flex-wrap gap-2 pt-1">
-            {definition.conditions.map((cond, idx) => {
-              const result = evaluateCondition(cond, indicator)
-              return (
-                <span
-                  key={idx}
-                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
-                    result === null
-                      ? 'bg-gray-100 text-gray-400'
-                      : result
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-red-100 text-red-700'
-                  }`}
-                >
-                  {result === null ? (
-                    <span>-</span>
-                  ) : result ? (
-                    <Check className="w-3 h-3" />
-                  ) : (
-                    <X className="w-3 h-3" />
-                  )}
-                  {cond.label}
-                </span>
-              )
-            })}
+            {tags.map((tag, idx) => (
+              <ConditionTagBadge key={idx} tag={tag} />
+            ))}
           </div>
         </div>
       </td>
@@ -208,11 +318,13 @@ function StockTable({
   category,
   indicatorData,
   definition,
+  windCode,
 }: {
   stocks: StrategyStock[]
   category: 'boss' | 'office' | 'worker'
   indicatorData: StockIndicator[]
   definition: StrategyDefinition | null
+  windCode: string
 }) {
   const defaultSort = DEFAULT_SORT[category]
   const [sortConfig, setSortConfig] = useState<SortConfig[]>(defaultSort)
@@ -359,6 +471,7 @@ function StockTable({
                     indicator={indicator}
                     definition={definition}
                     colSpan={COL_SPAN}
+                    windCode={windCode}
                   />
                 </tbody></table>
               )}
@@ -371,7 +484,7 @@ function StockTable({
 }
 
 // ── Main StrategyPanel ────────────────────────
-export default function StrategyPanel({ stocks, category, strategyDefinitions }: StrategyPanelProps) {
+export default function StrategyPanel({ stocks, category, strategyDefinitions, windCode = 'none' }: StrategyPanelProps) {
   const config = CATEGORY_CONFIG[category]
   const [activeStrategyIdx, setActiveStrategyIdx] = useState(0)
   const [indicatorData, setIndicatorData] = useState<StockIndicator[]>([])
@@ -441,6 +554,7 @@ export default function StrategyPanel({ stocks, category, strategyDefinitions }:
           category={category}
           indicatorData={indicatorData}
           definition={activeDefinition}
+          windCode={windCode}
         />
       </div>
 

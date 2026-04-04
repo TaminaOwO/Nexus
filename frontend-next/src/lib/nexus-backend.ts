@@ -137,6 +137,8 @@ export interface StockIndicator {
   volume: number | null
   monthly_revenue_growth: number | null
   cumulative_revenue_growth: number | null
+  weekly_macd_dif: number | null
+  weekly_macd_histogram: number | null
 }
 
 export async function getStrategyDefinitions(): Promise<{ data: StrategyDefinition[] }> {

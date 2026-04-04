@@ -124,7 +124,7 @@ function evaluateCondition(cond: StrategyCondition, stock: StockIndicator): bool
 }
 
 function fmt(val: number | null | undefined): string {
-  if (val === null || val === undefined) return '-'
+  if (val === null || val === undefined) return '--'
   return val.toFixed(2)
 }
 
@@ -322,8 +322,8 @@ function StockTable({
                   <span className="text-base font-mono font-semibold text-text-primary leading-tight">
                     {stock.price != null ? stock.price.toFixed(2) : '--'}
                   </span>
-                  <span className={`text-xs font-mono ${(stock.change_pct ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    {stock.change_pct != null ? `${stock.change_pct >= 0 ? '+' : ''}${stock.change_pct}%` : '--'}
+                  <span className={`text-xs font-mono ${stock.change_pct == null ? 'text-text-muted' : stock.change_pct >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {stock.change_pct != null ? `${stock.change_pct >= 0 ? '+' : ''}${stock.change_pct.toFixed(2)}%` : '--'}
                   </span>
                 </div>
 

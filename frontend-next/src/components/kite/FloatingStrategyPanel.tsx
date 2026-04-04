@@ -5,26 +5,26 @@ import { ChevronRight, ChevronLeft, ListChecks } from 'lucide-react'
 import type { StrategyDefinition } from '@/lib/nexus-backend'
 
 // Frontend override for strategy display conditions (NEXUS-006-R1 Issue 3)
-const DISPLAY_CONDITIONS_OVERRIDE: Record<string, string[]> = {
+export const DISPLAY_CONDITIONS_OVERRIDE: Record<string, string[]> = {
   boss_cheap: [
-    '適合風度: 全天候',
+    '適合風度: STRONG, TURBULENT, GUSTY, CALM（全天候）',
     '營收 YOY > 30%',
     '靠近月線或破月線（偏離 ≤ 3%）',
   ],
   boss_pullback: [
-    '適合風度: 全天候',
+    '適合風度: STRONG, TURBULENT, GUSTY, CALM（全天候）',
     '營收 YOY > 30%',
     '靠近月線或破月線（偏離 ≤ 3%）',
   ],
   office_strong: [
-    '適合風度: 強風, 陣風',
+    '適合風度: STRONG, GUSTY',
     '週 MACD 趨勢向上',
     '日 MACD 紅柱',
     '日 MACD 紅柱 ≤ 2 天（早期進場）',
     '循環為易漲（高勝率）',
   ],
   office_trend: [
-    '適合風度: 強風, 陣風',
+    '適合風度: STRONG, GUSTY',
     '週 MACD 趨勢向上',
     '價格靠近 5 日均線（1.5% 內）',
   ],

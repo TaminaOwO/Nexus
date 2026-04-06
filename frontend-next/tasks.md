@@ -1,29 +1,38 @@
-# NEXUS-003 Tasks — Life 部門通電
+# NEXUS-005 Tasks — Marketing 部門建置：Cat-Lab 內容自動化儀表板
 
-## Task 1 — AC-1: TypeScript 型別定義 + API Fetchers
-- 在 `nexus-backend.ts` 新增 `HealthRecord`, `SkincareStep`, `SkincareRoutine` interfaces
-- 新增 `getHealthLatest()`, `getSkincareToday()`, `getSkincareCycle()` fetcher functions
-- 測試：verify interface 結構與 fetcher 呼叫路徑、headers
+## Task 1 — AC-1: Sidebar 啟用 Marketing 連結
+- 在 `Sidebar.tsx` 將 Marketing nav item 設為 `enabled: true`，加入 `href: '/marketing'`
+- 測試：Marketing link 可點擊，正確連結至 `/marketing`
 
-## Task 2 — AC-4: X-API-Key 標頭驗證
-- 測試：`fetchFromBackend` 在每次請求中正確帶入 `X-API-Key` header
-- (已存在於 fetchFromBackend，需測試驗證)
+## Task 2 — AC-2 + AC-6: BFF API Route（快取 + GitHub 介接）
+- 新建 `src/app/api/marketing/catlab/route.ts`
+- 實作 GET handler：呼叫 `github.ts` 的 `listDirectory` + `getFileContent`
+- 使用 `gray-matter` 解析 frontmatter
+- 實作記憶體快取（drafts TTL 60s, published TTL 600s）
+- 測試：快取命中時不重複呼叫 GitHub API；正確解析 frontmatter
 
-## Task 3 — AC-2: HealthCycleCard 動態化
-- 移除 `METRICS` 靜態陣列
-- 接收 `HealthRecord` + cycle info props，動態渲染體脂/睡眠/靜止心率
-- DB 為空時顯示 N/A
-- 測試：props 注入後正確渲染；null 值顯示 N/A
+## Task 3 — AC-3 + AC-5: CatLabPostCard 元件
+- 新建 `src/components/marketing/CatLabPostCard.tsx`
+- 呈現發文標題、Persona 標籤（觀察員/研究員）、狀態（Draft/Published）
+- 符合 Morandi 設計系統（bg-white, border-border, font-display 等）
+- 測試：正確渲染 props，Persona badge 顯示正確顏色
 
-## Task 4 — AC-3: SkincareCard 動態化
-- 移除 `AM_STEPS`/`PM_STEPS` 常數
-- 接收 `SkincareRoutine` props，渲染 AM/PM 步驟 + badges + banned 區域
-- 測試：props 注入後正確渲染 AM/PM 列表與 banned 警告
+## Task 4 — AC-4: Skeleton Loading + Error State
+- 新建 `src/components/marketing/CatLabSkeleton.tsx`
+- 新建 `src/components/marketing/CatLabError.tsx`
+- Skeleton 在載入時顯示骨架屏
+- Error 在失敗時顯示友善錯誤訊息
+- 測試：Skeleton 渲染正確結構；Error 顯示錯誤訊息
 
-## Task 5 — AC-5: 日期歸屬正確性
-- 確認前端直接使用後端回傳的 `record_date` 字串，不做本地時區轉換
-- 測試：凌晨 00:30 入睡的 record_date 直接透傳顯示
+## Task 5 — AC-3: Marketing 頁面整合（Published 左欄 / Drafts 右欄）
+- 新建 `src/app/marketing/page.tsx`（'use client'）
+- 使用 `useSWR` 呼叫 BFF API
+- Published 左欄、Drafts 右欄佈局
+- 整合 Skeleton / Error / CatLabPostCard
+- 測試：頁面渲染正確佈局，SWR 呼叫正確 endpoint
 
-## Task 6 — LifePage 整合
-- 在 `page.tsx` 呼叫新增的 fetchers，注入 props 至各 component
-- 測試：page 正確呼叫 fetchers 並傳遞 data 至子元件
+## Task 6 — AC-5: CatRecordTimeline 元件（貓咪作息紀錄）
+- 新建 `src/components/marketing/CatRecordTimeline.tsx`
+- 視覺化貓咪作息紀錄（若有檔案）
+- 符合 Morandi 設計系統
+- 測試：正確渲染時間軸數據；無數據時顯示空狀態

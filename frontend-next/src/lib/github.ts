@@ -76,6 +76,41 @@ export async function listDirectory(path: string): Promise<Array<{ name: string;
 }
 
 /**
+ * 在 HQ repo 中建立或更新檔案
+ */
+export async function createOrUpdateFile(
+  path: string,
+  content: string,
+  message: string,
+): Promise<{ sha: string }> {
+  const owner = getOwner()
+  const repo = getRepo()
+  console.log(`[GitHub] createOrUpdateFile: ${owner}/${repo}/${path}`)
+
+  // Check if file exists to get its SHA (required for updates)
+  let sha: string | undefined
+  try {
+    const existing = await getOctokit().repos.getContent({ owner, repo, path })
+    if ('sha' in existing.data) {
+      sha = existing.data.sha
+    }
+  } catch {
+    // File doesn't exist yet — create new
+  }
+
+  const response = await getOctokit().repos.createOrUpdateFileContents({
+    owner,
+    repo,
+    path,
+    message,
+    content: Buffer.from(content).toString('base64'),
+    ...(sha ? { sha } : {}),
+  })
+
+  return { sha: response.data.content?.sha ?? '' }
+}
+
+/**
  * 讀取多個檔案（批次，避免 rate limit）
  */
 export async function getMultipleFiles(paths: string[]): Promise<Record<string, string | null>> {

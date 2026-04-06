@@ -14,7 +14,50 @@ async function fetchFromBackend<T>(path: string): Promise<T> {
   return res.json()
 }
 
-// ── Life ──────────────────────────────────────
+// ── Life: Health ─────────────────────────────
+
+export interface HealthRecord {
+  body_fat_pct: number | null
+  weight_kg: number | null
+  sleep_hours: number | null
+  resting_hr: number | null
+  record_date: string
+}
+
+export async function getHealthLatest(): Promise<HealthRecord> {
+  return fetchFromBackend<HealthRecord>('/api/v1/life/health/latest')
+}
+
+// ── Life: Skincare ───────────────────────────
+
+export interface SkincareStep {
+  product: string
+  badges?: string[]
+  is_optional: boolean
+}
+
+export interface SkincareRoutine {
+  am: SkincareStep[]
+  pm: SkincareStep[]
+  banned: string[]
+  phase: string
+  mode: string
+}
+
+export interface SkincareCycle {
+  day: number
+  phase: string
+}
+
+export async function getSkincareToday(): Promise<SkincareRoutine> {
+  return fetchFromBackend<SkincareRoutine>('/api/v1/life/skincare/today')
+}
+
+export async function getSkincareCycle(): Promise<SkincareCycle> {
+  return fetchFromBackend<SkincareCycle>('/api/v1/life/skincare/cycle')
+}
+
+// ── Life: Career Coach ───────────────────────
 
 export interface CareerCoachData {
   targetDate: string

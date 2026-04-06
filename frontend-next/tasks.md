@@ -1,36 +1,38 @@
-# NEXUS-004 Tasks — Omni-Comm 全局指令中心
+# NEXUS-005 Tasks — Marketing 部門建置：Cat-Lab 內容自動化儀表板
 
-## Task 1 — AC-2: `lib/github.ts` createOrUpdateFile 寫入功能
-- 在 `lib/github.ts` 新增 `createOrUpdateFile(path, content, message)` 方法
-- 使用 `getOctokit().repos.createOrUpdateFileContents`
-- content 自動轉 Base64
-- 10 秒 timeout（已在 Octokit 初始化設定）
-- 測試：mock Octokit，驗證呼叫參數與 Base64 轉換
+## Task 1 — AC-1: Sidebar 啟用 Marketing 連結
+- 在 `Sidebar.tsx` 將 Marketing nav item 設為 `enabled: true`，加入 `href: '/marketing'`
+- 測試：Marketing link 可點擊，正確連結至 `/marketing`
 
-## Task 2 — AC-6: API 路由缺少 GITHUB_PAT 時回傳 500
-- 建立 `/api/omni-comm/dispatch/route.ts`
-- 當 `GITHUB_PAT` 未設定時回傳 `{ error: "GITHUB_PAT is not configured" }` + HTTP 500
-- 測試：未設定 GITHUB_PAT 時回傳 500 錯誤
+## Task 2 — AC-2 + AC-6: BFF API Route（快取 + GitHub 介接）
+- 新建 `src/app/api/marketing/catlab/route.ts`
+- 實作 GET handler：呼叫 `github.ts` 的 `listDirectory` + `getFileContent`
+- 使用 `gray-matter` 解析 frontmatter
+- 實作記憶體快取（drafts TTL 60s, published TTL 600s）
+- 測試：快取命中時不重複呼叫 GitHub API；正確解析 frontmatter
 
-## Task 3 — AC-3: Dispatch API 路由核心邏輯
-- 解析 POST body 的 `hashtag` 對應路徑（`#req` → `Dev/Architect-Office/inbox/`）
-- 生成 Markdown 內容（含 Frontmatter: date, source, hashtag）
-- 調用 `createOrUpdateFile` 寫入 GitHub
-- 回傳成功 JSON
-- 測試：mock github.ts，驗證路徑映射、Markdown 生成、成功回傳
+## Task 3 — AC-3 + AC-5: CatLabPostCard 元件
+- 新建 `src/components/marketing/CatLabPostCard.tsx`
+- 呈現發文標題、Persona 標籤（觀察員/研究員）、狀態（Draft/Published）
+- 符合 Morandi 設計系統（bg-white, border-border, font-display 等）
+- 測試：正確渲染 props，Persona badge 顯示正確顏色
 
-## Task 4 — AC-5: Dispatch API 錯誤處理
-- GitHub API 失敗時回傳 `{ error: "<具體錯誤>" }` + HTTP 500
-- 測試：mock createOrUpdateFile throw error，驗證錯誤訊息回傳
+## Task 4 — AC-4: Skeleton Loading + Error State
+- 新建 `src/components/marketing/CatLabSkeleton.tsx`
+- 新建 `src/components/marketing/CatLabError.tsx`
+- Skeleton 在載入時顯示骨架屏
+- Error 在失敗時顯示友善錯誤訊息
+- 測試：Skeleton 渲染正確結構；Error 顯示錯誤訊息
 
-## Task 5 — AC-1: OmniComm 元件 Cmd+K 觸發
-- 建立 `OmniComm.tsx` client component
-- `Cmd+K` / `Ctrl+K` 切換指令面板顯示
-- 包含文字輸入框 + 送出按鈕
-- 測試：模擬 Cmd+K 按鍵，驗證面板顯示/隱藏
+## Task 5 — AC-3: Marketing 頁面整合（Published 左欄 / Drafts 右欄）
+- 新建 `src/app/marketing/page.tsx`（'use client'）
+- 使用 `useSWR` 呼叫 BFF API
+- Published 左欄、Drafts 右欄佈局
+- 整合 Skeleton / Error / CatLabPostCard
+- 測試：頁面渲染正確佈局，SWR 呼叫正確 endpoint
 
-## Task 6 — AC-4: OmniComm 成功 Toast + git pull 提醒
-- 送出期間顯示 Loading Spinner
-- 成功後彈出 Toast：「已送出至遠端，請在本地執行 git pull 同步」
-- 掛載於 `layout.tsx`
-- 測試：mock fetch dispatch API，驗證 loading 狀態與 Toast 文案
+## Task 6 — AC-5: CatRecordTimeline 元件（貓咪作息紀錄）
+- 新建 `src/components/marketing/CatRecordTimeline.tsx`
+- 視覺化貓咪作息紀錄（若有檔案）
+- 符合 Morandi 設計系統
+- 測試：正確渲染時間軸數據；無數據時顯示空狀態

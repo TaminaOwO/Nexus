@@ -20,7 +20,7 @@ const NAV_TREE: NavNode[] = [
       { label: 'Dev', icon: '$', enabled: true, href: '/dev' },
       { label: 'Life', icon: '$', enabled: true, href: '/life' },
       { label: 'Finance', icon: '$', enabled: true, href: '/finance/kite' },
-      { label: 'Marketing', icon: '$', enabled: false },
+      { label: 'Marketing', icon: '$', enabled: true, href: '/marketing' },
       { label: 'Business', icon: '$', enabled: false },
     ],
   },

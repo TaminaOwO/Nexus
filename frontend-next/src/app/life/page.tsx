@@ -7,8 +7,30 @@ import SkincareCard from '@/components/life/SkincareCard'
 import HealthCycleCard from '@/components/life/HealthCycleCard'
 import TaskReminderCard from '@/components/life/TaskReminderCard'
 import { getTaskStateDepartments } from '@/lib/fetchers'
-import { getCareerCoachData } from '@/lib/nexus-backend'
+import {
+  getCareerCoachData,
+  getHealthLatest,
+  getSkincareToday,
+  getSkincareCycle,
+} from '@/lib/nexus-backend'
 import type { TaskState } from '@/lib/types'
+import type { HealthRecord, SkincareRoutine, SkincareCycle } from '@/lib/nexus-backend'
+
+const FALLBACK_HEALTH: HealthRecord = {
+  body_fat_pct: null,
+  weight_kg: null,
+  sleep_hours: null,
+  resting_hr: null,
+  record_date: 'N/A',
+}
+
+const FALLBACK_SKINCARE: SkincareRoutine = {
+  am: [],
+  pm: [],
+  banned: [],
+  phase: 'unknown',
+  mode: 'unknown',
+}
 
 export default async function LifePage() {
   let taskState: TaskState
@@ -25,6 +47,10 @@ export default async function LifePage() {
     return MOCK_CAREER_COACH_DATA
   })
 
+  const healthLatest = await getHealthLatest().catch(() => FALLBACK_HEALTH)
+  const skincareToday = await getSkincareToday().catch(() => FALLBACK_SKINCARE)
+  const skincareCycle: SkincareCycle | null = await getSkincareCycle().catch(() => null)
+
   return (
     <div className="flex min-h-screen">
       <Sidebar />
@@ -39,8 +65,8 @@ export default async function LifePage() {
 
             {/* Middle column */}
             <div className="space-y-6">
-              <SkincareCard />
-              <HealthCycleCard />
+              <SkincareCard routine={skincareToday} />
+              <HealthCycleCard health={healthLatest} cycle={skincareCycle} />
             </div>
 
             {/* Right column */}

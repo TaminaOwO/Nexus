@@ -48,7 +48,7 @@ export default function OmniComm() {
     if (!input.trim() || isLoading) return
 
     // Parse hashtag from input: "#req some content" → hashtag="#req", content="some content"
-    const match = input.match(/^(#\w+)\s+(.+)$/s)
+    const match = input.match(/^(#\w+)\s+([\s\S]+)$/)
     if (!match) {
       setToast({ message: "格式錯誤：請使用 #hashtag 內容", type: "error" })
       return

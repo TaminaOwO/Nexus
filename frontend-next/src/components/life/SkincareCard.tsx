@@ -1,16 +1,30 @@
-const AM_STEPS = ['潔顏', '化妝水', '防曬']
-const PM_STEPS = ['卸妝', '潔顏', '精華', '乳霜']
+import type { SkincareRoutine, SkincareStep } from '@/lib/nexus-backend'
 
-function CheckItem({ label }: { label: string }) {
+interface SkincareCardProps {
+  routine: SkincareRoutine
+}
+
+function StepItem({ step }: { step: SkincareStep }) {
   return (
     <li className="flex items-center gap-2 text-sm text-text-primary py-0.5">
       <span className="w-3.5 h-3.5 border border-border rounded-xs inline-flex items-center justify-center flex-shrink-0" />
-      {label}
+      <span>{step.product}</span>
+      {step.badges?.map((badge) => (
+        <span
+          key={badge}
+          className="text-[10px] px-1.5 py-0.5 bg-primary/10 text-primary rounded-sm font-mono"
+        >
+          {badge}
+        </span>
+      ))}
+      {step.is_optional && (
+        <span className="text-[10px] text-text-muted opacity-50">(optional)</span>
+      )}
     </li>
   )
 }
 
-export default function SkincareCard() {
+export default function SkincareCard({ routine }: SkincareCardProps) {
   return (
     <div className="bg-white border border-border rounded-md p-4">
       <h3 className="font-display text-lg text-text-primary mb-3">
@@ -21,8 +35,8 @@ export default function SkincareCard() {
         <div>
           <p className="text-xs font-mono text-text-muted mb-2">AM</p>
           <ul className="space-y-1">
-            {AM_STEPS.map((step) => (
-              <CheckItem key={step} label={step} />
+            {routine.am.map((step) => (
+              <StepItem key={step.product} step={step} />
             ))}
           </ul>
         </div>
@@ -30,12 +44,28 @@ export default function SkincareCard() {
         <div>
           <p className="text-xs font-mono text-text-muted mb-2">PM</p>
           <ul className="space-y-1">
-            {PM_STEPS.map((step) => (
-              <CheckItem key={step} label={step} />
+            {routine.pm.map((step) => (
+              <StepItem key={step.product} step={step} />
             ))}
           </ul>
         </div>
       </div>
+
+      {routine.banned.length > 0 && (
+        <div className="mt-4 p-2 bg-red-50 border border-red-200 rounded-sm">
+          <p className="text-xs font-mono text-red-600 mb-1">Banned</p>
+          <div className="flex gap-2">
+            {routine.banned.map((item) => (
+              <span
+                key={item}
+                className="text-xs px-1.5 py-0.5 bg-red-100 text-red-700 rounded-sm font-mono"
+              >
+                {item}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

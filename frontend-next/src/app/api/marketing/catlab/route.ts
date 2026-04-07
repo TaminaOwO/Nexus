@@ -63,14 +63,14 @@ export async function GET(): Promise<NextResponse<CatLabApiResponse | { error: s
     if (isCacheValid(publishedCache, PUBLISHED_TTL)) {
       published = publishedCache.data
     } else {
-      published = await fetchPosts('Published', 'published')
+      published = await fetchPosts('posts', 'published')
       publishedCache = { data: published, timestamp: Date.now() }
     }
 
     if (isCacheValid(draftsCache, DRAFTS_TTL)) {
       drafts = draftsCache.data
     } else {
-      drafts = await fetchPosts('Drafts', 'draft')
+      drafts = await fetchPosts('drafts', 'draft')
       draftsCache = { data: drafts, timestamp: Date.now() }
     }
 

@@ -52,17 +52,17 @@ describe('GET /api/marketing/catlab', () => {
 
   it('returns published and drafts arrays', async () => {
     mockListDirectory.mockImplementation(async (path: string) => {
-      if (path.includes('Published')) {
-        return [{ name: 'post1.md', path: 'Marketing/Cat-Lab/Published/post1.md', type: 'file' }]
+      if (path.includes('posts')) {
+        return [{ name: 'post1.md', path: 'Marketing/Cat-Lab/posts/post1.md', type: 'file' }]
       }
-      if (path.includes('Drafts')) {
-        return [{ name: 'draft1.md', path: 'Marketing/Cat-Lab/Drafts/draft1.md', type: 'file' }]
+      if (path.includes('drafts')) {
+        return [{ name: 'draft1.md', path: 'Marketing/Cat-Lab/drafts/draft1.md', type: 'file' }]
       }
       return []
     })
     mockGetFileContent.mockImplementation(async (path: string) => {
-      if (path.includes('Published')) return SAMPLE_PUBLISHED_MD
-      if (path.includes('Drafts')) return SAMPLE_DRAFT_MD
+      if (path.includes('posts')) return SAMPLE_PUBLISHED_MD
+      if (path.includes('drafts')) return SAMPLE_DRAFT_MD
       return null
     })
 
@@ -82,8 +82,8 @@ describe('GET /api/marketing/catlab', () => {
 
   it('parses frontmatter tags correctly', async () => {
     mockListDirectory.mockImplementation(async (path: string) => {
-      if (path.includes('Published')) {
-        return [{ name: 'post1.md', path: 'Marketing/Cat-Lab/Published/post1.md', type: 'file' }]
+      if (path.includes('posts')) {
+        return [{ name: 'post1.md', path: 'Marketing/Cat-Lab/posts/post1.md', type: 'file' }]
       }
       return []
     })
@@ -97,8 +97,8 @@ describe('GET /api/marketing/catlab', () => {
 
   it('uses cache on second call within TTL (AC-6)', async () => {
     mockListDirectory.mockImplementation(async (path: string) => {
-      if (path.includes('Published')) {
-        return [{ name: 'post1.md', path: 'Marketing/Cat-Lab/Published/post1.md', type: 'file' }]
+      if (path.includes('posts')) {
+        return [{ name: 'post1.md', path: 'Marketing/Cat-Lab/posts/post1.md', type: 'file' }]
       }
       return []
     })

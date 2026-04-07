@@ -13,7 +13,7 @@ describe('HealthCycleCard', () => {
   }
 
   const cycleData: SkincareCycle = {
-    day: 14,
+    current_day: 14,
     phase: 'Ovulation',
   }
 

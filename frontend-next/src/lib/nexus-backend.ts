@@ -45,7 +45,8 @@ export interface SkincareRoutine {
 }
 
 export interface SkincareCycle {
-  day: number
+  day?: number
+  current_day: number
   phase: string
 }
 

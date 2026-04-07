@@ -4,7 +4,7 @@ import HealthCycleCard from './HealthCycleCard'
 import type { HealthRecord, SkincareCycle } from '@/lib/nexus-backend'
 
 describe('HealthCycleCard date attribution (AC-5)', () => {
-  const cycle: SkincareCycle = { day: 5, phase: 'Menstrual' }
+  const cycle: SkincareCycle = { current_day: 5, phase: 'Menstrual' }
 
   it('displays record_date from backend as-is, no local timezone conversion', () => {
     // Scenario: user sleeps at 00:30 on 2026-04-06

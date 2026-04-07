@@ -84,7 +84,7 @@ describe('nexus-backend Life fetchers', () => {
   })
 
   it('getSkincareCycle calls /api/v1/life/skincare/cycle', async () => {
-    const mockData = { day: 14, phase: 'Ovulation' }
+    const mockData = { current_day: 14, phase: 'Ovulation' }
 
     globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,

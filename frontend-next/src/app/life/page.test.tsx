@@ -25,7 +25,7 @@ vi.mock('@/lib/nexus-backend', () => ({
     mode: 'normal',
   }),
   getSkincareCycle: vi.fn().mockResolvedValue({
-    day: 10,
+    current_day: 10,
     phase: 'Follicular',
   }),
 }))

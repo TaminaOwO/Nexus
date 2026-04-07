@@ -5,8 +5,8 @@ interface HealthCycleCardProps {
   cycle: SkincareCycle | null
 }
 
-function formatMetric(value: number | null, suffix: string): string {
-  if (value === null) return 'N/A'
+function formatMetric(value: number | null | undefined, suffix: string): string {
+  if (value == null) return 'N/A'
   return `${value}${suffix}`
 }
 
@@ -37,7 +37,7 @@ export default function HealthCycleCard({ health, cycle }: HealthCycleCardProps)
       {cycle && (
         <div className="mt-4">
           <span className="text-xs font-mono text-text-muted">
-            Day {cycle.day} &middot; {cycle.phase}
+            Day {cycle.current_day} &middot; {cycle.phase}
           </span>
         </div>
       )}

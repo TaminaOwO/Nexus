@@ -28,6 +28,7 @@ vi.mock('@/lib/nexus-backend', () => ({
     current_day: 10,
     phase: 'Follicular',
   }),
+  getHealthRecommendation: vi.fn().mockResolvedValue(null),
 }))
 
 vi.mock('@/lib/fetchers', () => ({

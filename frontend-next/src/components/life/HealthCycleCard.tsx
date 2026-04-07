@@ -1,8 +1,16 @@
-import type { HealthRecord, SkincareCycle } from '@/lib/nexus-backend'
+import type { HealthRecord, HealthRecommendation, SkincareCycle } from '@/lib/nexus-backend'
+
+const PHASE_LABELS: Record<string, string> = {
+  follicular: '濾泡期',
+  ovulation:  '排卵期',
+  luteal:     '黃體期',
+  menstrual:  '月經期',
+}
 
 interface HealthCycleCardProps {
   health: HealthRecord
   cycle: SkincareCycle | null
+  recommendation?: HealthRecommendation | null
 }
 
 function formatMetric(value: number | null | undefined, suffix: string, decimals = 1): string {
@@ -10,7 +18,7 @@ function formatMetric(value: number | null | undefined, suffix: string, decimals
   return `${Number(value).toFixed(decimals)}${suffix}`
 }
 
-export default function HealthCycleCard({ health, cycle }: HealthCycleCardProps) {
+export default function HealthCycleCard({ health, cycle, recommendation }: HealthCycleCardProps) {
   const metrics = [
     { value: formatMetric(health.body_fat_pct, '%', 1), label: 'Body Fat %' },
     { value: formatMetric(health.sleep_hours, 'h', 1), label: 'Sleep' },
@@ -37,7 +45,7 @@ export default function HealthCycleCard({ health, cycle }: HealthCycleCardProps)
       {cycle && (
         <div className="mt-4">
           <span className="text-xs font-mono text-text-muted">
-            Day {cycle.current_day} &middot; {cycle.phase}
+            Day {cycle.current_day} &middot; {PHASE_LABELS[cycle.phase] ?? cycle.phase}
           </span>
         </div>
       )}
@@ -47,6 +55,20 @@ export default function HealthCycleCard({ health, cycle }: HealthCycleCardProps)
           {health.record_date}
         </span>
       </div>
+
+      {recommendation && (
+        <div className="mt-4 space-y-3 border-t border-border pt-3">
+          {recommendation.alert && (
+            <p className="text-xs text-red-600 whitespace-pre-line">{recommendation.alert}</p>
+          )}
+          {recommendation.diet && (
+            <p className="text-xs text-text-secondary whitespace-pre-line">{recommendation.diet}</p>
+          )}
+          {recommendation.training && (
+            <p className="text-xs text-text-secondary whitespace-pre-line">{recommendation.training}</p>
+          )}
+        </div>
+      )}
     </div>
   )
 }

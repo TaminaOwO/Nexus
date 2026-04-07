@@ -10,11 +10,12 @@ import { getTaskStateDepartments } from '@/lib/fetchers'
 import {
   getCareerCoachData,
   getHealthLatest,
+  getHealthRecommendation,
   getSkincareToday,
   getSkincareCycle,
 } from '@/lib/nexus-backend'
 import type { TaskState } from '@/lib/types'
-import type { HealthRecord, SkincareRoutine, SkincareCycle } from '@/lib/nexus-backend'
+import type { HealthRecord, HealthRecommendation, SkincareRoutine, SkincareCycle } from '@/lib/nexus-backend'
 
 const FALLBACK_HEALTH: HealthRecord = {
   body_fat_pct: null,
@@ -50,6 +51,7 @@ export default async function LifePage() {
   const healthLatest = await getHealthLatest().catch(() => FALLBACK_HEALTH)
   const skincareToday = await getSkincareToday().catch(() => FALLBACK_SKINCARE)
   const skincareCycle: SkincareCycle | null = await getSkincareCycle().catch(() => null)
+  const healthRec: HealthRecommendation | null = await getHealthRecommendation().catch(() => null)
 
   return (
     <div className="flex min-h-screen">
@@ -66,7 +68,7 @@ export default async function LifePage() {
             {/* Middle column */}
             <div className="space-y-6">
               <SkincareCard routine={skincareToday} />
-              <HealthCycleCard health={healthLatest} cycle={skincareCycle} />
+              <HealthCycleCard health={healthLatest} cycle={skincareCycle} recommendation={healthRec} />
             </div>
 
             {/* Right column */}

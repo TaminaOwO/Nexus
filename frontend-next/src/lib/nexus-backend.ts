@@ -28,6 +28,17 @@ export async function getHealthLatest(): Promise<HealthRecord> {
   return fetchFromBackend<HealthRecord>('/api/v1/life/health/latest')
 }
 
+export interface HealthRecommendation {
+  alert: string
+  diet: string
+  training: string
+  generated_at: string
+}
+
+export async function getHealthRecommendation(): Promise<HealthRecommendation> {
+  return fetchFromBackend<HealthRecommendation>('/api/v1/life/health/recommendation')
+}
+
 // ── Life: Skincare ───────────────────────────
 
 export interface SkincareStep {

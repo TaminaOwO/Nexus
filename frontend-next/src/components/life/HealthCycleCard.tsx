@@ -5,16 +5,16 @@ interface HealthCycleCardProps {
   cycle: SkincareCycle | null
 }
 
-function formatMetric(value: number | null | undefined, suffix: string): string {
+function formatMetric(value: number | null | undefined, suffix: string, decimals = 1): string {
   if (value == null) return 'N/A'
-  return `${value}${suffix}`
+  return `${Number(value).toFixed(decimals)}${suffix}`
 }
 
 export default function HealthCycleCard({ health, cycle }: HealthCycleCardProps) {
   const metrics = [
-    { value: formatMetric(health.body_fat_pct, '%'), label: 'Body Fat %' },
-    { value: formatMetric(health.sleep_hours, 'h'), label: 'Sleep' },
-    { value: formatMetric(health.resting_hr, ''), label: 'Resting HR' },
+    { value: formatMetric(health.body_fat_pct, '%', 1), label: 'Body Fat %' },
+    { value: formatMetric(health.sleep_hours, 'h', 1), label: 'Sleep' },
+    { value: formatMetric(health.resting_hr, '', 0), label: 'Resting HR' },
   ]
 
   return (
@@ -26,7 +26,7 @@ export default function HealthCycleCard({ health, cycle }: HealthCycleCardProps)
       <div className="grid grid-cols-3 gap-4">
         {metrics.map((m) => (
           <div key={m.label}>
-            <p className="font-mono text-3xl text-primary">{m.value}</p>
+            <p className="font-mono text-2xl text-primary truncate">{m.value}</p>
             <p className="text-xs text-text-secondary opacity-50 mt-1">
               {m.label}
             </p>

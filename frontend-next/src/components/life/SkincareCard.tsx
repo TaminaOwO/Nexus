@@ -6,9 +6,10 @@ interface SkincareCardProps {
 
 function StepItem({ step }: { step: SkincareStep }) {
   return (
-    <li className="flex items-center gap-2 text-sm text-text-primary py-0.5">
-      <span className="w-3.5 h-3.5 border border-border rounded-xs inline-flex items-center justify-center flex-shrink-0" />
-      <span>{step.product}</span>
+    <li className="flex items-start gap-2 text-sm text-text-primary py-0.5">
+      <span className="w-3.5 h-3.5 border border-border rounded-xs inline-flex items-center justify-center flex-shrink-0 mt-0.5" />
+      <span className="flex flex-wrap items-center gap-1 min-w-0">
+      <span className="break-words">{step.product}</span>
       {step.badges?.map((badge) => (
         <span
           key={badge}
@@ -20,6 +21,7 @@ function StepItem({ step }: { step: SkincareStep }) {
       {step.is_optional && (
         <span className="text-[10px] text-text-muted opacity-50">(optional)</span>
       )}
+      </span>
     </li>
   )
 }

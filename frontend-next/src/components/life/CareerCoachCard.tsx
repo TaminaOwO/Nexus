@@ -25,8 +25,11 @@ export const MOCK_CAREER_COACH_DATA: CareerCoachData = {
 }
 
 export default function CareerCoachCard({ data, isLive }: CareerCoachCardProps) {
-  const avgProgress = data.domains.length > 0
-    ? Math.round(data.domains.reduce((sum, d) => sum + d.progress, 0) / data.domains.length)
+  const domains = data.domains ?? []
+  const overdueTodos = data.overdueTodos ?? []
+
+  const avgProgress = domains.length > 0
+    ? Math.round(domains.reduce((sum, d) => sum + d.progress, 0) / domains.length)
     : 0
 
   return (
@@ -46,7 +49,7 @@ export default function CareerCoachCard({ data, isLive }: CareerCoachCardProps) 
         {data.phase}
       </p>
 
-      {data.domains.map((domain) => {
+      {domains.map((domain) => {
         const displayName = DOMAIN_NAME_MAP[domain.name] ?? domain.name
         return (
         <div key={domain.name} className="mb-2">
@@ -69,12 +72,12 @@ export default function CareerCoachCard({ data, isLive }: CareerCoachCardProps) 
         </p>
       )}
 
-      {data.overdueTodos.length > 0 && (
+      {overdueTodos.length > 0 && (
         <>
           <p className="text-sm text-text-secondary mt-3">
-            {data.overdueTodos.length === 1 ? 'Next Action' : 'Overdue'}
+            {overdueTodos.length === 1 ? 'Next Action' : 'Overdue'}
           </p>
-          {data.overdueTodos.map((todo, i) => (
+          {overdueTodos.map((todo, i) => (
             <p key={i} className="text-sm text-text-primary">
               {todo}
             </p>

@@ -25,6 +25,10 @@ function StepItem({ step }: { step: SkincareStep }) {
 }
 
 export default function SkincareCard({ routine }: SkincareCardProps) {
+  const am = routine.am ?? []
+  const pm = routine.pm ?? []
+  const banned = routine.banned ?? []
+
   return (
     <div className="bg-white border border-border rounded-md p-4">
       <h3 className="font-display text-lg text-text-primary mb-3">
@@ -35,7 +39,7 @@ export default function SkincareCard({ routine }: SkincareCardProps) {
         <div>
           <p className="text-xs font-mono text-text-muted mb-2">AM</p>
           <ul className="space-y-1">
-            {routine.am.map((step) => (
+            {am.map((step) => (
               <StepItem key={step.product} step={step} />
             ))}
           </ul>
@@ -44,18 +48,18 @@ export default function SkincareCard({ routine }: SkincareCardProps) {
         <div>
           <p className="text-xs font-mono text-text-muted mb-2">PM</p>
           <ul className="space-y-1">
-            {routine.pm.map((step) => (
+            {pm.map((step) => (
               <StepItem key={step.product} step={step} />
             ))}
           </ul>
         </div>
       </div>
 
-      {routine.banned.length > 0 && (
+      {banned.length > 0 && (
         <div className="mt-4 p-2 bg-red-50 border border-red-200 rounded-sm">
           <p className="text-xs font-mono text-red-600 mb-1">Banned</p>
           <div className="flex gap-2">
-            {routine.banned.map((item) => (
+            {banned.map((item) => (
               <span
                 key={item}
                 className="text-xs px-1.5 py-0.5 bg-red-100 text-red-700 rounded-sm font-mono"

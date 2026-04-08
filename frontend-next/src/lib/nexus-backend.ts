@@ -29,7 +29,7 @@ export async function getHealthLatest(): Promise<HealthRecord> {
 }
 
 export interface HealthRecommendation {
-  alert: string
+  health: string
   diet: string
   training: string
   generated_at: string

@@ -57,15 +57,15 @@ export default function HealthCycleCard({ health, cycle, recommendation }: Healt
       </div>
 
       {recommendation && (
-        <div className="mt-4 space-y-3 border-t border-border pt-3">
+        <div className="mt-4 space-y-4 border-t border-border pt-3">
           {recommendation.health && (
-            <p className="text-xs text-text-secondary whitespace-pre-line">{recommendation.health}</p>
+            <p className="text-sm leading-relaxed text-text-secondary whitespace-pre-line">{recommendation.health}</p>
           )}
           {recommendation.diet && (
-            <p className="text-xs text-text-secondary whitespace-pre-line">{recommendation.diet}</p>
+            <p className="text-sm leading-relaxed text-text-secondary whitespace-pre-line">{recommendation.diet}</p>
           )}
           {recommendation.training && (
-            <p className="text-xs text-text-secondary whitespace-pre-line">{recommendation.training}</p>
+            <p className="text-sm leading-relaxed text-text-secondary whitespace-pre-line">{recommendation.training}</p>
           )}
         </div>
       )}

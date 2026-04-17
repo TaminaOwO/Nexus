@@ -204,3 +204,15 @@ export async function getStrategyIndicators(strategyId: string): Promise<{ data:
   return fetchFromBackend(`/api/v1/kite/strategy/indicators?strategy_id=${encodeURIComponent(strategyId)}`)
 }
 
+// ── Kite: Token Status (KITE_REFRESH_TOKEN_FIX) ──
+
+export interface TokenStatus {
+  status: 'ok' | 'expiring_soon' | 'expired' | 'refresh_failed'
+  expires_at: string
+  last_refreshed: string
+}
+
+export async function getTokenStatus(): Promise<TokenStatus> {
+  return fetchFromBackend('/api/v1/kite/token-status')
+}
+
